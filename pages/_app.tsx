@@ -1,18 +1,35 @@
-import { FC } from "react";
-import type { AppProps /*, AppContext */ } from "next/app";
-import Sidebar from "../components/sidebar";
+import { createWrapper } from 'next-redux-wrapper';
+import { FC } from 'react';
+import { Provider } from 'react-redux';
+import { applyMiddleware, compose, createStore, Middleware, Store } from 'redux';
+import { composeWithDevTools } from 'redux-devtools-extension';
+import createSagaMiddleware from 'redux-saga';
 
-const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
-  return (
-    <div style={{ display: "flex", maxWidth: 1100 }}>
-      <div style={{ flexBasis: "30%", margin: 25 }}>
-        <Sidebar />
-      </div>
-      <div style={{ flexBasis: "70%", margin: 25 }}>
-        <Component {...pageProps} />
-      </div>
-    </div>
-  );
+import reducer from '../reducers';
+
+import type { AppProps } from 'next/app';
+
+interface MyAppProps extends AppProps {
+  store: Store;
+}
+
+const App: FC<MyAppProps> = ({ Component, pageProps }) => {
+  return <Component {...pageProps} />;
 };
 
-export default MyApp;
+const sagaMiddleware = createSagaMiddleware();
+
+const makeStore = (initialState: any) => {
+  const middlewares: Middleware<any, any, any>[] = [sagaMiddleware];
+  const enhancer =
+    process.env.NODE_ENV === 'production'
+      ? compose(applyMiddleware(...middlewares))
+      : composeWithDevTools(applyMiddleware(...middlewares));
+  const store = createStore(reducer, initialState, enhancer);
+
+  return store;
+};
+
+const wrapper = createWrapper(makeStore);
+
+export default wrapper.withRedux(App);
