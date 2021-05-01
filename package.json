@@ -4,8 +4,9 @@
   "main": "index.js",
   "license": "MIT",
   "keywords": [
-    "docker-registry",
-    "docker-registry-manage"
+    "docker registry sidecar",
+    "docker registry",
+    "docker registry management"
   ],
   "repository": {
     "type": "git",
