@@ -17,7 +17,10 @@
     "build:ui": "npx next build",
     "build:server": "npx tsc --project tsconfig.server.json && npx babel .next/production-server -d .next/production-server --extensions \".js\"",
     "build": "yarn build:clean && yarn build:ui && yarn build:server",
-    "start": "cross-env NODE_ENV=production node .next/production-server/src/main.js"
+    "start": "cross-env NODE_ENV=production node .next/production-server/src/main.js",
+    "test": "jest --config ./test/jest.json",
+    "test:cov": "yarn test --coverage && echo $(pwd)/test/coverage/lcov-report/index.html",
+    "test:e2e": "jest --config ./test/jest-e2e.json --coverage"
   },
   "dependencies": {
     "@nestjs/common": "^7.6.5",
@@ -34,17 +37,24 @@
   "devDependencies": {
     "@babel/cli": "^7.5.5",
     "@babel/core": "^7.5.5",
+    "@nestjs/testing": "^7.6.15",
+    "@types/jest": "^26.0.23",
     "@types/node": "^12.7.1",
     "@types/react": "^16.9.1",
+    "@types/supertest": "^2.0.11",
     "@typescript-eslint/eslint-plugin": "^4.11.1",
     "@typescript-eslint/parser": "^4.11.1",
     "eslint": "^7.16.0",
     "eslint-config-prettier": "^7.1.0",
     "eslint-plugin-prettier": "^3.3.0",
+    "jest": "^26.6.3",
+    "lint": "^0.7.0",
     "nodemon": "^2.0.4",
     "prettier": "^2.2.1",
     "rimraf": "^3.0.0",
+    "supertest": "^6.1.3",
+    "ts-jest": "^26.5.5",
     "ts-node": "^8.3.0",
-    "typescript": "^3.5.3"
+    "typescript": "^4.2.4"
   }
 }
