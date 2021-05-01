@@ -2,28 +2,28 @@ export interface UserState {
   id: number;
 }
 
-export enum UserReducerActionType {
+export enum UserActionType {
   SET_USER = 'SET_USER',
   RESET_USER = 'RESET_USER',
 }
 
-interface UserReducerAction {
-  type: UserReducerActionType;
+interface UserAction {
+  type: UserActionType;
   user: UserState;
 }
 
 export const initialState: UserState = { id: 0 };
 
 export const setUserAction = (user: UserState) => ({
-  type: UserReducerActionType.SET_USER,
+  type: UserActionType.SET_USER,
   user,
 });
 
-const reducer = (state = initialState, action: UserReducerAction) => {
+const reducer = (state = initialState, action: UserAction) => {
   switch (action.type) {
-    case UserReducerActionType.SET_USER:
+    case UserActionType.SET_USER:
       return action.user;
-    case UserReducerActionType.RESET_USER:
+    case UserActionType.RESET_USER:
     default:
       return initialState;
   }
