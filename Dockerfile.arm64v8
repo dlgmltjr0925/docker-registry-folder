@@ -1,0 +1,8 @@
+FROM arm64v8/node:lts-alpine
+MAINTAINER fine<dlgmltjr0925@gmail.com>
+
+RUN apk update \
+  && apk --no-cache --update add git python build-base
+
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD [ "node" ]

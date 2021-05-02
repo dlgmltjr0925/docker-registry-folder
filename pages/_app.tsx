@@ -32,8 +32,6 @@ const makeStore = (initialState: any) => {
   return store;
 };
 
-sagaMiddleware.run(rootSaga);
-
 const wrapper = createWrapper(makeStore);
 
 export default wrapper.withRedux(withReduxSaga(App));
