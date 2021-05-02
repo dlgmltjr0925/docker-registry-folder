@@ -1,11 +1,11 @@
+import withReduxSaga from 'next-redux-saga';
 import { createWrapper } from 'next-redux-wrapper';
 import { FC } from 'react';
-import { Provider } from 'react-redux';
 import { applyMiddleware, compose, createStore, Middleware, Store } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import createSagaMiddleware from 'redux-saga';
 
-import reducer from '../reducers';
+import reducer, { rootSaga } from '../reducers';
 
 import type { AppProps } from 'next/app';
 
@@ -27,9 +27,13 @@ const makeStore = (initialState: any) => {
       : composeWithDevTools(applyMiddleware(...middlewares));
   const store = createStore(reducer, initialState, enhancer);
 
+  // sagaMiddleware.run();
+
   return store;
 };
 
+sagaMiddleware.run(rootSaga);
+
 const wrapper = createWrapper(makeStore);
 
-export default wrapper.withRedux(App);
+export default wrapper.withRedux(withReduxSaga(App));

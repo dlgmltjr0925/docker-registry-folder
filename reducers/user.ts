@@ -6,7 +6,6 @@ export enum UserActionType {
   SET_USER = 'SET_USER',
   RESET_USER = 'RESET_USER',
 }
-
 interface UserAction {
   type: UserActionType;
   user: UserState;
