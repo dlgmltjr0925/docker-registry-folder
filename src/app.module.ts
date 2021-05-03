@@ -1,8 +1,11 @@
-import { Module } from '@nestjs/common';
 import { RenderModule } from 'nest-next';
 import Next from 'next';
-import { AppController } from './app.controller';
+
+import { Module } from '@nestjs/common';
+
 import { ApiController } from './api/api.controller';
+import { AppController } from './app.controller';
+import { AuthModule } from './auth/auth.module';
 
 export const NextModule = RenderModule.forRootAsync(
   Next({
@@ -11,7 +14,7 @@ export const NextModule = RenderModule.forRootAsync(
   })
 );
 @Module({
-  imports: [NextModule],
+  imports: [NextModule, AuthModule],
   controllers: [AppController, ApiController],
   providers: [],
 })

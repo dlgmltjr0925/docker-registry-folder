@@ -26,8 +26,10 @@
   "dependencies": {
     "@nestjs/common": "^7.6.5",
     "@nestjs/core": "^7.6.5",
+    "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^7.6.5",
     "cross-env": "^6.0.3",
+    "joi": "^17.4.0",
     "nest-next": "^9.3.0",
     "next": "10",
     "next-redux-saga": "^4.1.2",
@@ -47,6 +49,7 @@
     "@nestjs/testing": "^7.6.15",
     "@reduxjs/toolkit": "^1.5.1",
     "@types/jest": "^26.0.23",
+    "@types/joi": "^17.2.3",
     "@types/next-redux-saga": "^3.0.2",
     "@types/node": "^12.7.1",
     "@types/react": "^16.9.1",

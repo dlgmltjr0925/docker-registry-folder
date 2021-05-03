@@ -1,16 +1,16 @@
 import { GetServerSidePropsContext } from 'next';
 import { FC } from 'react';
 
-interface HomeProps {
+interface HomePageProps {
   name?: string;
 }
 
-const Home: FC<HomeProps> = ({ name }) => {
+const HomePage: FC<HomePageProps> = ({ name }) => {
   return <div>{`home ${name || ''}`}</div>;
 };
 
 export const getServerSideProps = (context: GetServerSidePropsContext) => {
-  const props: HomeProps = {};
+  const props: HomePageProps = {};
 
   const { name } = context.query;
   if (name) props.name = name as string;
@@ -20,4 +20,4 @@ export const getServerSideProps = (context: GetServerSidePropsContext) => {
   };
 };
 
-export default Home;
+export default HomePage;

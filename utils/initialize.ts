@@ -14,8 +14,9 @@ export const createTables = async () => {
         "username"	TEXT NOT NULL UNIQUE,
         "password"	TEXT NOT NULL,
         "role"	TEXT NOT NULL,
-        "created_at"	TEXT NOT NULL,
-        "updated_at"	TEXT NOT NULL,
+        "system_admin"	INTEGER NOT NULL DEFAULT 0,
+        "created_at"	TEXT NOT NULL DEFAULT (datetime('now','localtime')),
+        "updated_at"	TEXT NOT NULL DEFAULT (datetime('now','localtime')),
         PRIMARY KEY("id" AUTOINCREMENT)
       );`);
 
@@ -25,8 +26,8 @@ export const createTables = async () => {
         "host"	TEXT NOT NULL,
         "auth"	TEXT,
         "tag"	TEXT,
-        "created_at"	TEXT NOT NULL,
-        "updated_at"	TEXT NOT NULL,
+        "created_at"	TEXT NOT NULL DEFAULT (datetime('now','localtime')),
+        "updated_at"	TEXT NOT NULL DEFAULT (datetime('now','localtime')),
         "deleted_at"	TEXT DEFAULT NULL,
         PRIMARY KEY("id" AUTOINCREMENT)
       );`);
@@ -37,8 +38,8 @@ export const createTables = async () => {
         "name"	TEXT NOT NULL,
         "git_repository_url"	TEXT DEFAULT NULL,
         "description"	TEXT,
-        "created_at"	TEXT NOT NULL,
-        "updated_at"	TEXT NOT NULL,
+        "created_at"	TEXT NOT NULL DEFAULT (datetime('now','localtime')),
+        "updated_at"	TEXT NOT NULL DEFAULT (datetime('now','localtime')),
         "deleted_at"	TEXT DEFAULT NULL,
         PRIMARY KEY("id" AUTOINCREMENT)
       )`);

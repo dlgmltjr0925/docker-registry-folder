@@ -1,7 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { AppController } from './app.controller';
 
-describe('ApiController', () => {
+describe('AppController', () => {
   let controller: AppController;
 
   beforeEach(async () => {
@@ -16,11 +17,15 @@ describe('ApiController', () => {
     expect(controller).toBeDefined();
   });
 
-  it('should be return default object in /', () => {
-    expect(controller.index()).toEqual({});
+  it('home should be return {}', () => {
+    expect(controller.home()).toEqual({});
   });
 
-  it('should be return default object in /about', () => {
-    expect(controller.index()).toEqual({});
+  it('login should be return {}', () => {
+    expect(controller.login()).toEqual({});
+  });
+
+  it('loginAdmin should be return {}', () => {
+    expect(controller.loginAdmin()).toEqual({});
   });
 });
