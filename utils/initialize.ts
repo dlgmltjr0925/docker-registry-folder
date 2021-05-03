@@ -1,3 +1,4 @@
+import * as bcrypt from 'bcrypt';
 import fs from 'fs';
 import path from 'path';
 import { verbose } from 'sqlite3';
@@ -49,8 +50,17 @@ export const createTables = async () => {
   }
 };
 
+const genSalt = async () => {
+  const saltPath = path.resolve('data/salt');
+  if (!fs.existsSync(saltPath)) {
+    const salt = await bcrypt.genSalt();
+    fs.writeFileSync(saltPath, salt, 'binary');
+  }
+};
+
 const initialize = async () => {
   await createTables();
+  await genSalt();
 };
 
 export default initialize;

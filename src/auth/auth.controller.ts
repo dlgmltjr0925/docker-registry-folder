@@ -1,9 +1,20 @@
-import { Body, Controller, Get, Post, UsePipes, ValidationPipe } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Request,
+  UnauthorizedException,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 import { AuthService } from './auth.service';
-import { SignInInputDto, SignInInputSchema } from './dto/sign-in-input.dto';
 import { SignUpInputDto, SignUpInputSchema } from './dto/sign-up-input.dto';
+import { UserDto } from './dto/user.dto';
+import { LocalAuthGuard } from './local-auth.guard';
 
 @Controller('api/auth')
 export class AuthController {
@@ -15,16 +26,14 @@ export class AuthController {
   }
 
   @Post('sign-in')
-  @UsePipes(new JoiValidationPipe(SignInInputSchema))
-  async signIn(@Body() signInInputDto: SignInInputDto) {
-    console.log(signInInputDto);
-    return 'token';
+  @UseGuards(LocalAuthGuard)
+  async signIn(@Request() { user }: { user: UserDto }) {
+    return { accessToken: await this.authService.issueAccessToken(user) };
   }
 
   @Post('sign-up')
   @UsePipes(new JoiValidationPipe(SignUpInputSchema))
   async signUp(@Body() signUpInputDto: SignUpInputDto) {
-    console.log(signUpInputDto);
-    return 'token';
+    return { accessToken: await this.authService.signUp(signUpInputDto) };
   }
 }
