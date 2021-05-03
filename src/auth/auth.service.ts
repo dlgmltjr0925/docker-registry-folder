@@ -11,8 +11,8 @@ export class AuthService {
     return new Promise((resolve, reject) => {
       const sql = `SELECT id FROM user WHERE system_admin=1 LIMIT 1`;
       const db = connect();
-      db.all(sql, (err, rows) => {
-        if (err) return reject(err);
+      db.all(sql, (error, rows) => {
+        if (error) return reject(error);
         this.systemAdmin = rows.length === 1;
         resolve(this.systemAdmin);
       });
