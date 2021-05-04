@@ -58,9 +58,29 @@ const genSalt = async () => {
   }
 };
 
+const CHARS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz';
+
+const getRandomString = (length: number = 10) => {
+  const charLength = CHARS.length;
+  let randomString = '';
+  for (let i = 0; i < length; i++) {
+    randomString += CHARS.substr(Math.floor(Math.random() * charLength));
+  }
+  return randomString;
+};
+
+const genJwtSecret = async () => {
+  const jwtSecretPath = path.resolve('data/jwt-secret');
+  if (!fs.existsSync(jwtSecretPath)) {
+    const secret = getRandomString(255);
+    fs.writeFileSync(jwtSecretPath, secret, 'binary');
+  }
+};
+
 const initialize = async () => {
   await createTables();
   await genSalt();
+  await genJwtSecret();
 };
 
 export default initialize;
