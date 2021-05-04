@@ -1,16 +1,16 @@
 {
-  "name": "docker-registry-sidecar",
+  "name": "docker-registry-folder",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
   "keywords": [
-    "docker registry sidecar",
+    "docker registry folder",
     "docker registry",
     "docker registry management"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/dlgmltjr0925/docker-registry-sidecar.git"
+    "url": "https://github.com/dlgmltjr0925/docker-registry-folder.git"
   },
   "scripts": {
     "dev": "nodemon src/main.ts",
