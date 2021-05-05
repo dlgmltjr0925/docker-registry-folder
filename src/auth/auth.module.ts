@@ -16,5 +16,11 @@ import { LocalStrategy } from './local.strategy';
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, LocalStrategy],
+  exports: [
+    JwtModule.register({
+      signOptions: { expiresIn: '10m' },
+    }),
+    PassportModule,
+  ],
 })
 export class AuthModule {}

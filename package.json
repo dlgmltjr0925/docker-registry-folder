@@ -13,7 +13,7 @@
     "url": "https://github.com/dlgmltjr0925/docker-registry-folder.git"
   },
   "scripts": {
-    "dev": "nodemon src/main.ts",
+    "dev": "nodemon src/main.ts --ignore '**/*.spec.ts'",
     "build:clean": "rimraf .next",
     "build:ui": "npx next build",
     "build:server": "npx tsc --project tsconfig.server.json && npx babel .next/production-server -d .next/production-server --extensions \".js\"",
@@ -30,6 +30,7 @@
     "@nestjs/mapped-types": "*",
     "@nestjs/passport": "^7.1.5",
     "@nestjs/platform-express": "^7.6.5",
+    "axios": "^0.21.1",
     "bcrypt": "^5.0.1",
     "cross-env": "^6.0.3",
     "joi": "^17.4.0",
@@ -54,6 +55,7 @@
     "@babel/core": "^7.5.5",
     "@nestjs/testing": "^7.6.15",
     "@reduxjs/toolkit": "^1.5.1",
+    "@types/axios": "^0.14.0",
     "@types/bcrypt": "^3.0.1",
     "@types/jest": "^26.0.23",
     "@types/joi": "^17.2.3",

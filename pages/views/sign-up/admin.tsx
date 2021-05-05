@@ -1,10 +1,14 @@
 import { ChangeEvent, Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { signUp } from 'reducers/user';
 
 const handleChange = (setter: Dispatch<SetStateAction<string>>) => (e: ChangeEvent<HTMLInputElement>) => {
   setter(e.target.value);
 };
 
 const AdminPage = () => {
+  const dispatch = useDispatch();
+
   const [username, setUsername] = useState<string>('admin');
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
@@ -14,6 +18,17 @@ const AdminPage = () => {
   const isMatched = useMemo(() => {
     return password.length !== 0 && password === confirmPassword;
   }, [password, confirmPassword]);
+
+  const handleClickSinUp = useCallback(() => {
+    dispatch(
+      signUp({
+        username,
+        password,
+        role: 'ADMIN',
+        systemAdmin: true,
+      })
+    );
+  }, []);
 
   return (
     <div>
@@ -35,7 +50,7 @@ const AdminPage = () => {
         <p>
           <span>{isLongPassword ? 'O' : 'X'}</span>The password must be at least 8 characters long
         </p>
-        <button>Create user</button>
+        <button onClick={handleClickSinUp}>Create user</button>
       </div>
     </div>
   );
