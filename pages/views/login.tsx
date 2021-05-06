@@ -4,21 +4,22 @@ import { useRouter } from 'next/dist/client/router';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
-import { signIn } from 'reducers/user';
+import { signIn } from 'reducers/auth';
 import styled from 'styled-components';
 import { handleChangeText } from 'utils/event-handles';
 
 import { faSignInAlt } from '@fortawesome/free-solid-svg-icons';
 
 const LoginPage = () => {
-  const user = useSelector(({ user }: RootState) => user);
+  const auth = useSelector(({ auth }: RootState) => auth);
   const dispatch = useDispatch();
   const router = useRouter();
 
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
 
-  const handleClickLogin = () => {
+  const handleLogin = () => {
+    console.log('handleLogin');
     dispatch(
       signIn({
         username,
@@ -28,41 +29,46 @@ const LoginPage = () => {
   };
 
   useEffect(() => {
-    if (user.accessToken) router.replace('/');
-  }, [user.accessToken]);
+    if (auth.accessToken) router.replace('/');
+  }, [auth.accessToken]);
+
+  if (auth.accessToken) return null;
 
   return (
     <Container>
-      <div className="input-container">
-        <div className="input-wrapper">
-          <TextInput
-            className="input"
-            type="text"
-            label="username"
-            value={username}
-            onChange={handleChangeText(setUsername)}
-          />
+      <form onSubmit={handleLogin}>
+        <div className="input-container">
+          <div className="input-wrapper">
+            <TextInput
+              className="input"
+              type="text"
+              label="username"
+              value={username}
+              onChange={handleChangeText(setUsername)}
+            />
+          </div>
+          <div className="input-wrapper">
+            <TextInput
+              className="input"
+              type="password"
+              label="password"
+              value={password}
+              onChange={handleChangeText(setPassword)}
+            />
+          </div>
+          <IconButton
+            type="submit"
+            className="login-button"
+            variant="contained"
+            icon={faSignInAlt}
+            disabled={username === '' || password === ''}
+            loading={auth.loading}
+            onClick={handleLogin}
+          >
+            Login
+          </IconButton>
         </div>
-        <div className="input-wrapper">
-          <TextInput
-            className="input"
-            type="password"
-            label="password"
-            value={password}
-            onChange={handleChangeText(setPassword)}
-          />
-        </div>
-        <IconButton
-          className="login-button"
-          variant="contained"
-          icon={faSignInAlt}
-          disabled={username === '' || password === ''}
-          loading={user.loading}
-          onClick={handleClickLogin}
-        >
-          Login
-        </IconButton>
-      </div>
+      </form>
     </Container>
   );
 };

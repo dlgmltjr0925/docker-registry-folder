@@ -1,3 +1,5 @@
+import { Response } from 'express';
+
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { AppController } from './app.controller';
@@ -17,15 +19,15 @@ describe('AppController', () => {
     expect(controller).toBeDefined();
   });
 
-  it('home should be return {}', () => {
-    expect(controller.home()).toEqual({});
+  it('home should be return {}', async () => {
+    expect(await controller.home()).toEqual({});
   });
 
-  it('login should be return {}', () => {
-    expect(controller.login()).toEqual({});
+  it('login should be return {}', async () => {
+    expect(await controller.login()).toEqual({});
   });
 
-  it('loginAdmin should be return {}', () => {
-    expect(controller.loginAdmin()).toEqual({});
+  it('loginAdmin should be return {}', async () => {
+    expect(await controller.loginAdmin()).toEqual({});
   });
 });

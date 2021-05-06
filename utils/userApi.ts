@@ -3,7 +3,7 @@ import { SignInInputDto } from 'src/auth/dto/sign-in-input.dto';
 
 import { SignUpInputDto } from '../src/auth/dto/sign-up-input.dto';
 
-interface SignResponseData {
+export interface SignResponseData {
   accessToken: string;
 }
 

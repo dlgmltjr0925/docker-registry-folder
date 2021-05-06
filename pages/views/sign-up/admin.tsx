@@ -1,8 +1,8 @@
 import { useRouter } from 'next/dist/client/router';
-import { ChangeEvent, Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
-import { signUp } from 'reducers/user';
+import { signUp } from 'reducers/auth';
 import styled from 'styled-components';
 
 import { faUserPlus } from '@fortawesome/free-solid-svg-icons';
@@ -12,7 +12,7 @@ import TextInput from '../../../components/text-input';
 import { handleChangeText } from '../../../utils/event-handles';
 
 const AdminPage = () => {
-  const user = useSelector(({ user }: RootState) => user);
+  const auth = useSelector(({ auth }: RootState) => auth);
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -39,8 +39,8 @@ const AdminPage = () => {
   };
 
   useEffect(() => {
-    if (user.accessToken) router.replace('/');
-  }, [user]);
+    if (auth.accessToken) router.replace('/');
+  }, [auth]);
 
   return (
     <Container>
@@ -82,7 +82,7 @@ const AdminPage = () => {
           icon={faUserPlus}
           onClick={handleClickSignUp}
           disabled={!isLongPassword || !isMatched || username === ''}
-          loading={user.loading}
+          loading={auth.loading}
         >
           Create user
         </IconButton>

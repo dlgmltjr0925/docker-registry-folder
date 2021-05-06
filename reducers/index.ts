@@ -1,19 +1,27 @@
 import { combineReducers } from 'redux';
+import { persistReducer } from 'redux-persist';
+import { PersistConfig } from 'redux-persist/es/types';
+import storage from 'redux-persist/lib/storage/session';
 
 import { all } from '@redux-saga/core/effects';
 
-import user, { userSaga, UserState } from './user';
+import auth, { authSaga, AuthState } from './auth';
 
 export interface RootState {
-  user: UserState;
+  auth: AuthState;
 }
 
 const rootReducer = combineReducers({
-  user,
+  auth,
 });
 
 export function* rootSaga() {
-  yield all([userSaga()]);
+  yield all([authSaga()]);
 }
 
-export default rootReducer;
+const persistConfig: PersistConfig<RootState, any, any, any> = {
+  key: 'root',
+  storage,
+};
+
+export default persistReducer(persistConfig, rootReducer);

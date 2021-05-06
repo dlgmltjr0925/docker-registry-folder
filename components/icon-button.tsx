@@ -29,8 +29,6 @@ const StyledButton = withStyles({
     borderRadius: 4,
     border: 0,
     color: 'white',
-    height: 48,
-    padding: '10px 20px',
   },
 })(Button);
 
