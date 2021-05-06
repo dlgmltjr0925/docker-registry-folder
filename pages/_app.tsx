@@ -1,3 +1,5 @@
+import '../utils/styles.css';
+
 import withReduxSaga from 'next-redux-saga';
 import { createWrapper } from 'next-redux-wrapper';
 import { FC } from 'react';
@@ -8,7 +10,6 @@ import createSagaMiddleware from 'redux-saga';
 import reducer, { rootSaga } from '../reducers';
 
 import type { AppProps } from 'next/app';
-
 interface MyAppProps extends AppProps {
   store: Store;
 }

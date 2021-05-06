@@ -2,7 +2,11 @@ import { combineReducers } from 'redux';
 
 import { all } from '@redux-saga/core/effects';
 
-import user, { userSaga } from './user';
+import user, { userSaga, UserState } from './user';
+
+export interface RootState {
+  user: UserState;
+}
 
 const rootReducer = combineReducers({
   user,

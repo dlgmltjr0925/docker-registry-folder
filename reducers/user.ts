@@ -1,8 +1,7 @@
-import axios, { AxiosResponse } from 'axios';
 import { call, put, takeEvery } from 'redux-saga/effects';
 
 import { SignUpInputDto } from '../src/auth/dto/sign-up-input.dto';
-import * as api from '../utils/api';
+import * as userApi from '../utils/userApi';
 
 export interface UserState {
   loading: boolean;
@@ -10,16 +9,11 @@ export interface UserState {
   accessToken: string | null;
 }
 
-export const RESET_USER = 'RESET_USER';
-export const SIGN_UP = 'SIGN_UP';
-export const SIGN_UP_SUCCESS = 'SIGN_UP_SUCCESS';
-export const SIGN_UP_ERROR = 'SIGN_UP_ERROR';
-
 export enum UserActionType {
-  RESET_USER,
-  SIGN_UP,
-  SIGN_UP_SUCCESS,
-  SIGN_UP_ERROR,
+  RESET_USER = 'RESET_USER',
+  SIGN_UP = 'SIGN_UP',
+  SIGN_UP_SUCCESS = 'SIGN_UP_SUCCESS',
+  SIGN_UP_ERROR = 'SIGN_UP_ERROR',
 }
 
 interface SignInResponse {
@@ -37,11 +31,6 @@ interface UserAction {
   payload?: Payload;
 }
 
-interface SignInInput {
-  username: string;
-  password: string;
-}
-
 export const initialState: UserState = { loading: false, error: null, accessToken: null };
 
 export const signUp = (signUpInput: SignUpInputDto): UserAction => ({
@@ -51,7 +40,8 @@ export const signUp = (signUpInput: SignUpInputDto): UserAction => ({
 
 function* signUpSaga(action: UserAction) {
   try {
-    // const res = yield call(api.signUp, action.payload as SignUpInputDto);
+    const signUpInput = action.payload as SignUpInputDto;
+    const res = yield call(userApi.signUp, signUpInput);
     if (res?.status === 201) {
       yield put({
         type: UserActionType.SIGN_UP_SUCCESS,
@@ -59,9 +49,10 @@ function* signUpSaga(action: UserAction) {
       });
     }
   } catch (error) {
+    console.log(error);
     yield put({
       type: UserActionType.SIGN_UP_ERROR,
-      payload: { message: error.message },
+      payload: { error: error.message },
     });
   }
 }

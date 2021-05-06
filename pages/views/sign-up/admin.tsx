@@ -1,13 +1,24 @@
-import { ChangeEvent, Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useRouter } from 'next/dist/client/router';
+import { ChangeEvent, Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from 'reducers';
 import { signUp } from 'reducers/user';
+import styled from 'styled-components';
+
+import { faUserPlus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import IconButton from '../../../components/icon-button';
+import TextInput from '../../../components/text-input';
 
 const handleChange = (setter: Dispatch<SetStateAction<string>>) => (e: ChangeEvent<HTMLInputElement>) => {
   setter(e.target.value);
 };
 
 const AdminPage = () => {
+  const user = useSelector(({ user }: RootState) => user);
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const [username, setUsername] = useState<string>('admin');
   const [password, setPassword] = useState<string>('');
@@ -19,7 +30,8 @@ const AdminPage = () => {
     return password.length !== 0 && password === confirmPassword;
   }, [password, confirmPassword]);
 
-  const handleClickSinUp = useCallback(() => {
+  const handleClickSignUp = () => {
+    if (!isLongPassword || !isMatched) return;
     dispatch(
       signUp({
         username,
@@ -28,32 +40,97 @@ const AdminPage = () => {
         systemAdmin: true,
       })
     );
-  }, []);
+  };
+
+  useEffect(() => {
+    if (user.accessToken) router.replace('/');
+  }, [user]);
 
   return (
-    <div>
-      <div>
-        <p>Please create the initail administrator user.</p>
-        <div>
-          <span>Username</span>
-          <input type="text" value={username} onChange={handleChange(setUsername)} />
+    <Container>
+      <div className="input-container">
+        <p className="guide">Please create the initial administrator user</p>
+        <div className="input-wrapper">
+          <TextInput
+            className="input"
+            type="text"
+            label="username"
+            value={username}
+            onChange={handleChange(setUsername)}
+          />
         </div>
-        <div>
-          <span>Password</span>
-          <input type="password" value={password} onChange={handleChange(setPassword)} />
+        <div className="input-wrapper">
+          <TextInput
+            className="input"
+            type="password"
+            label="password"
+            helperText="The password must be at least 8 characters long"
+            value={password}
+            onChange={handleChange(setPassword)}
+            valid={isLongPassword}
+          />
         </div>
-        <div>
-          <span>Confirm password</span>
-          <input type="password" value={confirmPassword} onChange={handleChange(setConfirmPassword)} />
-          <span>{isMatched ? 'O' : 'X'}</span>
+        <div className="input-wrapper">
+          <TextInput
+            className="input"
+            type="password"
+            label="confirm password"
+            value={confirmPassword}
+            onChange={handleChange(setConfirmPassword)}
+            valid={isMatched}
+          />
         </div>
-        <p>
-          <span>{isLongPassword ? 'O' : 'X'}</span>The password must be at least 8 characters long
-        </p>
-        <button onClick={handleClickSinUp}>Create user</button>
+        <IconButton
+          variant="contained"
+          icon={faUserPlus}
+          onClick={handleClickSignUp}
+          disabled={!isLongPassword || !isMatched || username === ''}
+          loading={user.loading}
+        >
+          Create user
+        </IconButton>
       </div>
-    </div>
+    </Container>
   );
 };
+
+const Container = styled.div`
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  background: #f3f3f3;
+
+  .input-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: block;
+    box-sizing: border-box;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    padding: 45px 30px 30px;
+    width: 50%;
+    min-width: 400px;
+    max-width: 700px;
+    box-shadow: 0px 0px 10px #ccc;
+
+    .guide {
+      margin-bottom: 30px;
+    }
+
+    .input-wrapper {
+      display: inline-flex;
+      margin: 30px 0;
+      width: 100%;
+      align-items: center;
+
+      .input {
+        width: 100%;
+      }
+    }
+  }
+`;
 
 export default AdminPage;
