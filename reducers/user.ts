@@ -1,5 +1,6 @@
-import { call, put, takeEvery } from 'redux-saga/effects';
+import { call, put, takeLatest } from 'redux-saga/effects';
 
+import { SignInInputDto } from '../src/auth/dto/sign-in-input.dto';
 import { SignUpInputDto } from '../src/auth/dto/sign-up-input.dto';
 import * as userApi from '../utils/userApi';
 
@@ -14,6 +15,9 @@ export enum UserActionType {
   SIGN_UP = 'SIGN_UP',
   SIGN_UP_SUCCESS = 'SIGN_UP_SUCCESS',
   SIGN_UP_ERROR = 'SIGN_UP_ERROR',
+  SIGN_IN = 'SIGN_IN',
+  SIGN_IN_SUCCESS = 'SIGN_IN_SUCCESS',
+  SIGN_IN_ERROR = 'SIGN_IN_ERROR',
 }
 
 interface SignInResponse {
@@ -24,7 +28,7 @@ interface SignInError {
   error: string;
 }
 
-type Payload = SignInResponse | SignUpInputDto | SignInError;
+type Payload = SignInResponse | SignUpInputDto | SignInInputDto | SignInError;
 
 interface UserAction {
   type: UserActionType;
@@ -36,6 +40,11 @@ export const initialState: UserState = { loading: false, error: null, accessToke
 export const signUp = (signUpInput: SignUpInputDto): UserAction => ({
   type: UserActionType.SIGN_UP,
   payload: signUpInput,
+});
+
+export const signIn = (signInInput: SignInInputDto): UserAction => ({
+  type: UserActionType.SIGN_IN,
+  payload: signInInput,
 });
 
 function* signUpSaga(action: UserAction) {
@@ -57,15 +66,36 @@ function* signUpSaga(action: UserAction) {
   }
 }
 
+function* signInSaga(action: UserAction) {
+  try {
+    const signInInput = action.payload as SignInInputDto;
+    const res = yield call(userApi.signIn, signInInput);
+    if (res?.status === 201) {
+      yield put({
+        type: UserActionType.SIGN_IN_SUCCESS,
+        payload: { accessToken: res.data.accessToken },
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    yield put({
+      type: UserActionType.SIGN_IN_ERROR,
+      payload: { error: error.message },
+    });
+  }
+}
+
 const userReducer = (state = initialState, action: UserAction): UserState => {
   switch (action.type) {
     case UserActionType.SIGN_UP:
+    case UserActionType.SIGN_IN:
       return {
         loading: true,
         error: null,
         accessToken: null,
       };
     case UserActionType.SIGN_UP_SUCCESS:
+    case UserActionType.SIGN_IN_SUCCESS:
       const { accessToken } = action.payload as SignInResponse;
       return {
         loading: false,
@@ -73,6 +103,7 @@ const userReducer = (state = initialState, action: UserAction): UserState => {
         accessToken,
       };
     case UserActionType.SIGN_UP_ERROR:
+    case UserActionType.SIGN_IN_ERROR:
       const { error } = action.payload as SignInError;
       return {
         loading: false,
@@ -86,7 +117,8 @@ const userReducer = (state = initialState, action: UserAction): UserState => {
 };
 
 export function* userSaga() {
-  yield takeEvery(UserActionType.SIGN_UP, signUpSaga);
+  yield takeLatest(UserActionType.SIGN_UP, signUpSaga);
+  yield takeLatest(UserActionType.SIGN_IN, signInSaga);
 }
 
 export default userReducer;

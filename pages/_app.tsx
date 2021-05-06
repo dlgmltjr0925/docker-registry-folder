@@ -20,7 +20,7 @@ const App: FC<MyAppProps> = ({ Component, pageProps }) => {
 
 const sagaMiddleware = createSagaMiddleware();
 
-const makeStore = (initialState: any) => {
+const store = (initialState: any) => {
   const middlewares: Middleware<any, any, any>[] = [sagaMiddleware];
   const enhancer =
     process.env.NODE_ENV === 'production'
@@ -33,6 +33,6 @@ const makeStore = (initialState: any) => {
   return store;
 };
 
-const wrapper = createWrapper(makeStore);
+const wrapper = createWrapper(store);
 
 export default wrapper.withRedux(withReduxSaga(App));

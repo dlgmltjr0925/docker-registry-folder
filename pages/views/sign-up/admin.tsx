@@ -6,14 +6,10 @@ import { signUp } from 'reducers/user';
 import styled from 'styled-components';
 
 import { faUserPlus } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import IconButton from '../../../components/icon-button';
 import TextInput from '../../../components/text-input';
-
-const handleChange = (setter: Dispatch<SetStateAction<string>>) => (e: ChangeEvent<HTMLInputElement>) => {
-  setter(e.target.value);
-};
+import { handleChangeText } from '../../../utils/event-handles';
 
 const AdminPage = () => {
   const user = useSelector(({ user }: RootState) => user);
@@ -56,7 +52,7 @@ const AdminPage = () => {
             type="text"
             label="username"
             value={username}
-            onChange={handleChange(setUsername)}
+            onChange={handleChangeText(setUsername)}
           />
         </div>
         <div className="input-wrapper">
@@ -66,7 +62,7 @@ const AdminPage = () => {
             label="password"
             helperText="The password must be at least 8 characters long"
             value={password}
-            onChange={handleChange(setPassword)}
+            onChange={handleChangeText(setPassword)}
             valid={isLongPassword}
           />
         </div>
@@ -76,11 +72,12 @@ const AdminPage = () => {
             type="password"
             label="confirm password"
             value={confirmPassword}
-            onChange={handleChange(setConfirmPassword)}
+            onChange={handleChangeText(setConfirmPassword)}
             valid={isMatched}
           />
         </div>
         <IconButton
+          className="sign-up-button"
           variant="contained"
           icon={faUserPlus}
           onClick={handleClickSignUp}
@@ -105,7 +102,6 @@ const Container = styled.div`
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    display: block;
     box-sizing: border-box;
     border-radius: 4px;
     border: 1px solid #ccc;
@@ -128,7 +124,12 @@ const Container = styled.div`
 
       .input {
         width: 100%;
+        text-transform: capitalize;
       }
+    }
+
+    .sign-up-button {
+      margin-top: 30px;
     }
   }
 `;
