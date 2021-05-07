@@ -42,6 +42,8 @@ const AdminPage = () => {
     if (auth.accessToken) router.replace('/');
   }, [auth]);
 
+  if (auth.accessToken) return null;
+
   return (
     <Container>
       <div className="input-container">

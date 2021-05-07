@@ -1,19 +1,24 @@
 import { GetServerSidePropsContext } from 'next';
 import { useRouter } from 'next/dist/client/router';
 import { FC, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
+import { signOut } from 'reducers/auth';
+
+import Layout from '../../components/layout';
 
 interface HomePageProps {
   name?: string;
 }
 
 const HomePage: FC<HomePageProps> = ({ name }) => {
-  const root = useSelector((state) => state);
-  console.log(JSON.stringify(root, null, 2));
-
   const auth = useSelector(({ auth }: RootState) => auth);
+  const dispatch = useDispatch();
   const router = useRouter();
+
+  const handleLogOut = () => {
+    dispatch(signOut());
+  };
 
   useEffect(() => {
     if (!auth.accessToken) router.replace('/login');
@@ -21,7 +26,14 @@ const HomePage: FC<HomePageProps> = ({ name }) => {
 
   if (!auth.accessToken) return null;
 
-  return <div>{`home ${name || ''}`}</div>;
+  return (
+    <Layout>
+      <div>
+        {`home ${name || ''}`}
+        <button onClick={handleLogOut}>Logout</button>
+      </div>
+    </Layout>
+  );
 };
 
 export const getServerSideProps = (context: GetServerSidePropsContext) => {

@@ -28,6 +28,10 @@ const LoginPage = () => {
     );
   };
 
+  const handleKeyPress = ({ key }: KeyboardEvent) => {
+    if (key === 'Enter') handleLogin();
+  };
+
   useEffect(() => {
     if (auth.accessToken) router.replace('/');
   }, [auth.accessToken]);
@@ -36,39 +40,38 @@ const LoginPage = () => {
 
   return (
     <Container>
-      <form onSubmit={handleLogin}>
-        <div className="input-container">
-          <div className="input-wrapper">
-            <TextInput
-              className="input"
-              type="text"
-              label="username"
-              value={username}
-              onChange={handleChangeText(setUsername)}
-            />
-          </div>
-          <div className="input-wrapper">
-            <TextInput
-              className="input"
-              type="password"
-              label="password"
-              value={password}
-              onChange={handleChangeText(setPassword)}
-            />
-          </div>
-          <IconButton
-            type="submit"
-            className="login-button"
-            variant="contained"
-            icon={faSignInAlt}
-            disabled={username === '' || password === ''}
-            loading={auth.loading}
-            onClick={handleLogin}
-          >
-            Login
-          </IconButton>
+      <div className="input-container">
+        <div className="input-wrapper">
+          <TextInput
+            className="input"
+            type="text"
+            label="username"
+            value={username}
+            onChange={handleChangeText(setUsername)}
+          />
         </div>
-      </form>
+        <div className="input-wrapper">
+          <TextInput
+            className="input"
+            type="password"
+            label="password"
+            value={password}
+            onChange={handleChangeText(setPassword)}
+            onKeyPress={handleKeyPress}
+          />
+        </div>
+        <IconButton
+          type="submit"
+          className="login-button"
+          variant="contained"
+          icon={faSignInAlt}
+          disabled={username === '' || password === ''}
+          loading={auth.loading}
+          onClick={handleLogin}
+        >
+          Login
+        </IconButton>
+      </div>
     </Container>
   );
 };

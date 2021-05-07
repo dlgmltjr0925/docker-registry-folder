@@ -6,13 +6,16 @@ import storage from 'redux-persist/lib/storage/session';
 import { all } from '@redux-saga/core/effects';
 
 import auth, { authSaga, AuthState } from './auth';
+import layout, { LayoutState } from './layout';
 
 export interface RootState {
   auth: AuthState;
+  layout: LayoutState;
 }
 
 const rootReducer = combineReducers({
   auth,
+  layout,
 });
 
 export function* rootSaga() {

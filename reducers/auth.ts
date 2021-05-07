@@ -38,6 +38,10 @@ interface AuthAction {
 
 export const initialState: AuthState = { loading: false, error: null, accessToken: null };
 
+export const signOut = () => ({
+  type: AuthActionType.RESET,
+});
+
 export const signUp = (signUpInput: SignUpInputDto): AuthAction => ({
   type: AuthActionType.SIGN_UP,
   payload: signUpInput,
@@ -112,8 +116,9 @@ const authReducer = (state = initialState, action: AuthAction): AuthState => {
         accessToken: null,
       };
     case AuthActionType.RESET:
-    default:
       return initialState;
+    default:
+      return state;
   }
 };
 

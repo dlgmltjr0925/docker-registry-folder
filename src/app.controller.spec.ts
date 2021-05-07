@@ -1,11 +1,13 @@
-import { Response } from 'express';
+import * as Express from 'express';
 
+import { Response } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { AppController } from './app.controller';
 
 describe('AppController', () => {
   let controller: AppController;
+  let res: Express.Response;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
