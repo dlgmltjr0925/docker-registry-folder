@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 import { persistReducer } from 'redux-persist';
 import { PersistConfig } from 'redux-persist/es/types';
-import storage from 'redux-persist/lib/storage/session';
+import storage from 'redux-persist/lib/storage';
 
 import { all } from '@redux-saga/core/effects';
 
@@ -23,7 +23,7 @@ export function* rootSaga() {
 }
 
 const persistConfig: PersistConfig<RootState, any, any, any> = {
-  key: 'root',
+  key: 'docker-registry-folder',
   storage,
 };
 

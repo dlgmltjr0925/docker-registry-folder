@@ -1,5 +1,7 @@
+import { Request } from 'express';
+
 import {
-    Body, Controller, Get, Post, Request, UnauthorizedException, UseGuards, UsePipes, ValidationPipe
+    Body, Controller, Get, Headers, Post, Req, Res, Session, UseGuards, UsePipes
 } from '@nestjs/common';
 
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
@@ -20,13 +22,29 @@ export class AuthController {
 
   @Post('sign-in')
   @UseGuards(LocalAuthGuard)
-  async signIn(@Request() req: { user: UserDto }) {
-    return { accessToken: await this.authService.issueAccessToken(req.user) };
+  async signIn(@Req() { user }: Request, @Session() session: Record<string, any>) {
+    const accessToken = await this.authService.issueAccessToken(user as UserDto);
+    session.accessToken = accessToken;
+    return { accessToken, user: user };
   }
 
   @Post('sign-up')
   @UsePipes(new JoiValidationPipe(SignUpInputSchema))
-  async signUp(@Body() signUpInputDto: SignUpInputDto) {
-    return { accessToken: await this.authService.signUp(signUpInputDto) };
+  async signUp(@Body() signUpInputDto: SignUpInputDto, @Session() session: Record<string, any>) {
+    const { accessToken, user } = await this.authService.signUp(signUpInputDto);
+    session.accessToken = accessToken;
+    return { accessToken, user };
+  }
+
+  @Post('sign-out')
+  async signOut(@Session() session: Record<string, any>) {
+    delete session.accessToken;
+    return {};
+  }
+
+  @Get('profile')
+  @UseGuards(JwtAuthGuard)
+  async profile(@Req() req: Request) {
+    return { user: req.user };
   }
 }

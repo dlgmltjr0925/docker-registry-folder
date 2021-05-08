@@ -1,8 +1,10 @@
 import * as bcrypt from 'bcrypt';
+import { Request } from 'express';
 
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
+import { getUserByAccessToken } from '../../lib/jwt';
 import { connect } from '../../lib/sqlite';
 import { JwtPayload } from './dto/jwt-payload.dto';
 import { SignInInputDto } from './dto/sign-in-input.dto';
@@ -62,8 +64,12 @@ export class AuthService {
     return this.jwtService.sign(payload, { secret: this.jwtSecret });
   }
 
-  async signUp({ username, password, role, systemAdmin }: SignUpInputDto): Promise<string> {
-    console.log(this.jwtSecret);
+  async signUp({
+    username,
+    password,
+    role,
+    systemAdmin,
+  }: SignUpInputDto): Promise<{ user: UserDto; accessToken: string }> {
     const hashedPassword = await bcrypt.hash(password, this.salt);
     return new Promise((resolve, reject) => {
       const db = connect();
@@ -103,13 +109,9 @@ export class AuthService {
         db.each(sql, [username, hashedPassword], async (error, row) => {
           if (error) return reject(error);
           const { id, username, role, system_admin: systemAdmin } = row;
-          const payload: JwtPayload = {
-            sub: id,
-            username,
-            role,
-            systemAdmin,
-          };
-          resolve(this.jwtService.sign(payload, { secret: this.jwtSecret }));
+          const user = { id, username, role, systemAdmin };
+          const accessToken = await this.issueAccessToken(user);
+          resolve({ user, accessToken });
         });
       });
       db.close();

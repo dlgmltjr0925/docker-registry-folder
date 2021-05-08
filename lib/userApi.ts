@@ -22,3 +22,11 @@ export const signIn = (signInInput: SignInInputDto): Promise<AxiosResponse<SignR
     throw error;
   }
 };
+
+export const signOut = (): Promise<AxiosResponse<{}>> => {
+  try {
+    return axios.post(`${window.location.origin}/api/auth/sign-out`);
+  } catch (error) {
+    throw error;
+  }
+};

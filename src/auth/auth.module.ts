@@ -7,20 +7,14 @@ import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
 import { LocalStrategy } from './local.strategy';
 
+const DynamicJwtModule = JwtModule.register({
+  signOptions: { expiresIn: '10m' },
+});
+
 @Module({
-  imports: [
-    JwtModule.register({
-      signOptions: { expiresIn: '10m' },
-    }),
-    PassportModule,
-  ],
+  imports: [DynamicJwtModule, PassportModule],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, LocalStrategy],
-  exports: [
-    JwtModule.register({
-      signOptions: { expiresIn: '10m' },
-    }),
-    PassportModule,
-  ],
+  exports: [DynamicJwtModule, PassportModule],
 })
 export class AuthModule {}

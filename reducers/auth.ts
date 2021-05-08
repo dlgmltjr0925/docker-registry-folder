@@ -1,5 +1,6 @@
 import { AxiosResponse } from 'axios';
 import { call, CallEffect, put, takeEvery } from 'redux-saga/effects';
+import { UserDto } from 'src/auth/dto/user.dto';
 
 import * as userApi from '../lib/userApi';
 import { SignInInputDto } from '../src/auth/dto/sign-in-input.dto';
@@ -9,6 +10,7 @@ export interface AuthState {
   loading: boolean;
   error: string | null;
   accessToken: string | null;
+  user: UserDto | null;
 }
 
 export enum AuthActionType {
@@ -19,10 +21,14 @@ export enum AuthActionType {
   SIGN_IN = 'SIGN_IN',
   SIGN_IN_SUCCESS = 'SIGN_IN_SUCCESS',
   SIGN_IN_ERROR = 'SIGN_IN_ERROR',
+  SIGN_OUT = 'SIGN_OUT',
+  SIGN_OUT_SUCCESS = 'SIGN_OUT_SUCCESS',
+  SIGN_OUT_ERROR = 'SIGN_OUT_ERROR',
 }
 
 interface SignInResponse {
   accessToken: string;
+  user: UserDto;
 }
 
 interface SignInError {
@@ -36,10 +42,10 @@ interface AuthAction {
   payload?: Payload;
 }
 
-export const initialState: AuthState = { loading: false, error: null, accessToken: null };
+export const initialState: AuthState = { loading: false, error: null, accessToken: null, user: null };
 
 export const signOut = () => ({
-  type: AuthActionType.RESET,
+  type: AuthActionType.SIGN_OUT,
 });
 
 export const signUp = (signUpInput: SignUpInputDto): AuthAction => ({
@@ -90,22 +96,42 @@ function* signInSaga(action: AuthAction) {
   }
 }
 
+function* signOutSaga() {
+  try {
+    const res: AxiosResponse<{}> = yield call(userApi.signOut);
+    if (res?.status === 201) {
+      yield put({
+        type: AuthActionType.SIGN_OUT_SUCCESS,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    yield put({
+      type: AuthActionType.SIGN_IN_ERROR,
+      payload: { error: error.message },
+    });
+  }
+}
+
 const authReducer = (state = initialState, action: AuthAction): AuthState => {
   switch (action.type) {
     case AuthActionType.SIGN_UP:
     case AuthActionType.SIGN_IN:
+    case AuthActionType.SIGN_OUT:
       return {
         loading: true,
         error: null,
         accessToken: null,
+        user: null,
       };
     case AuthActionType.SIGN_UP_SUCCESS:
     case AuthActionType.SIGN_IN_SUCCESS:
-      const { accessToken } = action.payload as SignInResponse;
+      const { accessToken, user } = action.payload as SignInResponse;
       return {
         loading: false,
         error: null,
         accessToken,
+        user,
       };
     case AuthActionType.SIGN_UP_ERROR:
     case AuthActionType.SIGN_IN_ERROR:
@@ -114,8 +140,9 @@ const authReducer = (state = initialState, action: AuthAction): AuthState => {
         loading: false,
         error,
         accessToken: null,
+        user: null,
       };
-    case AuthActionType.RESET:
+    case AuthActionType.SIGN_OUT_SUCCESS:
       return initialState;
     default:
       return state;
@@ -125,6 +152,7 @@ const authReducer = (state = initialState, action: AuthAction): AuthState => {
 export function* authSaga() {
   yield takeEvery(AuthActionType.SIGN_UP, signUpSaga);
   yield takeEvery(AuthActionType.SIGN_IN, signInSaga);
+  yield takeEvery(AuthActionType.SIGN_OUT, signOutSaga);
 }
 
 export default authReducer;

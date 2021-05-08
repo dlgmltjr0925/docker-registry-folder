@@ -1,9 +1,10 @@
 import '../lib/styles.css';
 
+import Layout from 'components/layout';
 import withReduxSaga from 'next-redux-saga';
 import { createWrapper } from 'next-redux-wrapper';
 import { FC } from 'react';
-import { useSelector, useStore } from 'react-redux';
+import { useStore } from 'react-redux';
 import { applyMiddleware, compose, createStore, Middleware, Store } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import { Persistor } from 'redux-persist/es/types';
@@ -11,7 +12,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 import persistStore from 'redux-persist/lib/persistStore';
 import createSagaMiddleware from 'redux-saga';
 
-import reducer, { rootSaga, RootState } from '../reducers';
+import reducer, { rootSaga } from '../reducers';
 
 import type { AppProps } from 'next/app';
 interface MyAppProps extends AppProps {}
@@ -21,7 +22,9 @@ const MyApp: FC<MyAppProps> = ({ Component, pageProps }) => {
 
   return (
     <PersistGate persistor={store.__persistor} loading={null}>
-      <Component {...pageProps} />
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
     </PersistGate>
   );
 };
@@ -32,10 +35,8 @@ const configureStore = (initialState: any) => {
   const isServer = typeof window === 'undefined';
   const middlewares: Middleware<any, any, any>[] = [sagaMiddleware];
   if (isServer) {
-    console.log('store', 'isServer');
     return createStore(reducer, undefined, applyMiddleware(...middlewares));
   } else {
-    console.log('store', 'isClient');
     const enhancer =
       process.env.NODE_ENV === 'production'
         ? compose(applyMiddleware(...middlewares))

@@ -1,4 +1,7 @@
-import { PropsWithChildren } from 'react';
+import { useRouter } from 'next/dist/client/router';
+import { PropsWithChildren, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from 'reducers';
 import styled from 'styled-components';
 
 import Header from './header';
@@ -6,7 +9,18 @@ import SideBar from './side-bar';
 
 interface LayoutProps {}
 
+const EXCEPTION_PAGE = ['/404', '/views/login', '/views/sign-up/admin'];
+
 const Layout = ({ children }: PropsWithChildren<LayoutProps>) => {
+  const router = useRouter();
+  const auth = useSelector(({ auth }: RootState) => auth);
+
+  if (EXCEPTION_PAGE.includes(router.pathname)) return children;
+
+  useEffect(() => {
+    if (!auth.accessToken) router.replace('/login');
+  }, [auth.accessToken]);
+
   return (
     <Container>
       <SideBar />
