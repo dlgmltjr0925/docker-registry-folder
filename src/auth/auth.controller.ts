@@ -25,7 +25,7 @@ export class AuthController {
   async signIn(@Req() { user }: Request, @Session() session: Record<string, any>) {
     const accessToken = await this.authService.issueAccessToken(user as UserDto);
     session.accessToken = accessToken;
-    return { accessToken, user: user };
+    return { accessToken, user };
   }
 
   @Post('sign-up')

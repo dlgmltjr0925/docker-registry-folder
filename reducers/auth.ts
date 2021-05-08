@@ -65,7 +65,7 @@ function* signUpSaga(action: AuthAction) {
     if (res?.status === 201) {
       yield put({
         type: AuthActionType.SIGN_UP_SUCCESS,
-        payload: { accessToken: res.data.accessToken },
+        payload: res.data,
       });
     }
   } catch (error) {
@@ -84,7 +84,7 @@ function* signInSaga(action: AuthAction) {
     if (res?.status === 201) {
       yield put({
         type: AuthActionType.SIGN_IN_SUCCESS,
-        payload: { accessToken: res.data.accessToken },
+        payload: res.data,
       });
     }
   } catch (error) {
@@ -117,16 +117,22 @@ const authReducer = (state = initialState, action: AuthAction): AuthState => {
   switch (action.type) {
     case AuthActionType.SIGN_UP:
     case AuthActionType.SIGN_IN:
-    case AuthActionType.SIGN_OUT:
       return {
         loading: true,
         error: null,
         accessToken: null,
         user: null,
       };
+    case AuthActionType.SIGN_OUT:
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      };
     case AuthActionType.SIGN_UP_SUCCESS:
     case AuthActionType.SIGN_IN_SUCCESS:
       const { accessToken, user } = action.payload as SignInResponse;
+      console.log(user);
       return {
         loading: false,
         error: null,

@@ -3,13 +3,11 @@ import { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
 import { signOut } from 'reducers/auth';
-import { UserDto } from 'src/auth/dto/user.dto';
+import styled from 'styled-components';
 
-interface HomePageProps {
-  user: UserDto;
-}
+interface HomePageProps {}
 
-const HomePage: FC<HomePageProps> = ({ user }) => {
+const HomePage: FC<HomePageProps> = () => {
   const auth = useSelector(({ auth }: RootState) => auth);
   const dispatch = useDispatch();
   const router = useRouter();
@@ -18,18 +16,18 @@ const HomePage: FC<HomePageProps> = ({ user }) => {
     dispatch(signOut());
   };
 
-  useEffect(() => {
-    if (!auth.accessToken) router.replace('/login');
-  }, [auth.accessToken]);
-
   if (!auth.accessToken) return null;
 
   return (
-    <div>
-      {`home ${user?.username || ''}`}
+    <Container>
+      {`home ${auth.user?.username || ''}`}
       <button onClick={handleLogOut}>Logout</button>
-    </div>
+    </Container>
   );
 };
+
+const Container = styled.div`
+  display: flex;
+`;
 
 export default HomePage;

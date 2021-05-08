@@ -1,10 +1,12 @@
 import axios, { AxiosResponse } from 'axios';
 import { SignInInputDto } from 'src/auth/dto/sign-in-input.dto';
+import { UserDto } from 'src/auth/dto/user.dto';
 
 import { SignUpInputDto } from '../src/auth/dto/sign-up-input.dto';
 
 export interface SignResponseData {
   accessToken: string;
+  user: UserDto;
 }
 
 export const signUp = (signUpInput: SignUpInputDto): Promise<AxiosResponse<SignResponseData>> => {
