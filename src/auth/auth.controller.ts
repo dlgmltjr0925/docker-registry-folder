@@ -21,7 +21,6 @@ export class AuthController {
   @Post('sign-in')
   @UseGuards(LocalAuthGuard)
   async signIn(@Request() req: { user: UserDto }) {
-    console.log('signIn');
     return { accessToken: await this.authService.issueAccessToken(req.user) };
   }
 

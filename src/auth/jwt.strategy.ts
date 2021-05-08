@@ -1,11 +1,8 @@
-import fs from 'fs';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import path from 'path';
 
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 
-import { AuthService } from './auth.service';
 import { JwtPayload } from './dto/jwt-payload.dto';
 import { UserDto } from './dto/user.dto';
 
@@ -15,7 +12,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: fs.readFileSync(path.resolve('data/jwt-secret'), 'binary'),
+      secretOrKey: process.env.JWT_SECRET,
     });
   }
 

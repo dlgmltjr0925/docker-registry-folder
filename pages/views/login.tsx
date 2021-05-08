@@ -1,12 +1,12 @@
 import IconButton from 'components/icon-button';
 import TextInput from 'components/text-input';
+import { handleChangeText } from 'lib/event-handles';
 import { useRouter } from 'next/dist/client/router';
-import { useEffect, useState } from 'react';
+import { KeyboardEventHandler, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
 import { signIn } from 'reducers/auth';
 import styled from 'styled-components';
-import { handleChangeText } from 'utils/event-handles';
 
 import { faSignInAlt } from '@fortawesome/free-solid-svg-icons';
 
@@ -19,7 +19,6 @@ const LoginPage = () => {
   const [password, setPassword] = useState<string>('');
 
   const handleLogin = () => {
-    console.log('handleLogin');
     dispatch(
       signIn({
         username,
@@ -28,7 +27,7 @@ const LoginPage = () => {
     );
   };
 
-  const handleKeyPress = ({ key }: KeyboardEvent) => {
+  const handleKeyPress: KeyboardEventHandler<HTMLDivElement> = ({ key }) => {
     if (key === 'Enter') handleLogin();
   };
 

@@ -1,9 +1,9 @@
 import { AxiosResponse } from 'axios';
 import { call, CallEffect, put, takeEvery } from 'redux-saga/effects';
 
+import * as userApi from '../lib/userApi';
 import { SignInInputDto } from '../src/auth/dto/sign-in-input.dto';
 import { SignUpInputDto } from '../src/auth/dto/sign-up-input.dto';
-import * as userApi from '../utils/userApi';
 
 export interface AuthState {
   loading: boolean;

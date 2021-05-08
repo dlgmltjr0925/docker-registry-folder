@@ -3,6 +3,9 @@ import fs from 'fs';
 import path from 'path';
 import { verbose } from 'sqlite3';
 
+const ENV_PATH = path.resolve('data/.env');
+const CHARS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz';
+
 export const createTables = async () => {
   const dbPath = path.resolve('data/data.db');
   if (!fs.existsSync(dbPath)) {
@@ -51,36 +54,44 @@ export const createTables = async () => {
 };
 
 const genSalt = async () => {
-  const saltPath = path.resolve('data/salt');
-  if (!fs.existsSync(saltPath)) {
-    const salt = await bcrypt.genSalt();
-    fs.writeFileSync(saltPath, salt, 'binary');
-  }
+  const salt = await bcrypt.genSalt();
+  fs.appendFileSync(ENV_PATH, `SALT=${salt}\n`);
 };
 
-const CHARS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz';
-
-const getRandomString = (length: number = 10) => {
+const getRandomString = (length: number = 64) => {
   const charLength = CHARS.length;
   let randomString = '';
   for (let i = 0; i < length; i++) {
-    randomString += CHARS.substr(Math.floor(Math.random() * charLength));
+    const index = Math.floor(Math.random() * charLength);
+    randomString += CHARS.substr(index, 1);
   }
   return randomString;
 };
 
 const genJwtSecret = async () => {
-  const jwtSecretPath = path.resolve('data/jwt-secret');
-  if (!fs.existsSync(jwtSecretPath)) {
-    const secret = getRandomString(255);
-    fs.writeFileSync(jwtSecretPath, secret, 'binary');
+  const jwtSecret = getRandomString();
+  fs.appendFileSync(ENV_PATH, `JWT_SECRET=${jwtSecret}\n`);
+};
+
+const genSessionSecret = async () => {
+  const sessionSecret = getRandomString();
+  fs.appendFileSync(ENV_PATH, `SESSION_SECRET=${sessionSecret}`);
+};
+
+const genDotEnvFile = async () => {
+  if (!fs.existsSync(ENV_PATH)) {
+    fs.writeFileSync(ENV_PATH, '');
   }
+  const data = fs.readFileSync(ENV_PATH, { encoding: 'utf-8' });
+  if (!/SALT\=/.test(data)) await genSalt();
+  if (!/JWT_SECRET\=/.test(data)) await genJwtSecret();
+  if (!/SESSION_SECRET\=/.test(data)) await genSessionSecret();
 };
 
 const initialize = async () => {
   await createTables();
-  await genSalt();
-  await genJwtSecret();
+  await genDotEnvFile();
+  require('dotenv').config({ path: ENV_PATH });
 };
 
 export default initialize;

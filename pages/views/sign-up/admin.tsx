@@ -9,7 +9,7 @@ import { faUserPlus } from '@fortawesome/free-solid-svg-icons';
 
 import IconButton from '../../../components/icon-button';
 import TextInput from '../../../components/text-input';
-import { handleChangeText } from '../../../utils/event-handles';
+import { handleChangeText } from '../../../lib/event-handles';
 
 const AdminPage = () => {
   const auth = useSelector(({ auth }: RootState) => auth);

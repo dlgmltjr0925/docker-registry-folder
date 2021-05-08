@@ -1,11 +1,9 @@
 import * as bcrypt from 'bcrypt';
-import fs from 'fs';
-import path from 'path';
 
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
-import { connect } from '../../utils/sqlite';
+import { connect } from '../../lib/sqlite';
 import { JwtPayload } from './dto/jwt-payload.dto';
 import { SignInInputDto } from './dto/sign-in-input.dto';
 import { SignUpInputDto } from './dto/sign-up-input.dto';
@@ -14,25 +12,9 @@ import { UserDto } from './dto/user.dto';
 @Injectable()
 export class AuthService {
   systemAdmin: boolean = false;
-  salt: string | null = null;
-  jwtSecret: string | null = null;
+  salt = process.env.SALT as string;
+  jwtSecret = process.env.JWT_SECRET as string;
   constructor(private jwtService: JwtService) {}
-
-  async getSalt(): Promise<string> {
-    if (this.salt === null) {
-      const saltPath = path.resolve('data/salt');
-      this.salt = fs.readFileSync(saltPath, 'binary');
-    }
-    return this.salt;
-  }
-
-  async getJwtSecret(): Promise<string> {
-    if (this.jwtSecret === null) {
-      const jwtSecretPath = path.resolve('data/jwt-secret');
-      this.jwtSecret = fs.readFileSync(jwtSecretPath, 'binary');
-    }
-    return this.jwtSecret;
-  }
 
   async hasSystemAdmin(): Promise<boolean> {
     if (this.systemAdmin) return true;
@@ -49,7 +31,7 @@ export class AuthService {
   }
 
   async validateUser({ username, password }: SignInInputDto): Promise<UserDto | null> {
-    const hashedPassword = await bcrypt.hash(password, await this.getSalt());
+    const hashedPassword = await bcrypt.hash(password, await this.salt);
     return new Promise((resolve, reject) => {
       const sql = `SELECT id, username, role, system_admin FROM user WHERE username=? AND password=? LIMIT 1`;
       const db = connect();
@@ -77,11 +59,12 @@ export class AuthService {
       role,
       systemAdmin,
     };
-    return this.jwtService.sign(payload, { secret: await this.getJwtSecret() });
+    return this.jwtService.sign(payload, { secret: this.jwtSecret });
   }
 
   async signUp({ username, password, role, systemAdmin }: SignUpInputDto): Promise<string> {
-    const hashedPassword = await bcrypt.hash(password, await this.getSalt());
+    console.log(this.jwtSecret);
+    const hashedPassword = await bcrypt.hash(password, this.salt);
     return new Promise((resolve, reject) => {
       const db = connect();
       let sql: string;
@@ -126,7 +109,7 @@ export class AuthService {
             role,
             systemAdmin,
           };
-          resolve(this.jwtService.sign(payload, { secret: await this.getJwtSecret() }));
+          resolve(this.jwtService.sign(payload, { secret: this.jwtSecret }));
         });
       });
       db.close();

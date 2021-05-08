@@ -1,12 +1,9 @@
-import fs from 'fs';
-import path from 'path';
-
 import { BadRequestException, UnauthorizedException } from '@nestjs/common';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { connect } from '../../utils/sqlite';
+import { connect } from '../../lib/sqlite';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { SignUpInputDto } from './dto/sign-up-input.dto';

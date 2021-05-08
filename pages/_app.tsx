@@ -1,4 +1,4 @@
-import '../utils/styles.css';
+import '../lib/styles.css';
 
 import withReduxSaga from 'next-redux-saga';
 import { createWrapper } from 'next-redux-wrapper';

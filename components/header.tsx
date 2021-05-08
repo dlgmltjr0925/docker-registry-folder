@@ -4,8 +4,6 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'reducers';
 import styled from 'styled-components';
 
-import { Button } from '@material-ui/core';
-
 interface HeaderProps {}
 
 const getRouteName = (route: string): [string, string | string[]] => {
