@@ -96,6 +96,7 @@ const Container = styled.div`
 
       .user-icon {
         margin-right: 5px;
+        font-size: 17px;
       }
     }
 

@@ -79,7 +79,7 @@ const Container = styled.div`
   display: flex;
   width: 100vw;
   height: 100vh;
-  background: #f3f3f3;
+  background: #f6f6f6;
 
   .input-container {
     position: absolute;

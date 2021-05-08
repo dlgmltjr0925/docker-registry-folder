@@ -1,18 +1,21 @@
+import { useRouter } from 'next/dist/client/router';
 import Link from 'next/link';
-import { FC, useCallback, useState } from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
 import { toggleSideBar } from 'reducers/layout';
 import styled from 'styled-components';
 
-import { faExchangeAlt } from '@fortawesome/free-solid-svg-icons';
+import { faExchangeAlt, faHome } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface SideBarProps {}
 
 const SideBar: FC<SideBarProps> = (props) => {
+  console.log('[render]', 'SideBar');
   const layout = useSelector(({ layout }: RootState) => layout);
   const dispatch = useDispatch();
+  const { route } = useRouter();
 
   const handleClickOpen = () => {
     dispatch(toggleSideBar());
@@ -28,6 +31,11 @@ const SideBar: FC<SideBarProps> = (props) => {
           <FontAwesomeIcon icon={faExchangeAlt} />
         </div>
       </div>
+      {/* Home */}
+      <MenuWrapper isSelected={route === '/views/home'}>
+        <FontAwesomeIcon className="menu-icon" icon={faHome} />
+        <span className="menu-label">Home</span>
+      </MenuWrapper>
     </Container>
   );
 };
@@ -72,8 +80,42 @@ const Container = styled.div<ContainerProps>`
     span {
       padding-left: 20px;
       font-size: 20px;
-      font-weight: bold;
+      font-weight: 400;
     }
+  }
+`;
+
+interface MenuWrapperProps {
+  isSelected: boolean;
+}
+
+const MenuWrapper = styled.div<MenuWrapperProps>`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 36px;
+  align-items: center;
+  box-sizing: border-box;
+  cursor: pointer;
+  background-color: ${({ isSelected }) => (isSelected ? '#273657' : '#2a3a5d')};
+  border-left: 3px solid ${({ isSelected }) => (isSelected ? 'white' : '#2a3a5d')};
+  padding: 0 0 0 10px;
+
+  &:hover {
+    background-color: #273657;
+  }
+
+  .menu-icon {
+    font-size: 16px;
+    margin-right: 6px;
+  }
+
+  .menu-label {
+    flex: 1;
+    font-size: 16px;
+    line-height: 21px;
+    padding-top: 5px;
+    font-weight: 700;
   }
 `;
 

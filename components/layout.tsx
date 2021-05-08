@@ -37,6 +37,7 @@ const Container = styled.div`
   flex-direction: row;
   min-height: 100vh;
   color: #fff;
+  background: #f6f6f6;
 
   .content-container {
     flex: 1;
@@ -44,7 +45,7 @@ const Container = styled.div`
     flex-direction: column;
 
     .content-wrapper {
-      margin-top: 60px;
+      padding-top: 60px;
     }
   }
 `;
