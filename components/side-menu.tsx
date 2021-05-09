@@ -17,9 +17,7 @@ const SideMenu: FC<SideMenuProps> = ({ route, label, icon, isSelected }) => {
     <Link href={route}>
       <Container isSelected={isSelected}>
         <span className="menu-label">{label}</span>
-        <div className="icon-wrapper">
-          <FontAwesomeIcon className="menu-icon" icon={icon} />
-        </div>
+        <FontAwesomeIcon className="menu-icon" icon={icon} />
       </Container>
     </Link>
   );
@@ -48,19 +46,9 @@ const Container = styled.div<ContainerProps>`
     color: #fff;
   }
 
-  .icon-wrapper {
-    display: inline-flex;
+  .menu-icon {
     width: 60px;
-    height: 100%;
-    font-size: 18px;
-    justify-content: center;
-    align-items: center;
-    color: ${({ isSelected }) => (isSelected ? '#fff' : '#ffffffcc')};
-
-    .menu-icon {
-      font-size: 16px;
-      color: #fff;
-    }
+    font-size: 16px;
   }
 
   .menu-label {

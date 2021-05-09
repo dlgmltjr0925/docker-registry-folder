@@ -15,13 +15,22 @@ const getRouteName = (route: string): [string, string | string[]] => {
   switch (route) {
     case '/views/home':
       return ['home', 'endpoints'];
+    case '/views/account':
+      return ['account', 'account management'];
+    case '/views/registries':
+      return ['registries', 'registry management'];
+    case '/views/users':
+      return ['users', 'user management'];
     default:
       return ['', ''];
   }
 };
 
 const Header: FC<HeaderProps> = () => {
-  const auth = useSelector(({ auth }: RootState) => auth);
+  const {
+    auth: { user },
+    layout,
+  } = useSelector(({ auth, layout }: RootState) => ({ auth, layout }));
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -32,7 +41,7 @@ const Header: FC<HeaderProps> = () => {
   }, []);
 
   return (
-    <Container>
+    <Container isOpened={layout.isOpenedSideBar}>
       <div className="router-wrapper">
         <p className="router">{routerName}</p>
         <p className="sub-router">{description}</p>
@@ -40,7 +49,7 @@ const Header: FC<HeaderProps> = () => {
       <div className="user-wrapper">
         <p className="user-name">
           <FontAwesomeIcon className="user-icon" icon={faUserCircle} />
-          {auth.user?.username || ''}
+          {user?.username || ''}
         </p>
         <div className="user-controll-wrapper">
           <Link href="/account">
@@ -59,18 +68,30 @@ const Header: FC<HeaderProps> = () => {
   );
 };
 
-const Container = styled.div`
+interface ContainerProps {
+  isOpened: boolean;
+}
+
+const Container = styled.div<ContainerProps>`
+  position: fixed;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 640px;
+  padding: 0 20px 0 ${({ isOpened }) => (isOpened ? '300px' : '60px')};
+  transition: padding 0.5s;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   height: 60px;
   box-shadow: 2px 2px 5px #ccc;
-  padding: 0 20px;
   background: #fff;
   color: black;
+  z-index: 2;
 
   .router-wrapper {
     text-transform: capitalize;
+    color: #333;
+    padding-left: 20px;
 
     .router {
       font-size: 20px;

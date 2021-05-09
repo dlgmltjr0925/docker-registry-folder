@@ -16,7 +16,6 @@ import SideMenu from './side-menu';
 interface SideBarProps {}
 
 const SideBar: FC<SideBarProps> = (props) => {
-  console.log('[render]', 'SideBar');
   const {
     auth: { user },
     layout,
@@ -29,34 +28,32 @@ const SideBar: FC<SideBarProps> = (props) => {
   };
 
   return (
-    <Container isOpened={layout.isOpenedSideBar}>
-      <div className="side-bar-container noselect">
-        <div className="home-logo">
-          <Link href="/">
-            <span className="noselect">Docker Registry Folder</span>
-          </Link>
-          <div className="icon-wrapper" onClick={handleClickOpen}>
-            <FontAwesomeIcon icon={faExchangeAlt} />
+    <Container className="noselect" isOpened={layout.isOpenedSideBar}>
+      <div className="home-logo">
+        <Link href="/">
+          <span className="noselect">Docker Registry Folder</span>
+        </Link>
+        <div className="icon-wrapper" onClick={handleClickOpen}>
+          <FontAwesomeIcon icon={faExchangeAlt} />
+        </div>
+      </div>
+      {/* Home */}
+      <SideMenu route="/" label="Home" icon={faHome} isSelected={route === '/views/home'} />
+      {/* Setting */}
+      {user?.role !== 'VIEWER' && (
+        <div className="category">
+          <span>Settings</span>
+          <div className="icon-wrapper">
+            <FontAwesomeIcon icon={faCog} />
           </div>
         </div>
-        {/* Home */}
-        <SideMenu route="/" label="Home" icon={faHome} isSelected={route === '/views/home'} />
-        {/* Setting */}
-        {user?.role !== 'VIEWER' && (
-          <div className="category">
-            <span>Setting</span>
-            <div className="icon-wrapper">
-              <FontAwesomeIcon icon={faCog} />
-            </div>
-          </div>
-        )}
-        {user?.role !== 'VIEWER' && (
-          <SideMenu route="/registries" label="Registries" icon={faServer} isSelected={route === '/views/registries'} />
-        )}
-        {user?.role === 'ADMIN' && (
-          <SideMenu route="/users" label="Users" icon={faUsersCog} isSelected={route === '/views/users'} />
-        )}
-      </div>
+      )}
+      {user?.role !== 'VIEWER' && (
+        <SideMenu route="/registries" label="Registries" icon={faServer} isSelected={route === '/views/registries'} />
+      )}
+      {user?.role === 'ADMIN' && (
+        <SideMenu route="/users" label="Users" icon={faUsersCog} isSelected={route === '/views/users'} />
+      )}
     </Container>
   );
 };
@@ -66,19 +63,15 @@ interface ContainerProps {
 }
 
 const Container = styled.div<ContainerProps>`
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  background: #2a3a5d;
   width: 300px;
   height: 100vh;
   margin-left: ${({ isOpened }) => (isOpened ? '0' : '-240px')};
   transition: margin 0.5s;
-
-  .side-bar-container {
-    position: fixed;
-    display: flex;
-    flex-direction: column;
-    background: #2a3a5d;
-    width: 300px;
-    height: 100vh;
-  }
+  z-index: 3;
 
   .icon-wrapper {
     display: inline-flex;
@@ -122,7 +115,8 @@ const Container = styled.div<ContainerProps>`
     margin: 30px 0 15px 15px;
     text-align: center;
     color: #ffffffbb;
-    font-size: 16px;
+    font-size: 15px;
+    letter-spacing: 0.5px;
     text-transform: uppercase;
     font-weight: 600;
 
