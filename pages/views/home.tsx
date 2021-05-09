@@ -1,9 +1,13 @@
 import { useRouter } from 'next/dist/client/router';
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
-import { signOut } from 'reducers/auth';
 import styled from 'styled-components';
+
+import { faServer } from '@fortawesome/free-solid-svg-icons';
+
+import WidgetContainer from '../../components/widget-container';
+import WidgetSearch from '../../components/widget-search';
 
 interface HomePageProps {}
 
@@ -12,18 +16,13 @@ const HomePage: FC<HomePageProps> = () => {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const handleLogOut = () => {
-    dispatch(signOut());
-  };
-
   if (!auth.accessToken) return null;
 
   return (
     <Container>
-      <div>
-        {`home ${auth.user?.username || ''}`}
-        <button onClick={handleLogOut}>Logout</button>
-      </div>
+      <WidgetContainer title="Registries" titleIcon={faServer}>
+        <WidgetSearch placeholder="Search by name, tag, status, URL..." />
+      </WidgetContainer>
     </Container>
   );
 };
@@ -31,6 +30,10 @@ const HomePage: FC<HomePageProps> = () => {
 const Container = styled.div`
   flex: 1;
   min-height: 100vh;
+
+  .search-container {
+    height: 60px;
+  }
 `;
 
 export default HomePage;

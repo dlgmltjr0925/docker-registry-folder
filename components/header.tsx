@@ -14,7 +14,7 @@ interface HeaderProps {}
 const getRouteName = (route: string): [string, string | string[]] => {
   switch (route) {
     case '/views/home':
-      return ['home', 'endpoints'];
+      return ['home', 'registries'];
     case '/views/account':
       return ['account', 'account management'];
     case '/views/registries':
@@ -83,7 +83,7 @@ const Container = styled.div<ContainerProps>`
   flex-direction: row;
   justify-content: space-between;
   height: 60px;
-  box-shadow: 2px 2px 5px #ccc;
+  box-shadow: 1px 1px 3px #ccc;
   background: #fff;
   color: black;
   z-index: 2;

@@ -63,14 +63,14 @@ const Container = styled.div<ContainerProps>`
   flex-direction: row;
   min-height: 100vh;
   color: #fff;
-  background: #f6f6f6;
+  background: #f3f3f3;
 
   .content-container {
     display: flex;
     box-sizing: border-box;
     width: 100%;
     min-width: 640px;
-    padding: 60px 20px 0 ${({ isOpened }) => (isOpened ? '300px' : '60px')};
+    padding: 60px 0 0 ${({ isOpened }) => (isOpened ? '300px' : '60px')};
     transition: padding 0.5s;
     color: black;
   }

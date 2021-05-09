@@ -1,4 +1,5 @@
 import { useRouter } from 'next/dist/client/router';
+import Image from 'next/image';
 import Link from 'next/link';
 import { FC } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -29,9 +30,12 @@ const SideBar: FC<SideBarProps> = (props) => {
 
   return (
     <Container className="noselect" isOpened={layout.isOpenedSideBar}>
-      <div className="home-logo">
+      <div className="home-logo-container">
         <Link href="/">
-          <span className="noselect">Docker Registry Folder</span>
+          <span className="home-logo-wrapper">
+            <Image className="home-logo" src="/images/home-logo.png" alt="Home Logo" width={48} height={33} />
+            <span>Docker Registry Folder</span>
+          </span>
         </Link>
         <div className="icon-wrapper" onClick={handleClickOpen}>
           <FontAwesomeIcon icon={faExchangeAlt} />
@@ -87,23 +91,32 @@ const Container = styled.div<ContainerProps>`
     }
   }
 
-  .home-logo {
+  .home-logo-container {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     width: 100%;
     height: 60px;
     background: #273657;
-    align-items: center;
 
     &:hover {
       cursor: pointer;
     }
 
-    span {
-      padding-left: 20px;
-      font-size: 20px;
-      font-weight: 400;
+    .home-logo-wrapper {
+      height: 40px;
+      margin-left: 15px;
+      display: flex;
+      flex-direction: row;
+      align-items: flex-end;
+
+      span {
+        display: inline-block;
+        font-size: 18px;
+        letter-spacing: -0.5px;
+        font-weight: 500;
+        margin: 10px 0 0 8px;
+      }
     }
   }
 
