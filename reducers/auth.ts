@@ -132,7 +132,6 @@ const authReducer = (state = initialState, action: AuthAction): AuthState => {
     case AuthActionType.SIGN_UP_SUCCESS:
     case AuthActionType.SIGN_IN_SUCCESS:
       const { accessToken, user } = action.payload as SignInResponse;
-      console.log(user);
       return {
         loading: false,
         error: null,

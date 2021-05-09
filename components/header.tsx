@@ -43,7 +43,7 @@ const Header: FC<HeaderProps> = () => {
           {auth.user?.username || ''}
         </p>
         <div className="user-controll-wrapper">
-          <Link href="/views/account">
+          <Link href="/account">
             <span className="my-account-button user-controll-button">
               <FontAwesomeIcon className="user-controll-icon" icon={faUserCog} />
               my account

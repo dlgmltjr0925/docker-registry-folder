@@ -15,7 +15,7 @@ const Layout = ({ children }: PropsWithChildren<LayoutProps>) => {
   const router = useRouter();
   const auth = useSelector(({ auth }: RootState) => auth);
 
-  if (EXCEPTION_PAGE.includes(router.pathname)) return children;
+  if (EXCEPTION_PAGE.includes(router.pathname)) return <div>{children}</div>;
 
   useEffect(() => {
     if (!auth.accessToken) router.replace('/login');
@@ -24,8 +24,8 @@ const Layout = ({ children }: PropsWithChildren<LayoutProps>) => {
   return (
     <Container>
       <SideBar />
+      <Header />
       <div className="content-container">
-        <Header />
         <div className="content-wrapper">{children}</div>
       </div>
     </Container>
@@ -40,12 +40,15 @@ const Container = styled.div`
   background: #f6f6f6;
 
   .content-container {
-    flex: 1;
     display: flex;
+    flex: 1;
     flex-direction: column;
+    position: relative;
 
     .content-wrapper {
       padding-top: 60px;
+      border: 1px solid #ccc;
+      overflow-y: scroll;
     }
   }
 `;

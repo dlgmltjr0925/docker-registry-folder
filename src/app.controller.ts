@@ -25,4 +25,22 @@ export class AppController {
   async signUpAdmin() {
     return {};
   }
+
+  @Render('account')
+  @Get('account')
+  async account() {
+    return {};
+  }
+
+  @Render('registries')
+  @Get('registries')
+  async registries() {
+    return {};
+  }
+
+  @Render('users')
+  @Get('users')
+  async users() {
+    return {};
+  }
 }

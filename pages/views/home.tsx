@@ -20,14 +20,17 @@ const HomePage: FC<HomePageProps> = () => {
 
   return (
     <Container>
-      {`home ${auth.user?.username || ''}`}
-      <button onClick={handleLogOut}>Logout</button>
+      <div>
+        {`home ${auth.user?.username || ''}`}
+        <button onClick={handleLogOut}>Logout</button>
+      </div>
     </Container>
   );
 };
 
 const Container = styled.div`
-  display: flex;
+  flex: 1;
+  min-height: 100vh;
 `;
 
 export default HomePage;

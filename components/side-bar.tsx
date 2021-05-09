@@ -1,19 +1,26 @@
 import { useRouter } from 'next/dist/client/router';
 import Link from 'next/link';
-import { FC, useCallback, useMemo, useState } from 'react';
+import { FC } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
 import { toggleSideBar } from 'reducers/layout';
 import styled from 'styled-components';
 
-import { faExchangeAlt, faHome } from '@fortawesome/free-solid-svg-icons';
+import {
+    faCog, faExchangeAlt, faHome, faServer, faUsersCog
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import SideMenu from './side-menu';
 
 interface SideBarProps {}
 
 const SideBar: FC<SideBarProps> = (props) => {
   console.log('[render]', 'SideBar');
-  const layout = useSelector(({ layout }: RootState) => layout);
+  const {
+    auth: { user },
+    layout,
+  } = useSelector(({ auth, layout }: RootState) => ({ auth, layout }));
   const dispatch = useDispatch();
   const { route } = useRouter();
 
@@ -23,19 +30,33 @@ const SideBar: FC<SideBarProps> = (props) => {
 
   return (
     <Container isOpened={layout.isOpenedSideBar}>
-      <div className="home-logo">
-        <Link href="/">
-          <span className="noselect">Docker Registry Folder</span>
-        </Link>
-        <div className="icon-wrapper" onClick={handleClickOpen}>
-          <FontAwesomeIcon icon={faExchangeAlt} />
+      <div className="side-bar-container noselect">
+        <div className="home-logo">
+          <Link href="/">
+            <span className="noselect">Docker Registry Folder</span>
+          </Link>
+          <div className="icon-wrapper" onClick={handleClickOpen}>
+            <FontAwesomeIcon icon={faExchangeAlt} />
+          </div>
         </div>
+        {/* Home */}
+        <SideMenu route="/" label="Home" icon={faHome} isSelected={route === '/views/home'} />
+        {/* Setting */}
+        {user?.role !== 'VIEWER' && (
+          <div className="category">
+            <span>Setting</span>
+            <div className="icon-wrapper">
+              <FontAwesomeIcon icon={faCog} />
+            </div>
+          </div>
+        )}
+        {user?.role !== 'VIEWER' && (
+          <SideMenu route="/registries" label="Registries" icon={faServer} isSelected={route === '/views/registries'} />
+        )}
+        {user?.role === 'ADMIN' && (
+          <SideMenu route="/users" label="Users" icon={faUsersCog} isSelected={route === '/views/users'} />
+        )}
       </div>
-      {/* Home */}
-      <MenuWrapper isSelected={route === '/views/home'}>
-        <FontAwesomeIcon className="menu-icon" icon={faHome} />
-        <span className="menu-label">Home</span>
-      </MenuWrapper>
     </Container>
   );
 };
@@ -45,10 +66,19 @@ interface ContainerProps {
 }
 
 const Container = styled.div<ContainerProps>`
-  background: #2a3a5d;
   width: 300px;
+  height: 100vh;
   margin-left: ${({ isOpened }) => (isOpened ? '0' : '-240px')};
   transition: margin 0.5s;
+
+  .side-bar-container {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    background: #2a3a5d;
+    width: 300px;
+    height: 100vh;
+  }
 
   .icon-wrapper {
     display: inline-flex;
@@ -83,39 +113,29 @@ const Container = styled.div<ContainerProps>`
       font-weight: 400;
     }
   }
-`;
 
-interface MenuWrapperProps {
-  isSelected: boolean;
-}
-
-const MenuWrapper = styled.div<MenuWrapperProps>`
-  display: flex;
-  align-items: center;
-  width: 100%;
-  height: 36px;
-  align-items: center;
-  box-sizing: border-box;
-  cursor: pointer;
-  background-color: ${({ isSelected }) => (isSelected ? '#273657' : '#2a3a5d')};
-  border-left: 3px solid ${({ isSelected }) => (isSelected ? 'white' : '#2a3a5d')};
-  padding: 0 0 0 10px;
-
-  &:hover {
-    background-color: #273657;
-  }
-
-  .menu-icon {
+  .category {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    margin: 30px 0 15px 15px;
+    text-align: center;
+    color: #ffffffbb;
     font-size: 16px;
-    margin-right: 6px;
-  }
+    text-transform: uppercase;
+    font-weight: 600;
 
-  .menu-label {
-    flex: 1;
-    font-size: 16px;
-    line-height: 21px;
-    padding-top: 5px;
-    font-weight: 700;
+    span {
+      padding-top: 3px;
+      line-height: 23px;
+    }
+
+    .icon-wrapper {
+      &:hover {
+        color: #ccc;
+      }
+    }
   }
 `;
 
