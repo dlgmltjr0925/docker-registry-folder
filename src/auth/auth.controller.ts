@@ -15,14 +15,9 @@ import { LocalAuthGuard } from './local-auth.guard';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Get('has-system-admin')
-  async hasSystemAdmin() {
-    return await this.authService.hasSystemAdmin();
-  }
-
   @Post('sign-in')
   @UseGuards(LocalAuthGuard)
-  async signIn(@Req() { user }: Request, @Session() session: Record<string, any>) {
+  async signIn(@Req() { user }: { user: UserDto }, @Session() session: Record<string, any>) {
     const accessToken = await this.authService.issueAccessToken(user as UserDto);
     session.accessToken = accessToken;
     return { accessToken, user };
@@ -44,7 +39,7 @@ export class AuthController {
 
   @Get('profile')
   @UseGuards(JwtAuthGuard)
-  async profile(@Req() req: Request) {
-    return { user: req.user };
+  async profile(@Req() { user }: { user: UserDto | null }) {
+    return { user };
   }
 }

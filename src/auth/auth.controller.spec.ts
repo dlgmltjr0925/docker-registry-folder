@@ -1,3 +1,7 @@
+import { Request } from 'express';
+import { verify } from 'jsonwebtoken';
+import path from 'path';
+
 import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
@@ -5,9 +9,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { connect } from '../../lib/sqlite';
 import { AuthController } from './auth.controller';
+import { DynamicJwtModule } from './auth.module';
 import { AuthService } from './auth.service';
+import { JwtPayload } from './dto/jwt-payload.dto';
 import { SignUpInputDto } from './dto/sign-up-input.dto';
 import { UserDto } from './dto/user.dto';
+import { JwtAuthGuard } from './jwt-auth.guard';
 import { JwtStrategy } from './jwt.strategy';
 import { LocalStrategy } from './local.strategy';
 
@@ -23,18 +30,16 @@ const deleteTestUser = (): Promise<any> => {
   });
 };
 
+const ENV_PATH = path.resolve('data/.env');
+
 describe('AuthController', () => {
   let controller: AuthController;
   let authService: AuthService;
+  require('dotenv').config({ path: ENV_PATH });
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [
-        JwtModule.register({
-          signOptions: { expiresIn: '10m' },
-        }),
-        PassportModule,
-      ],
+      imports: [DynamicJwtModule, PassportModule],
       controllers: [AuthController],
       providers: [AuthService, JwtStrategy, LocalStrategy],
     }).compile();
@@ -48,31 +53,9 @@ describe('AuthController', () => {
   });
 
   it('has-system-admin should be indicated the presence or absence of a system administrator', async () => {
-    const result = await controller.hasSystemAdmin();
+    const result = await authService.hasSystemAdmin();
     expect(typeof result).toBe('boolean');
     expect(result).toBe(await authService.hasSystemAdmin());
-  });
-
-  describe('sign-in', () => {
-    let localStrategy: LocalStrategy;
-
-    beforeEach(() => {
-      localStrategy = new LocalStrategy(authService);
-    });
-
-    it('should be return access token', async () => {
-      const user: UserDto = await localStrategy.validate('admin', 'admin');
-      const { accessToken } = await controller.signIn({ user });
-      expect(typeof accessToken).toEqual('string');
-    });
-
-    it('should be return error', async () => {
-      try {
-        await localStrategy.validate('noadmin', 'noadmin');
-      } catch (error) {
-        expect(error).toEqual(new UnauthorizedException());
-      }
-    });
   });
 
   describe('sign-up', () => {
@@ -80,7 +63,7 @@ describe('AuthController', () => {
 
     beforeAll(async () => {
       await deleteTestUser();
-      hasSystemAdmin = await controller.hasSystemAdmin();
+      hasSystemAdmin = await authService.hasSystemAdmin();
     });
 
     it('should be returned error when trying to register system admin twice', async () => {
@@ -91,10 +74,10 @@ describe('AuthController', () => {
         systemAdmin: true,
       };
       try {
-        if (!hasSystemAdmin) await controller.signUp(signUpInput);
+        if (!hasSystemAdmin) await controller.signUp(signUpInput, {});
         signUpInput.username = '__testadmin1';
         signUpInput.password = '__testadmin1';
-        await controller.signUp(signUpInput);
+        await controller.signUp(signUpInput, {});
       } catch (error) {
         expect(error).toEqual(new BadRequestException('Only one system administrator can be registered'));
       }
@@ -108,20 +91,61 @@ describe('AuthController', () => {
           role: 'ADMIN',
           systemAdmin: false,
         };
-        const { accessToken } = await controller.signUp(signUpInput);
+        const { accessToken } = await controller.signUp(signUpInput, {});
         expect(typeof accessToken).toEqual('string');
-        await controller.signUp(signUpInput);
+        await controller.signUp(signUpInput, {});
       } catch (error) {
         expect(error).toEqual(new BadRequestException('Already registered'));
       }
     });
+  });
 
-    afterAll(async () => {
+  describe('sign-in', () => {
+    let localStrategy: LocalStrategy;
+    let accessToken: string;
+    let user: UserDto;
+
+    beforeEach(() => {
+      localStrategy = new LocalStrategy(authService);
+    });
+
+    it('should be return access token and user info', async () => {
+      const testUser: UserDto = await localStrategy.validate('__testuser1', '__testuser1');
+      const result = await controller.signIn({ user: testUser }, {});
+      accessToken = result.accessToken;
+      user = result.user;
+      expect(typeof accessToken).toEqual('string');
+    });
+
+    it('should be return error', async () => {
       try {
-        await deleteTestUser();
+        await localStrategy.validate('noadmin', 'noadmin');
       } catch (error) {
-        console.log(error);
+        expect(error).toEqual(new UnauthorizedException());
       }
     });
+
+    it('should be return user info', async () => {
+      const jwtStrategy = new JwtStrategy();
+      const jwtPayload = verify(accessToken, process.env.JWT_SECRET as string) as JwtPayload;
+      const testUser: UserDto = await jwtStrategy.validate(jwtPayload);
+      const result = await controller.profile({ user: testUser });
+      expect(result.user).toEqual(user);
+    });
+
+    it('should be deleted accessToken in session', async () => {
+      const session = { accessToken };
+      const result = await controller.signOut(session);
+      expect(result).toEqual({});
+      expect(session).toEqual({});
+    });
+  });
+
+  afterAll(async () => {
+    try {
+      await deleteTestUser();
+    } catch (error) {
+      console.log(error);
+    }
   });
 });

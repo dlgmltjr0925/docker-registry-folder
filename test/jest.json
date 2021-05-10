@@ -1,6 +1,6 @@
 {
   "moduleFileExtensions": ["js", "json", "ts"],
-  "modulePathIgnorePatterns": ["<rootDir>/main.ts", "<rootDir>/app.module.ts"],
+  "modulePathIgnorePatterns": ["<rootDir>/main.ts", "<rootDir>/app.module.ts", "<rootDir>/auth/dto/"],
   "rootDir": "../src",
   "testRegex": ".*\\.spec\\.ts$",
   "transform": {

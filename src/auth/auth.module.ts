@@ -7,7 +7,7 @@ import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
 import { LocalStrategy } from './local.strategy';
 
-const DynamicJwtModule = JwtModule.register({
+export const DynamicJwtModule = JwtModule.register({
   signOptions: { expiresIn: '10m' },
 });
 
