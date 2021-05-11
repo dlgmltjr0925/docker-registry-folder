@@ -3,10 +3,11 @@ import Next from 'next';
 
 import { Module } from '@nestjs/common';
 
-import { ApiController } from './api/api.controller';
 import { AppController } from './app.controller';
 import { AuthModule } from './auth/auth.module';
 import { AuthService } from './auth/auth.service';
+import { RegistryModule } from './registry/registry.module';
+import { DockerRegistryService } from './docker-registry/docker-registry.service';
 
 export const NextModule = RenderModule.forRootAsync(
   Next({
@@ -15,8 +16,8 @@ export const NextModule = RenderModule.forRootAsync(
   })
 );
 @Module({
-  imports: [NextModule, AuthModule],
-  controllers: [AppController, ApiController],
-  providers: [AuthService],
+  imports: [NextModule, AuthModule, RegistryModule],
+  controllers: [AppController],
+  providers: [AuthService, DockerRegistryService],
 })
 export class AppModule {}

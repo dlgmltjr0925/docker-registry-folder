@@ -1,15 +1,17 @@
 import Joi from 'joi';
 
+import { Role } from '../interfaces/role.enum';
+
 export class SignUpInputDto {
   username!: string;
   password!: string;
-  role!: 'ADMIN' | 'MANAGER' | 'VIEWER';
+  role!: Role;
   systemAdmin!: boolean;
 }
 
 export const SignUpInputSchema = Joi.object({
   username: Joi.string().required(),
   password: Joi.string().required(),
-  role: Joi.string().valid('ADMIN', 'MANAGER', 'VIEWER').required(),
+  role: Joi.string().valid(Role.ADMIN, Role.MANAGER, Role.VIEWER).required(),
   systemAdmin: Joi.boolean().default(false),
 });

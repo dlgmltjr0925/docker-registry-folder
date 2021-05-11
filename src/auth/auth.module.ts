@@ -8,7 +8,7 @@ import { JwtStrategy } from './jwt.strategy';
 import { LocalStrategy } from './local.strategy';
 
 export const DynamicJwtModule = JwtModule.register({
-  signOptions: { expiresIn: '10m' },
+  signOptions: { expiresIn: process.env.NODE_ENV === 'production' ? '30m' : '4h' },
 });
 
 @Module({

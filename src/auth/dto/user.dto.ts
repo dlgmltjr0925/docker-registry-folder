@@ -1,6 +1,8 @@
+import { Role } from '../interfaces/role.enum';
+
 export class UserDto {
   id!: number;
   username!: string;
-  role!: 'ADMIN' | 'MANAGER' | 'VIEWER';
+  role!: Role;
   systemAdmin!: boolean;
 }
