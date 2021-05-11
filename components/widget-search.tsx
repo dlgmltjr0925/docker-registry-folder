@@ -22,6 +22,7 @@ const Container = styled.div`
   align-items: center;
   padding: 0 15px;
   color: #767676;
+  border-bottom: 1px solid #ddd;
 
   .search-icon {
     margin-right: 10px;
@@ -33,7 +34,7 @@ const Container = styled.div`
     border: none;
 
     &::placeholder {
-      font-weight: 600;
+      font-weight: 500;
     }
   }
 `;
