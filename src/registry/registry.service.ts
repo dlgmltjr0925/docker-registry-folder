@@ -11,67 +11,140 @@ import { UpdateRegistryDto } from './dto/update-registry.dto';
 
 @Injectable()
 export class RegistryService {
-  cipher: CipherGCM;
-  decipher: DecipherGCM;
+  cryptoPassword;
+  cipherKey;
+  algorithm;
+  iv;
 
   constructor(private dockerRegistryService: DockerRegistryService) {
-    const cryptoPassword = Buffer.from(process.env.CRYPTO_PASSWORD as string);
-    const cipherKey = scryptSync(cryptoPassword, 'salt', 32);
-    const algorithm = 'aes-256-gcm';
-    const iv = Buffer.alloc(16, 0);
-    this.cipher = createCipheriv(algorithm, cipherKey, iv);
-    this.decipher = createDecipheriv(algorithm, cipherKey, iv);
+    this.cryptoPassword = Buffer.from(process.env.CRYPTO_PASSWORD as string);
+    this.cipherKey = scryptSync(this.cryptoPassword, 'salt', 32);
+    this.algorithm = 'aes-256-gcm';
+    this.iv = Buffer.alloc(16, 0);
   }
 
   encrypt(plainText: string): string {
-    let encrypted = this.cipher.update(plainText, 'utf8', 'hex');
-    encrypted += this.cipher.final('hex');
+    const cipher = createCipheriv(this.algorithm, this.cipherKey, this.iv);
+    let encrypted = cipher.update(plainText, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
     return encrypted;
   }
 
   decrypt(encrypted: string): string {
-    let decrypted = this.decipher.update(encrypted, 'hex', 'utf8');
-    decrypted += this.decipher.final('utf8');
+    const decipher = createDecipheriv(this.algorithm, this.cipherKey, this.iv);
+    let decrypted = decipher.update(encrypted, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
     return decrypted;
   }
 
   async create(createRegistryDto: CreateRegistryDto) {
     return new Promise((resolve, reject) => {
-      const { name, host, username, password, tag } = createRegistryDto;
-      const token = username && password ? Buffer.from(`${username}:${password}`).toString('base64') : null;
-      const encryptedToken = token ? this.encrypt(token) : null;
-
       const db = connect();
-      db.serialize(() => {
-        let sql = `INSERT INTO registry (name, host, token, tag) VALUES (?, ?, ?, ?)`;
-        db.run(sql, [name, host, encryptedToken, tag], (res: any, error: any) => {
-          console.log(res);
-        });
+      try {
+        const { name, host, username, password, tag } = createRegistryDto;
+        const token = username && password ? Buffer.from(`${username}:${password}`).toString('base64') : null;
+        console.log(this.encrypt);
+        const encryptedToken = token ? this.encrypt(token) : null;
 
-        sql = `SELECT id, name, host, tag FROM registry WHERE name=? AND host=? AND ifnull(token, '')=? AND ifnull(tag, '')=? ORDER BY id DESC LIMIT 1`;
-        db.each(sql, [name, host, encryptedToken || '', tag || ''], (error, row) => {
-          console.log(error);
-          if (error) return reject(error);
-          resolve(row);
+        db.serialize(() => {
+          let sql = `INSERT INTO registry (name, host, token, tag) VALUES (?, ?, ?, ?)`;
+          db.run(sql, [name, host, encryptedToken, tag], (error) => {
+            if (error) throw error;
+          });
+
+          sql = `SELECT id, name, host, tag FROM registry WHERE name=? AND host=? AND ifnull(token, '')=? AND ifnull(tag, '')=? ORDER BY id DESC LIMIT 1`;
+          db.each(sql, [name, host, encryptedToken || '', tag || ''], (error, row) => {
+            if (error) throw error;
+            resolve(row);
+          });
         });
-      });
-      db.close();
+      } catch (error) {
+        reject(error);
+      } finally {
+        db.close();
+      }
     });
   }
 
   findAll() {
-    return `This action returns all registry`;
+    return new Promise((resolve, reject) => {
+      const db = connect();
+      try {
+        const sql = `SELECT id, name, host, tag FROM registry`;
+        db.all(sql, (error, rows) => {
+          if (error) throw error;
+          resolve(rows);
+        });
+      } catch (error) {
+        reject(error);
+      } finally {
+        db.close();
+      }
+    });
+  }
+
+  findAllByKeyword(keyword: string) {
+    return new Promise((resolve, reject) => {
+      const db = connect();
+      try {
+        const sql = `SELECT id, name, host, tag FROM registry WHERE name LIKE ? OR host LIKE ? OR ifnull(tag, '') LIKE ?`;
+        const likeKeyword = `%${keyword}%`;
+        db.all(sql, [likeKeyword, likeKeyword, likeKeyword], (error, rows) => {
+          if (error) throw error;
+          resolve(rows);
+        });
+      } catch (error) {
+        reject(error);
+      } finally {
+        db.close();
+      }
+    });
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} registry`;
+    return new Promise((resolve, reject) => {
+      const db = connect();
+      try {
+        const sql = `SELECT id, name, host, tag FROM registry WHERE id=?`;
+        db.each(sql, [id], (error, row) => {
+          if (error) return reject(error);
+          resolve(row);
+        });
+      } catch (error) {
+        reject(error);
+      } finally {
+        db.close();
+      }
+    });
   }
 
   update(id: number, updateRegistryDto: UpdateRegistryDto) {
-    return `This action updates a #${id} registry`;
+    return new Promise((resolve, reject) => {
+      const db = connect();
+      try {
+        // let sql = `UPDATE registry SET ${} updated WHERE id=?`
+      } catch (error) {
+        reject(error);
+      } finally {
+        db.close();
+      }
+    });
   }
 
   remove(id: number) {
-    return `This action removes a #${id} registry`;
+    return new Promise((resolve, reject) => {
+      const db = connect();
+      try {
+        const sql = `DELETE FROM registry WHERE id=?`;
+        db.run(sql, [id], (error) => {
+          if (error) return reject(error);
+          resolve(true);
+        });
+      } catch (error) {
+        reject(error);
+      } finally {
+        db.close();
+      }
+    });
   }
 }

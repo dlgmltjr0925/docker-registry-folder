@@ -32,7 +32,6 @@ export const createTables = async () => {
         "tag"	TEXT,
         "created_at"	TEXT NOT NULL DEFAULT (datetime('now','localtime')),
         "updated_at"	TEXT NOT NULL DEFAULT (datetime('now','localtime')),
-        "deleted_at"	TEXT DEFAULT NULL,
         PRIMARY KEY("id" AUTOINCREMENT)
       );`);
 
@@ -44,7 +43,6 @@ export const createTables = async () => {
         "description"	TEXT,
         "created_at"	TEXT NOT NULL DEFAULT (datetime('now','localtime')),
         "updated_at"	TEXT NOT NULL DEFAULT (datetime('now','localtime')),
-        "deleted_at"	TEXT DEFAULT NULL,
         PRIMARY KEY("id" AUTOINCREMENT)
       )`);
     });

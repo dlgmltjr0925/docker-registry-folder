@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 import { persistReducer } from 'redux-persist';
 import { PersistConfig } from 'redux-persist/es/types';
-import storage from 'redux-persist/lib/storage';
+import storage from 'redux-persist/lib/storage/session';
 
 import { all } from '@redux-saga/core/effects';
 
