@@ -3,13 +3,15 @@ import Joi from 'joi';
 export class CreateRegistryDto {
   name!: string;
   host!: string;
-  auth!: string | null;
+  username!: string | null;
+  password!: string | null;
   tag!: string | null;
 }
 
 export const CreateRegistrySchema = Joi.object({
   name: Joi.string().required(),
   host: Joi.string().required(),
-  auth: Joi.string(),
-  tag: Joi.string(),
+  username: Joi.string().default(null),
+  password: Joi.string().default(null),
+  tag: Joi.string().default(null),
 });

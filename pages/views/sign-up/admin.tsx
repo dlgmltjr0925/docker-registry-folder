@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
 import { signUp } from 'reducers/auth';
+import { Role } from 'src/auth/interfaces/role.enum';
 import styled from 'styled-components';
 
 import { faUserPlus } from '@fortawesome/free-solid-svg-icons';
@@ -32,7 +33,7 @@ const AdminPage = () => {
       signUp({
         username,
         password,
-        role: 'ADMIN',
+        role: Role.ADMIN,
         systemAdmin: true,
       })
     );

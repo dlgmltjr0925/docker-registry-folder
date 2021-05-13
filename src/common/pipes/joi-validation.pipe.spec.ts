@@ -1,3 +1,5 @@
+import { Role } from 'src/auth/interfaces/role.enum';
+
 import { BadRequestException } from '@nestjs/common';
 
 import { SignUpInputDto, SignUpInputSchema } from '../../auth/dto/sign-up-input.dto';
@@ -11,7 +13,7 @@ describe('JoiValidationPipe', () => {
     const inputValue: Partial<SignUpInputDto> = {
       username: 'test',
       password: 'test',
-      role: 'ADMIN',
+      role: Role.ADMIN,
     };
     const result = joiValidationPipe.transform(inputValue, { type: 'body' });
     expect(result).toEqual({

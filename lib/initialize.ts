@@ -28,7 +28,7 @@ export const createTables = async () => {
         "id"	INTEGER NOT NULL,
         "name"	TEXT NOT NULL,
         "host"	TEXT NOT NULL,
-        "auth"	TEXT,
+        "token"	TEXT,
         "tag"	TEXT,
         "created_at"	TEXT NOT NULL DEFAULT (datetime('now','localtime')),
         "updated_at"	TEXT NOT NULL DEFAULT (datetime('now','localtime')),
@@ -75,7 +75,12 @@ const genJwtSecret = async () => {
 
 const genSessionSecret = async () => {
   const sessionSecret = getRandomString();
-  fs.appendFileSync(ENV_PATH, `SESSION_SECRET=${sessionSecret}`);
+  fs.appendFileSync(ENV_PATH, `SESSION_SECRET=${sessionSecret}\n`);
+};
+
+const genCryptoPassword = async () => {
+  const cryptoPassword = getRandomString(32);
+  fs.appendFileSync(ENV_PATH, `CRYPTO_PASSWORD=${cryptoPassword}\n`);
 };
 
 const genDotEnvFile = async () => {
@@ -86,6 +91,7 @@ const genDotEnvFile = async () => {
   if (!/SALT\=/.test(data)) await genSalt();
   if (!/JWT_SECRET\=/.test(data)) await genJwtSecret();
   if (!/SESSION_SECRET\=/.test(data)) await genSessionSecret();
+  if (!/CRYPTO_PASSWORD\=/.test(data)) await genCryptoPassword();
 };
 
 const initialize = async () => {

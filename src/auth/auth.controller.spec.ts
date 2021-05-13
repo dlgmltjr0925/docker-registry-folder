@@ -1,9 +1,7 @@
-import { Request } from 'express';
 import { verify } from 'jsonwebtoken';
 import path from 'path';
 
 import { BadRequestException, UnauthorizedException } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { Test, TestingModule } from '@nestjs/testing';
 
@@ -14,6 +12,7 @@ import { AuthService } from './auth.service';
 import { JwtPayload } from './dto/jwt-payload.dto';
 import { SignUpInputDto } from './dto/sign-up-input.dto';
 import { UserDto } from './dto/user.dto';
+import { Role } from './interfaces/role.enum';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { JwtStrategy } from './jwt.strategy';
 import { LocalStrategy } from './local.strategy';
@@ -70,7 +69,7 @@ describe('AuthController', () => {
       const signUpInput: SignUpInputDto = {
         username: '__testadmin',
         password: '__testadmin',
-        role: 'ADMIN',
+        role: Role.ADMIN,
         systemAdmin: true,
       };
       try {
@@ -88,7 +87,7 @@ describe('AuthController', () => {
         const signUpInput: SignUpInputDto = {
           username: '__testuser1',
           password: '__testuser1',
-          role: 'ADMIN',
+          role: Role.ADMIN,
           systemAdmin: false,
         };
         const { accessToken } = await controller.signUp(signUpInput, {});
