@@ -3,7 +3,6 @@ import {
 } from '@nestjs/common';
 
 import { Role } from '../auth/interfaces/role.enum';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { Roles } from '../auth/roles.decorator';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 import { DockerRegistryExceptionFilter } from '../docker-registry/docker-registry-exception.filter';
@@ -14,7 +13,7 @@ import { RegistryService } from './registry.service';
 
 @Controller('api/registry')
 @UseFilters(DockerRegistryExceptionFilter)
-@UseGuards(JwtAuthGuard)
+// @UseGuards(JwtAuthGuard)
 export class RegistryController {
   constructor(private registryService: RegistryService, private dockerRegistryService: DockerRegistryService) {}
 

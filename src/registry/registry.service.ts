@@ -1,6 +1,7 @@
 import {
     CipherGCM, createCipheriv, createDecipheriv, DecipherGCM, randomBytes, scryptSync
 } from 'crypto';
+import dateFormat from 'dateformat';
 
 import { Injectable } from '@nestjs/common';
 
@@ -43,7 +44,6 @@ export class RegistryService {
       try {
         const { name, host, username, password, tag } = createRegistryDto;
         const token = username && password ? Buffer.from(`${username}:${password}`).toString('base64') : null;
-        console.log(this.encrypt);
         const encryptedToken = token ? this.encrypt(token) : null;
 
         db.serialize(() => {
@@ -122,7 +122,18 @@ export class RegistryService {
     return new Promise((resolve, reject) => {
       const db = connect();
       try {
-        // let sql = `UPDATE registry SET ${} updated WHERE id=?`
+        const values = [];
+        const elements = Object.entries(updateRegistryDto).map(([key, value]) => {
+          values.push(value);
+          return `${key}=?`;
+        });
+        values.push(dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss'));
+        values.push(id);
+        let sql = `UPDATE registry SET ${elements.join(', ')}, updated_at=? WHERE id=?`;
+        db.run(sql, values, (error) => {
+          if (error) throw error;
+          resolve(true);
+        });
       } catch (error) {
         reject(error);
       } finally {
