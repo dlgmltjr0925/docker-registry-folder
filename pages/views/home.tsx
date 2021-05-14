@@ -13,7 +13,10 @@ import WidgetSearch from '../../components/widget-search';
 interface HomePageProps {}
 
 const HomePage: FC<HomePageProps> = () => {
-  const auth = useSelector(({ auth }: RootState) => auth);
+  const { auth } = useSelector(({ auth, registry }: RootState) => ({
+    auth,
+    registry,
+  }));
   const dispatch = useDispatch();
   const router = useRouter();
 

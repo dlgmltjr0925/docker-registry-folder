@@ -7,19 +7,22 @@ import { all } from '@redux-saga/core/effects';
 
 import auth, { authSaga, AuthState } from './auth';
 import layout, { LayoutState } from './layout';
+import registry, { registrySaga, RegistryState } from './registry';
 
 export interface RootState {
   auth: AuthState;
   layout: LayoutState;
+  registry: RegistryState;
 }
 
 const rootReducer = combineReducers({
   auth,
   layout,
+  registry,
 });
 
 export function* rootSaga() {
-  yield all([authSaga()]);
+  yield all([authSaga(), registrySaga()]);
 }
 
 const persistConfig: PersistConfig<RootState, any, any, any> = {

@@ -1,4 +1,4 @@
-import { AxiosResponse } from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { call, CallEffect, delay, put, takeEvery } from 'redux-saga/effects';
 import { UserDto } from 'src/auth/dto/user.dto';
 
@@ -42,7 +42,7 @@ interface AuthAction {
   payload?: Payload;
 }
 
-export const initialState: AuthState = { loading: false, error: null, accessToken: null, user: null };
+const initialState: AuthState = { loading: false, error: null, accessToken: null, user: null };
 
 export const signOut = () => ({
   type: AuthActionType.SIGN_OUT,
@@ -114,6 +114,7 @@ function* signOutSaga() {
 }
 
 const authReducer = (state = initialState, action: AuthAction): AuthState => {
+  if (axios.defaults.headers['Authorization']) delete axios.defaults.headers['Authorization'];
   switch (action.type) {
     case AuthActionType.SIGN_UP:
     case AuthActionType.SIGN_IN:
@@ -132,6 +133,7 @@ const authReducer = (state = initialState, action: AuthAction): AuthState => {
     case AuthActionType.SIGN_UP_SUCCESS:
     case AuthActionType.SIGN_IN_SUCCESS:
       const { accessToken, user } = action.payload as SignInResponse;
+      axios.defaults.headers['Authorization'] = `bearer ${accessToken}`;
       return {
         loading: false,
         error: null,

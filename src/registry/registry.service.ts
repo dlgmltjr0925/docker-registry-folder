@@ -44,7 +44,7 @@ export class RegistryService {
   }
 
   async create(createRegistryDto: CreateRegistryDto) {
-    return new Promise((resolve, reject) => {
+    return new Promise<RegistryDto>((resolve, reject) => {
       const db = connect();
       try {
         const { name, host, username, password, tag } = createRegistryDto;
