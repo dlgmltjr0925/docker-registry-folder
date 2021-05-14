@@ -118,19 +118,17 @@ export class RegistryService {
     });
   }
 
-  update(id: number, updateRegistryDto: UpdateRegistryDto) {
+  update(updateRegistryDto: UpdateRegistryDto) {
     return new Promise((resolve, reject) => {
       const db = connect();
       try {
-        const values = [];
-        const elements = Object.entries(updateRegistryDto).map(([key, value]) => {
-          values.push(value);
-          return `${key}=?`;
-        });
-        values.push(dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss'));
-        values.push(id);
-        let sql = `UPDATE registry SET ${elements.join(', ')}, updated_at=? WHERE id=?`;
-        db.run(sql, values, (error) => {
+        const { id, name, host, username, password, tag } = updateRegistryDto;
+        const token = username && password ? Buffer.from(`${username}:${password}`).toString('base64') : null;
+        const encryptedToken = token ? this.encrypt(token) : null;
+        const updatedAt = dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss');
+
+        let sql = `UPDATE registry SET name=?, host=?, token=?, tag=?, updated_at=? WHERE id=?`;
+        db.run(sql, [name, host, encryptedToken, tag, updatedAt, id], (error) => {
           if (error) throw error;
           resolve(true);
         });

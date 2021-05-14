@@ -1,5 +1,6 @@
 import {
-    Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, UseFilters, UseGuards, UsePipes
+    Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, Req, UseFilters, UseGuards,
+    UsePipes
 } from '@nestjs/common';
 
 import { Role } from '../auth/interfaces/role.enum';
@@ -8,7 +9,7 @@ import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 import { DockerRegistryExceptionFilter } from '../docker-registry/docker-registry-exception.filter';
 import { DockerRegistryService } from '../docker-registry/docker-registry.service';
 import { CreateRegistryDto, CreateRegistrySchema } from './dto/create-registry.dto';
-import { UpdateRegistryDto } from './dto/update-registry.dto';
+import { UpdateRegistryDto, UpdateRegistrySchema } from './dto/update-registry.dto';
 import { RegistryService } from './registry.service';
 
 @Controller('api/registry')
@@ -49,10 +50,17 @@ export class RegistryController {
     return this.registryService.findOne(+id);
   }
 
-  @Patch(':id')
+  @Put()
   @Roles(Role.ADMIN, Role.MANAGER)
-  update(@Param('id') id: string, @Body() updateRegistryDto: UpdateRegistryDto) {
-    return this.registryService.update(+id, updateRegistryDto);
+  @UsePipes(new JoiValidationPipe(UpdateRegistrySchema))
+  async update(@Body() updateRegistryDto: UpdateRegistryDto) {
+    try {
+      const { host, username, password } = updateRegistryDto;
+      await this.dockerRegistryService.checkApiVersion({ host, username, password });
+      return await this.registryService.update(updateRegistryDto);
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Delete(':id')
