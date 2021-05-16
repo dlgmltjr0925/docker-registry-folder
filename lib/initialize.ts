@@ -27,7 +27,7 @@ export const createTables = async () => {
       db.run(`CREATE TABLE "registry" (
         "id"	INTEGER NOT NULL,
         "name"	TEXT NOT NULL,
-        "host"	TEXT NOT NULL,
+        "host"	TEXT NOT NULL UNIQUE,
         "token"	TEXT,
         "tag"	TEXT,
         "created_at"	TEXT NOT NULL DEFAULT (datetime('now','localtime')),
