@@ -4,7 +4,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { UnauthorizedException } from './exceptions/unauthorized.exception';
 
-export interface CheckApiVersionArgs {
+export interface RegistryAccessInfo {
   host: string;
   username: string | null;
   password: string | null;
@@ -37,7 +37,7 @@ export class DockerRegistryService {
     return error;
   }
 
-  async checkApiVersion({ host, username, password }: CheckApiVersionArgs) {
+  async checkApiVersion({ host, username, password }: RegistryAccessInfo) {
     try {
       const config: AxiosRequestConfig = { headers: {} };
       if (username && password) {
@@ -45,6 +45,19 @@ export class DockerRegistryService {
         config.headers['Authorization'] = `Basic ${token}`;
       }
       return await axios.get(DockerRegistryService.getRegistryUrl(host), config);
+    } catch (error) {
+      throw DockerRegistryService.handleError(error);
+    }
+  }
+
+  async getRepositories({ host, username, password }: RegistryAccessInfo) {
+    try {
+      const config: AxiosRequestConfig = { headers: {} };
+      if (username && password) {
+        const token = Buffer.from(`${username}:${password}`).toString('base64');
+        config.headers['Authorization'] = `Basic ${token}`;
+      }
+      return await axios.get(DockerRegistryService.getRegistryUrl(host, '/_catalog'), config);
     } catch (error) {
       throw DockerRegistryService.handleError(error);
     }
