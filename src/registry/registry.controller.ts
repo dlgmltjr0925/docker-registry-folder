@@ -9,6 +9,7 @@ import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 import { DockerRegistryExceptionFilter } from '../docker-registry/docker-registry-exception.filter';
 import { DockerRegistryService } from '../docker-registry/docker-registry.service';
 import { CreateRegistryDto, CreateRegistrySchema } from './dto/create-registry.dto';
+import { RegistryDto } from './dto/registry.dto';
 import { UpdateRegistryDto, UpdateRegistrySchema } from './dto/update-registry.dto';
 import { RegistryService } from './registry.service';
 
@@ -24,7 +25,7 @@ export class RegistryController {
   async create(@Body() createRegistryDto: CreateRegistryDto) {
     try {
       const { host, username, password } = createRegistryDto;
-      await this.dockerRegistryService.checkApiVersion({ host, username, password });
+      await this.dockerRegistryService.checkApiVersion({ host, username, password, token: null });
       return await this.registryService.create(createRegistryDto);
     } catch (error) {
       throw error;
@@ -33,15 +34,28 @@ export class RegistryController {
 
   @Get('list')
   @Roles(Role.ADMIN, Role.MANAGER, Role.VIEWER)
-  findAll() {
-    return this.registryService.findAll();
+  async findAll(): Promise<RegistryDto[]> {
+    const registries = await this.registryService.findAll();
+    return await this.registryService.getRegistriesWithRepositories(registries);
   }
 
   @Get('list/:keyword*')
   @Roles(Role.ADMIN, Role.MANAGER, Role.VIEWER)
-  findAllByKeyword(@Param() param: any) {
+  async findAllByKeyword(@Param() param: any) {
     const keyword = param.keyword + param[0];
-    return this.registryService.findAllByKeyword(keyword);
+    const registries = await this.registryService.findAllByKeyword(keyword);
+    return await this.registryService.getRegistriesWithRepositories(registries);
+  }
+
+  @Get('test')
+  test() {
+    console.log('here');
+    const plainText = 'hello world';
+    const enc = this.registryService.encrypt(plainText);
+    const dec = this.registryService.decrypt(enc);
+    console.log('test', enc, dec);
+
+    return {};
   }
 
   @Get(':id')
@@ -56,7 +70,7 @@ export class RegistryController {
   async update(@Body() updateRegistryDto: UpdateRegistryDto) {
     try {
       const { host, username, password } = updateRegistryDto;
-      await this.dockerRegistryService.checkApiVersion({ host, username, password });
+      await this.dockerRegistryService.checkApiVersion({ host, username, password, token: null });
       return await this.registryService.update(updateRegistryDto);
     } catch (error) {
       throw error;

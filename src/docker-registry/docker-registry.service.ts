@@ -7,11 +7,18 @@ import { UnauthorizedException } from './exceptions/unauthorized.exception';
 
 export interface RegistryAccessInfo {
   host: string;
-  username: string | null;
-  password: string | null;
+  username?: string | null;
+  password?: string | null;
+  token?: string | null;
 }
 
 export interface GetRepositoriesArgs extends RegistryAccessInfo {
+  n?: number;
+  last?: string;
+}
+
+export interface GetTagsArgs extends RegistryAccessInfo {
+  name: string;
   n?: number;
   last?: string;
 }
@@ -43,10 +50,12 @@ export class DockerRegistryService {
     return error;
   }
 
-  async checkApiVersion({ host, username, password }: RegistryAccessInfo) {
+  async checkApiVersion({ host, username = null, password = null, token = null }: RegistryAccessInfo) {
     try {
       const config: AxiosRequestConfig = { headers: {} };
-      if (username && password) {
+      if (token) {
+        config.headers['Authorization'] = `Basic ${token}`;
+      } else if (username && password) {
         const token = Buffer.from(`${username}:${password}`).toString('base64');
         config.headers['Authorization'] = `Basic ${token}`;
       }
@@ -56,15 +65,40 @@ export class DockerRegistryService {
     }
   }
 
-  async getRepositories({ host, username, password, n, last }: GetRepositoriesArgs) {
+  async getRepositories({ host, username = null, password = null, token = null, n, last }: GetRepositoriesArgs) {
     try {
       const config: AxiosRequestConfig = { headers: {} };
-      if (username && password) {
+      if (token) {
+        config.headers['Authorization'] = `Basic ${token}`;
+      } else if (username && password) {
         const token = Buffer.from(`${username}:${password}`).toString('base64');
         config.headers['Authorization'] = `Basic ${token}`;
       }
       let url = '/_catalog';
-      return await axios.get(DockerRegistryService.getRegistryUrl(host, url), config);
+      const query = stringify({ n, last });
+      if (query) url += `?${query}`;
+      return await axios.get<{ repositories: string[] }>(DockerRegistryService.getRegistryUrl(host, url), config);
+    } catch (error) {
+      throw DockerRegistryService.handleError(error);
+    }
+  }
+
+  async getTags({ host, username = null, password = null, token = null, n, last, name }: GetTagsArgs) {
+    try {
+      const config: AxiosRequestConfig = { headers: {} };
+      if (token) {
+        config.headers['Authorization'] = `Basic ${token}`;
+      } else if (username && password) {
+        const token = Buffer.from(`${username}:${password}`).toString('base64');
+        config.headers['Authorization'] = `Basic ${token}`;
+      }
+      let url = `/${name}/tags/list`;
+      const query = stringify({ n, last });
+      if (query) url += `?${query}`;
+      return await axios.get<{ name: string; tags: string[] | null }>(
+        DockerRegistryService.getRegistryUrl(host, url),
+        config
+      );
     } catch (error) {
       throw DockerRegistryService.handleError(error);
     }

@@ -8,6 +8,8 @@ import { Injectable } from '@nestjs/common';
 import { connect } from '../../lib/sqlite';
 import { DockerRegistryService } from '../docker-registry/docker-registry.service';
 import { CreateRegistryDto } from './dto/create-registry.dto';
+import { RegistryWithTokenDto } from './dto/registry-with-token.dto';
+import { RegistryDto } from './dto/registry.dto';
 import { UpdateRegistryDto } from './dto/update-registry.dto';
 
 @Injectable()
@@ -16,12 +18,15 @@ export class RegistryService {
   cipherKey;
   algorithm;
   iv;
+  registries: RegistryDto[];
 
   constructor(private dockerRegistryService: DockerRegistryService) {
     this.cryptoPassword = Buffer.from(process.env.CRYPTO_PASSWORD as string);
-    this.cipherKey = scryptSync(this.cryptoPassword, 'salt', 32);
-    this.algorithm = 'aes-256-gcm';
+    this.cipherKey = scryptSync(this.cryptoPassword, 'salt', 24);
+    this.algorithm = 'aes-192-cbc';
     this.iv = Buffer.alloc(16, 0);
+    console.log('iv', this.iv);
+    this.registries = [];
   }
 
   encrypt(plainText: string): string {
@@ -67,10 +72,10 @@ export class RegistryService {
   }
 
   findAll() {
-    return new Promise((resolve, reject) => {
+    return new Promise<RegistryWithTokenDto[]>((resolve, reject) => {
       const db = connect();
       try {
-        const sql = `SELECT id, name, host, tag FROM registry`;
+        const sql = `SELECT id, name, host, tag, token FROM registry`;
         db.all(sql, (error, rows) => {
           if (error) throw error;
           resolve(rows);
@@ -84,10 +89,10 @@ export class RegistryService {
   }
 
   findAllByKeyword(keyword: string) {
-    return new Promise((resolve, reject) => {
+    return new Promise<RegistryWithTokenDto[]>((resolve, reject) => {
       const db = connect();
       try {
-        const sql = `SELECT id, name, host, tag FROM registry WHERE name LIKE ? OR host LIKE ? OR ifnull(tag, '') LIKE ?`;
+        const sql = `SELECT id, name, host, tag, token FROM registry WHERE name LIKE ? OR host LIKE ? OR ifnull(tag, '') LIKE ?`;
         const likeKeyword = `%${keyword}%`;
         db.all(sql, [likeKeyword, likeKeyword, likeKeyword], (error, rows) => {
           if (error) throw error;
@@ -155,5 +160,35 @@ export class RegistryService {
         db.close();
       }
     });
+  }
+
+  async getRegistriesWithRepositories(registries: RegistryWithTokenDto[]): Promise<RegistryDto[]> {
+    return await Promise.all(
+      registries.map(async ({ token: encryptedToken, ...registry }) => {
+        try {
+          const { host } = registry;
+          const token = encryptedToken ? this.decrypt(encryptedToken) : null;
+          const res = await this.dockerRegistryService.getRepositories({ host, token });
+          if (res?.status === 200) {
+            registry.repositories = await Promise.all(
+              res.data.repositories.map(async (name) => {
+                const res = await this.dockerRegistryService.getTags({ host, token, name });
+                let tags: string[] = [];
+                if (res?.status === 200 && res.data.tags !== null) {
+                  tags = res.data.tags;
+                }
+                return { name, tags };
+              })
+            );
+          }
+        } catch (error) {
+          registry.repositories = [];
+          registry.message = error.message;
+        } finally {
+          registry.checkedAt = new Date();
+          return registry;
+        }
+      })
+    );
   }
 }
