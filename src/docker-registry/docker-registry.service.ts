@@ -1,4 +1,5 @@
 import axios, { AxiosRequestConfig } from 'axios';
+import { stringify } from 'query-string';
 
 import { Injectable, NotFoundException } from '@nestjs/common';
 
@@ -8,6 +9,11 @@ export interface RegistryAccessInfo {
   host: string;
   username: string | null;
   password: string | null;
+}
+
+export interface GetRepositoriesArgs extends RegistryAccessInfo {
+  n?: number;
+  last?: string;
 }
 
 @Injectable()
@@ -50,14 +56,15 @@ export class DockerRegistryService {
     }
   }
 
-  async getRepositories({ host, username, password }: RegistryAccessInfo) {
+  async getRepositories({ host, username, password, n, last }: GetRepositoriesArgs) {
     try {
       const config: AxiosRequestConfig = { headers: {} };
       if (username && password) {
         const token = Buffer.from(`${username}:${password}`).toString('base64');
         config.headers['Authorization'] = `Basic ${token}`;
       }
-      return await axios.get(DockerRegistryService.getRegistryUrl(host, '/_catalog'), config);
+      let url = '/_catalog';
+      return await axios.get(DockerRegistryService.getRegistryUrl(host, url), config);
     } catch (error) {
       throw DockerRegistryService.handleError(error);
     }
