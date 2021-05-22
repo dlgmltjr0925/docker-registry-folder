@@ -4,11 +4,11 @@ import { FC, KeyboardEventHandler, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
 import { search } from 'reducers/registry';
-import { RegistryDto } from 'src/registry/dto/registry.dto';
 import styled from 'styled-components';
 
 import { faServer } from '@fortawesome/free-solid-svg-icons';
 
+import RegistryItem from '../../components/registry-item';
 import WidgetContainer from '../../components/widget-container';
 import WidgetSearch from '../../components/widget-search';
 
@@ -45,9 +45,9 @@ const HomePage: FC<HomePageProps> = () => {
           <div>No registry available</div>
         ) : (
           <ul>
-            {registry.searchedRegistries.map((registry) => {
-              return <div id={`${registry.id}`}>{registry.name}</div>;
-            })}
+            {registry.searchedRegistries.map((registry, index) => (
+              <RegistryItem key={registry.id} item={registry} />
+            ))}
           </ul>
         )}
       </WidgetContainer>
