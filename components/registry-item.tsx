@@ -50,7 +50,7 @@ const Container = styled.div`
   cursor: pointer;
 
   &:hover {
-    box-shadow: 2px 2px 5px #ccc;
+    box-shadow: 2px 2px 3px #ccc;
   }
 
   .name {

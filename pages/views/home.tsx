@@ -42,7 +42,7 @@ const HomePage: FC<HomePageProps> = () => {
           onKeyPress={handleKeyPress}
         />
         {registry.searchedRegistries.length === 0 ? (
-          <div>No registry available</div>
+          <p className="empty-list-label">No registry available</p>
         ) : (
           <ul>
             {registry.searchedRegistries.map((registry, index) => (
@@ -61,6 +61,13 @@ const Container = styled.div`
 
   .search-container {
     height: 60px;
+  }
+
+  .empty-list-label {
+    color: #777;
+    text-align: center;
+    padding: 20px;
+    font-size: 15px;
   }
 `;
 
