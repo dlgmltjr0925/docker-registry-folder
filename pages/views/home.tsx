@@ -1,6 +1,6 @@
 import { handleChangeText } from 'lib/event-handles';
 import { useRouter } from 'next/dist/client/router';
-import { FC, KeyboardEventHandler, useCallback, useEffect, useState } from 'react';
+import { FC, KeyboardEventHandler, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
 import { search } from 'reducers/registry';

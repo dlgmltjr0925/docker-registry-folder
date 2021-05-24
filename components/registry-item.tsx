@@ -1,3 +1,4 @@
+import dateFormat from 'dateformat';
 import { FC } from 'react';
 import styled from 'styled-components';
 
@@ -10,13 +11,15 @@ interface RegistryItemProps {
   item: RegistryDto;
 }
 
-const RegistryItem: FC<RegistryItemProps> = ({ item: { name, host, repositories } }) => {
+const RegistryItem: FC<RegistryItemProps> = ({ item: { name, status, checkedAt, host, repositories } }) => {
   const repositoriesLength = repositories.length;
 
   return (
-    <Container>
+    <Container className="noselect">
       <div className="name-wrapper">
         <span className="name">{name}</span>
+        <span className={`status status-${status === 'UP' ? 'up' : 'down'}`}>{status}</span>
+        <span className="date">{dateFormat(checkedAt, 'yyyy-mm-dd HH:MM:ss')}</span>
       </div>
       <div className="info-wrapper">
         <span className="host">{host}</span>
@@ -53,12 +56,35 @@ const Container = styled.div`
     box-shadow: 2px 2px 3px #ccc;
   }
 
-  .name {
-    font-size: 19px;
-    font-weight: 700;
-    margin-right: 10px;
-    vertical-align: middle;
-    color: #333333;
+  .name-wrapper {
+    .name {
+      font-size: 19px;
+      font-weight: 700;
+      vertical-align: middle;
+      color: #333333;
+    }
+
+    .status {
+      display: inline-block;
+      margin-left: 12px;
+      font-size: 11px;
+      padding: 4px 6px 3px;
+      border-radius: 3px;
+      color: #ffffff;
+    }
+
+    .status-up {
+      background-color: #74b566;
+    }
+
+    .status-down {
+      background-color: #b71c1c;
+    }
+
+    .date {
+      margin-left: 6px;
+      font-size: 14px;
+    }
   }
 
   .info-wrapper {
@@ -92,7 +118,7 @@ const Container = styled.div`
       border: 0;
       outline: none;
       cursor: pointer;
-      background-color: #255177;
+      background-color: #286090;
       color: #fff;
       padding: 5px 10px;
       border-radius: 3px;

@@ -7,5 +7,6 @@ export class RegistryDto {
   tag!: string;
   repositories!: RepositoryDto[];
   message!: string;
-  checkedAt!: Date | null;
+  status: 'UP' | 'DOWN';
+  checkedAt!: Date;
 }

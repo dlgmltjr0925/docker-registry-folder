@@ -166,6 +166,7 @@ export class RegistryService {
     return await Promise.all(
       registries.map(async ({ token: encryptedToken, ...registry }) => {
         try {
+          registry.status = 'UP';
           const { host } = registry;
           const token = encryptedToken ? this.decrypt(encryptedToken) : null;
           const res = await this.dockerRegistryService.getRepositories({ host, token });
@@ -182,6 +183,7 @@ export class RegistryService {
             );
           }
         } catch (error) {
+          registry.status = 'DOWN';
           registry.repositories = [];
           registry.message = error.message;
         } finally {
