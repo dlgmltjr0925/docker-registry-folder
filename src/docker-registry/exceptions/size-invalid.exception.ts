@@ -8,6 +8,12 @@ import { HttpException, HttpStatus } from '@nestjs/common';
  */
 export class SizeInvalidException extends HttpException {
   constructor() {
-    super('SizeInvalid', HttpStatus.BAD_REQUEST);
+    super(
+      {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'SizeInvalid',
+      },
+      HttpStatus.BAD_REQUEST
+    );
   }
 }

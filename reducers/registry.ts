@@ -5,12 +5,18 @@ import { call, put, takeLatest } from '@redux-saga/core/effects';
 import * as registryApi from '../lib/registryApi';
 import { RegistryDto } from '../src/registry/dto/registry.dto';
 import { RegistryListResponse } from '../src/registry/registry.controller';
+import { closeAlertDialog } from './alert-dialog';
+
+interface SearchedRegistry extends RegistryDto {
+  loading: boolean;
+  error: string | null;
+}
 
 export interface RegistryState {
   loading: boolean;
   error: string | null;
   keyword: string;
-  searchedRegistries: RegistryDto[];
+  searchedRegistries: SearchedRegistry[];
   selectedRegistry: RegistryDto | null;
 }
 
@@ -18,6 +24,9 @@ export enum RegistryActionType {
   SEARCH = 'SEARCH',
   SEARCH_SUCCESS = 'SEARCH_SUCCESS',
   SEARCH_ERROR = 'SEARCH_ERROR',
+  REMOVE = 'REMOVE',
+  REMOVE_SUCCESS = 'REMOVE_SUCCESS',
+  REMOVE_ERROR = 'REMOVE_ERROR',
   SIGN_OUT = 'SIGN_OUT',
 }
 
@@ -25,11 +34,19 @@ interface Keyword {
   keyword: string;
 }
 
+interface Remove {
+  willBeRemovedRegistryId: number;
+}
+
+interface RemoveError extends Remove {
+  error: string;
+}
+
 interface RegistryError {
   error: string;
 }
 
-type Payload = Keyword | RegistryListResponse | RegistryError;
+type Payload = Keyword | RegistryListResponse | RegistryError | Remove | RemoveError;
 
 interface RegistryAction<T = Payload> {
   type: RegistryActionType;
@@ -49,6 +66,11 @@ export const search = (keyword: string): RegistryAction<Keyword> => ({
   payload: { keyword },
 });
 
+export const removeRegistry = (id: number): RegistryAction<Remove> => ({
+  type: RegistryActionType.REMOVE,
+  payload: { willBeRemovedRegistryId: id },
+});
+
 function* searchSaga(action: RegistryAction) {
   try {
     const { keyword } = action.payload as Keyword;
@@ -60,11 +82,32 @@ function* searchSaga(action: RegistryAction) {
       });
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
     yield put({
       type: RegistryActionType.SEARCH_ERROR,
       payload: { error: error.message },
     });
+  }
+}
+
+function* removeSaga(action: RegistryAction) {
+  const { willBeRemovedRegistryId } = action.payload as Remove;
+  try {
+    const res: AxiosResponse = yield call(registryApi.remove, willBeRemovedRegistryId);
+    if (res?.status === 200) {
+      yield put({
+        type: RegistryActionType.REMOVE_SUCCESS,
+        payload: { willBeRemovedRegistryId },
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    yield put({
+      type: RegistryActionType.REMOVE_ERROR,
+      payload: { willBeRemovedRegistryId, error: error.message },
+    });
+  } finally {
+    yield put(closeAlertDialog());
   }
 }
 
@@ -84,15 +127,49 @@ const registryReducer = (state = initialState, action: RegistryAction): Registry
         ...state,
         loading: false,
         error: null,
-        searchedRegistries: registries,
+        searchedRegistries: registries.map((registry) => ({ ...registry, loading: false, error: null })),
       };
-    case RegistryActionType.SEARCH_ERROR:
+    case RegistryActionType.SEARCH_ERROR: {
       const { error } = action.payload as RegistryError;
       return {
         ...state,
         loading: false,
         error,
       };
+    }
+    case RegistryActionType.REMOVE: {
+      const { willBeRemovedRegistryId } = action.payload as Remove;
+      const index = state.searchedRegistries.findIndex(({ id }) => id === willBeRemovedRegistryId);
+      if (index === -1) return state;
+      return {
+        ...state,
+        searchedRegistries: [
+          ...state.searchedRegistries.slice(0, index),
+          { ...state.searchedRegistries[index], loading: true },
+          ...state.searchedRegistries.slice(index + 1),
+        ],
+      };
+    }
+    case RegistryActionType.REMOVE_SUCCESS: {
+      const { willBeRemovedRegistryId } = action.payload as Remove;
+      return {
+        ...state,
+        searchedRegistries: state.searchedRegistries.filter(({ id }) => id !== willBeRemovedRegistryId),
+      };
+    }
+    case RegistryActionType.REMOVE_ERROR: {
+      const { willBeRemovedRegistryId, error } = action.payload as RemoveError;
+      const index = state.searchedRegistries.findIndex(({ id }) => id === willBeRemovedRegistryId);
+      if (index === -1) return state;
+      return {
+        ...state,
+        searchedRegistries: [
+          ...state.searchedRegistries.slice(0, index),
+          { ...state.searchedRegistries[index], loading: false, error },
+          ...state.searchedRegistries.slice(index + 1),
+        ],
+      };
+    }
     case RegistryActionType.SIGN_OUT:
       return initialState;
     default:
@@ -102,6 +179,7 @@ const registryReducer = (state = initialState, action: RegistryAction): Registry
 
 export function* registrySaga() {
   yield takeLatest(RegistryActionType.SEARCH, searchSaga);
+  yield takeLatest(RegistryActionType.REMOVE, removeSaga);
 }
 
 export default registryReducer;

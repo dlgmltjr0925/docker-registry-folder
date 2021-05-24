@@ -7,6 +7,12 @@ import { HttpException, HttpStatus } from '@nestjs/common';
  */
 export class ManifestBlobUnknownException extends HttpException {
   constructor() {
-    super('ManifestBlobUnknown', HttpStatus.NOT_FOUND);
+    super(
+      {
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'ManifestBlobUnknown',
+      },
+      HttpStatus.NOT_FOUND
+    );
   }
 }

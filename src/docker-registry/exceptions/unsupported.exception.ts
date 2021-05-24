@@ -7,6 +7,12 @@ import { HttpException, HttpStatus } from '@nestjs/common';
  */
 export class UnsupportedException extends HttpException {
   constructor() {
-    super('Unsupported', HttpStatus.METHOD_NOT_ALLOWED);
+    super(
+      {
+        statusCode: HttpStatus.METHOD_NOT_ALLOWED,
+        message: 'Unsupported',
+      },
+      HttpStatus.METHOD_NOT_ALLOWED
+    );
   }
 }

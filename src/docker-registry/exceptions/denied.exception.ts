@@ -7,6 +7,12 @@ import { HttpException, HttpStatus } from '@nestjs/common';
  */
 export class DeniedException extends HttpException {
   constructor() {
-    super('Denied', HttpStatus.FORBIDDEN);
+    super(
+      {
+        statusCode: HttpStatus.FORBIDDEN,
+        message: 'Denied',
+      },
+      HttpStatus.FORBIDDEN
+    );
   }
 }

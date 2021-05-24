@@ -8,6 +8,12 @@ import { HttpException, HttpStatus } from '@nestjs/common';
  */
 export class TagInvalidException extends HttpException {
   constructor() {
-    super('TagInvalid', HttpStatus.BAD_REQUEST);
+    super(
+      {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'TagInvalid',
+      },
+      HttpStatus.BAD_REQUEST
+    );
   }
 }

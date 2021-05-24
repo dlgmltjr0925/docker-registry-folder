@@ -7,6 +7,12 @@ import { HttpException, HttpStatus } from '@nestjs/common';
  */
 export class NameUnknownException extends HttpException {
   constructor() {
-    super('NameUnknown', HttpStatus.NOT_FOUND);
+    super(
+      {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'NameUnknown',
+      },
+      HttpStatus.NOT_FOUND
+    );
   }
 }

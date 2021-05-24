@@ -9,6 +9,12 @@ import { HttpException, HttpStatus } from '@nestjs/common';
  */
 export class DigestInvalidException extends HttpException {
   constructor() {
-    super('DigestInvalid', HttpStatus.BAD_REQUEST);
+    super(
+      {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'DigestInvalid',
+      },
+      HttpStatus.BAD_REQUEST
+    );
   }
 }

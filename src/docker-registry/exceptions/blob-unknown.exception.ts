@@ -8,6 +8,12 @@ import { HttpException, HttpStatus } from '@nestjs/common';
  */
 export class BlobUnknownException extends HttpException {
   constructor() {
-    super('BlobUnknown', HttpStatus.BAD_REQUEST);
+    super(
+      {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'BlobUnknown',
+      },
+      HttpStatus.BAD_REQUEST
+    );
   }
 }

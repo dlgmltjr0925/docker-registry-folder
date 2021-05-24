@@ -9,6 +9,12 @@ import { HttpException, HttpStatus } from '@nestjs/common';
  */
 export class ManifestInvalidException extends HttpException {
   constructor() {
-    super('ManifestInvalid', HttpStatus.BAD_REQUEST);
+    super(
+      {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'ManifestInvalid',
+      },
+      HttpStatus.BAD_REQUEST
+    );
   }
 }

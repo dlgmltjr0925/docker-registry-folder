@@ -7,6 +7,12 @@ import { HttpException, HttpStatus } from '@nestjs/common';
  */
 export class NameInvalidException extends HttpException {
   constructor() {
-    super('NameInvalid', HttpStatus.BAD_REQUEST);
+    super(
+      {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'NameInvalid',
+      },
+      HttpStatus.BAD_REQUEST
+    );
   }
 }

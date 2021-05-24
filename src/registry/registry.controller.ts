@@ -11,6 +11,7 @@ import { DockerRegistryService } from '../docker-registry/docker-registry.servic
 import { CreateRegistryDto, CreateRegistrySchema } from './dto/create-registry.dto';
 import { RegistryDto } from './dto/registry.dto';
 import { UpdateRegistryDto, UpdateRegistrySchema } from './dto/update-registry.dto';
+import { RegistryExceptionFilter } from './registry-exception.filter';
 import { RegistryService } from './registry.service';
 
 export interface CreateRegistryResponse {
@@ -23,6 +24,7 @@ export interface RegistryListResponse {
 
 @Controller('api/registry')
 @UseFilters(DockerRegistryExceptionFilter)
+@UseFilters(RegistryExceptionFilter)
 // @UseGuards(JwtAuthGuard)
 export class RegistryController {
   constructor(private registryService: RegistryService, private dockerRegistryService: DockerRegistryService) {}

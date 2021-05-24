@@ -1,6 +1,4 @@
-import {
-    CipherGCM, createCipheriv, createDecipheriv, DecipherGCM, randomBytes, scryptSync
-} from 'crypto';
+import { createCipheriv, createDecipheriv, scryptSync } from 'crypto';
 import dateFormat from 'dateformat';
 
 import { Injectable } from '@nestjs/common';
@@ -11,6 +9,7 @@ import { CreateRegistryDto } from './dto/create-registry.dto';
 import { RegistryWithTokenDto } from './dto/registry-with-token.dto';
 import { RegistryDto } from './dto/registry.dto';
 import { UpdateRegistryDto } from './dto/update-registry.dto';
+import { HostDuplicateException } from './exceptions/host-duplicate.exception';
 
 @Injectable()
 export class RegistryService {
@@ -54,7 +53,11 @@ export class RegistryService {
         db.serialize(() => {
           let sql = `INSERT INTO registry (name, host, token, tag) VALUES (?, ?, ?, ?)`;
           db.run(sql, [name, host, encryptedToken, tag], (error) => {
-            if (error) throw error;
+            if (error) {
+              if (error.message === 'SQLITE_CONSTRAINT: UNIQUE constraint failed: registry.host')
+                return reject(new HostDuplicateException());
+              return reject(error);
+            }
           });
 
           sql = `SELECT id, name, host, tag FROM registry WHERE name=? AND host=? AND ifnull(token, '')=? AND ifnull(tag, '')=? ORDER BY id DESC LIMIT 1`;

@@ -8,6 +8,12 @@ import { HttpException, HttpStatus } from '@nestjs/common';
  */
 export class BlobUploadInvalidException extends HttpException {
   constructor() {
-    super('BlobUploadInvalid', HttpStatus.BAD_REQUEST);
+    super(
+      {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'BlobUploadInvalid',
+      },
+      HttpStatus.BAD_REQUEST
+    );
   }
 }

@@ -9,10 +9,16 @@ import { RegistryDto } from '../src/registry/dto/registry.dto';
 
 interface RegistryItemProps {
   item: RegistryDto;
+  onClickRemove: (item: RegistryDto) => void;
 }
 
-const RegistryItem: FC<RegistryItemProps> = ({ item: { name, status, checkedAt, host, repositories } }) => {
+const RegistryItem: FC<RegistryItemProps> = ({ item, onClickRemove }) => {
+  const { name, status, checkedAt, host, repositories } = item;
   const repositoriesLength = repositories.length;
+
+  const handleClickRemove = () => {
+    onClickRemove(item);
+  };
 
   return (
     <Container className="noselect">
@@ -37,7 +43,7 @@ const RegistryItem: FC<RegistryItemProps> = ({ item: { name, status, checkedAt, 
           );
         })}
       </ul>
-      <button className="remove-wrapper">
+      <button className="remove-wrapper" onClick={handleClickRemove}>
         <FontAwesomeIcon className="remove-icon" icon={faTrashAlt} />
       </button>
     </Container>
@@ -84,6 +90,8 @@ const Container = styled.div`
     .date {
       margin-left: 6px;
       font-size: 14px;
+      color: #777777;
+      letter-spacing: -0.2px;
     }
   }
 
@@ -138,15 +146,16 @@ const Container = styled.div`
     border: none;
     background-color: transparent;
     border-radius: 2px;
-    width: 20px;
-    height: 20px;
+    width: 25px;
+    height: 25px;
     justify-content: center;
     align-items: center;
-    color: #b71c1c;
+    color: #dc9690;
     cursor: pointer;
+    font-size: 17px;
 
     &:hover {
-      opacity: 0.7;
+      color: #b71c1c;
     }
   }
 `;

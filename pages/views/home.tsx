@@ -3,7 +3,9 @@ import { useRouter } from 'next/dist/client/router';
 import { FC, KeyboardEventHandler, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
-import { search } from 'reducers/registry';
+import { closeAlertDialog, openAlertDialog } from 'reducers/alert-dialog';
+import { removeRegistry, search } from 'reducers/registry';
+import { RegistryDto } from 'src/registry/dto/registry.dto';
 import styled from 'styled-components';
 
 import { faServer } from '@fortawesome/free-solid-svg-icons';
@@ -33,6 +35,25 @@ const HomePage: FC<HomePageProps> = () => {
     }
   };
 
+  const handleClickRemove = ({ id }: RegistryDto) => {
+    dispatch(
+      openAlertDialog({
+        content: 'Are you sure you want to remove the registry?',
+        options: {
+          buttons: [
+            {
+              label: 'Delete',
+              onClick: () => {
+                dispatch(removeRegistry(id));
+              },
+            },
+          ],
+          cancelable: true,
+        },
+      })
+    );
+  };
+
   useEffect(() => {
     dispatch(search(''));
   }, []);
@@ -51,7 +72,7 @@ const HomePage: FC<HomePageProps> = () => {
         ) : (
           <ul>
             {registry.searchedRegistries.map((registry, index) => (
-              <RegistryItem key={registry.id} item={registry} />
+              <RegistryItem key={registry.id} item={registry} onClickRemove={handleClickRemove} />
             ))}
           </ul>
         )}

@@ -7,6 +7,12 @@ import { HttpException, HttpStatus } from '@nestjs/common';
  */
 export class ManifestUnverifiedException extends HttpException {
   constructor() {
-    super('ManifestUnverified', HttpStatus.BAD_REQUEST);
+    super(
+      {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'ManifestUnverified',
+      },
+      HttpStatus.BAD_REQUEST
+    );
   }
 }

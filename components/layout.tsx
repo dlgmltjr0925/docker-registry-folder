@@ -5,6 +5,7 @@ import { RootState } from 'reducers';
 import { closeSideBar, openSideBar } from 'reducers/layout';
 import styled from 'styled-components';
 
+import AlertDialog from './alert-dialog';
 import Header from './header';
 import SideBar from './side-bar';
 
@@ -22,7 +23,13 @@ const Layout = ({ children }: PropsWithChildren<LayoutProps>) => {
   );
   const dispatch = useDispatch();
 
-  if (EXCEPTION_PAGE.includes(router.pathname)) return <Container>{children}</Container>;
+  if (EXCEPTION_PAGE.includes(router.pathname))
+    return (
+      <Container>
+        {children}
+        <AlertDialog />
+      </Container>
+    );
 
   useEffect(() => {
     let status = isOpenedSideBar;
@@ -43,13 +50,20 @@ const Layout = ({ children }: PropsWithChildren<LayoutProps>) => {
     if (!accessToken) router.replace('/login');
   }, [accessToken]);
 
-  if (!accessToken) return <Container>{children}</Container>;
+  if (!accessToken)
+    return (
+      <Container>
+        {children}
+        <AlertDialog />
+      </Container>
+    );
 
   return (
     <Container isOpened={isOpenedSideBar}>
       <Header />
       <SideBar />
       <div className="content-container">{children}</div>
+      <AlertDialog />
     </Container>
   );
 };

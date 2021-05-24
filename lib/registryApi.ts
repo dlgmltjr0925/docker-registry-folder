@@ -12,3 +12,11 @@ export const search = (keyword: string): Promise<AxiosResponse<RegistryListRespo
     throw error;
   }
 };
+
+export const remove = (id: number): Promise<AxiosResponse> => {
+  try {
+    return axios.delete(`${window.location.origin}/api/registry/${id}`);
+  } catch (error) {
+    throw error;
+  }
+};
