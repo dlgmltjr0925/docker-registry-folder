@@ -1,6 +1,6 @@
 import { handleChangeText } from 'lib/event-handles';
 import { useRouter } from 'next/dist/client/router';
-import { FC, KeyboardEventHandler, useCallback, useState } from 'react';
+import { FC, KeyboardEventHandler, useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
 import { search } from 'reducers/registry';
@@ -19,6 +19,9 @@ const HomePage: FC<HomePageProps> = () => {
     auth,
     registry,
   }));
+
+  if (!auth.accessToken) return null;
+
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -30,7 +33,9 @@ const HomePage: FC<HomePageProps> = () => {
     }
   };
 
-  if (!auth.accessToken) return null;
+  useEffect(() => {
+    dispatch(search(''));
+  }, []);
 
   return (
     <Container>

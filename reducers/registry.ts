@@ -53,7 +53,6 @@ function* searchSaga(action: RegistryAction) {
   try {
     const { keyword } = action.payload as Keyword;
     const res: AxiosResponse<RegistryListResponse> = yield call(registryApi.search, keyword);
-    console.log(res.data);
     if (res?.status === 200) {
       yield put({
         type: RegistryActionType.SEARCH_SUCCESS,
