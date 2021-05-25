@@ -26,20 +26,20 @@ export class AppController {
     return {};
   }
 
-  @Render('account')
-  @Get('account')
+  @Render('setting/account')
+  @Get('setting/account')
   async account() {
     return {};
   }
 
-  @Render('registries')
-  @Get('registries')
+  @Render('setting/registries')
+  @Get('setting/registries')
   async registries() {
     return {};
   }
 
-  @Render('users')
-  @Get('users')
+  @Render('setting/users')
+  @Get('setting/users')
   async users() {
     return {};
   }

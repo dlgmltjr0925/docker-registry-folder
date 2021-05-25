@@ -53,10 +53,20 @@ const SideBar: FC<SideBarProps> = (props) => {
         </div>
       )}
       {user?.role !== 'VIEWER' && (
-        <SideMenu route="/registries" label="Registries" icon={faServer} isSelected={route === '/views/registries'} />
+        <SideMenu
+          route="/setting/registries"
+          label="Registries"
+          icon={faServer}
+          isSelected={route === '/views/setting/registries'}
+        />
       )}
       {user?.role === 'ADMIN' && (
-        <SideMenu route="/users" label="Users" icon={faUsersCog} isSelected={route === '/views/users'} />
+        <SideMenu
+          route="/setting/users"
+          label="Users"
+          icon={faUsersCog}
+          isSelected={route === '/views/setting/users'}
+        />
       )}
     </Container>
   );

@@ -54,3 +54,29 @@ table {
   -ms-user-select: none;
   user-select: none;
 }
+
+.widget-sub-container {
+	padding: 10px 15px;
+	border-bottom: 1px solid #ddd;
+}
+
+.widget-sub-container .widget-button {
+	font-size: 11px;
+	padding: 4px 8px;
+}
+
+.empty-list-label {
+	color: #777;
+	text-align: center;
+	padding: 20px;
+	font-size: 15px;
+}
+
+:root {
+	--button-red-inactive: #dc9690;
+	--button-red-active: #b71c1c;
+	--button-red-hover: #a72020;
+	--button-blue-inactive: #7ea2c2;
+	--button-blue-active: #286090;
+	--button-blue-hover: #1a4e7a;
+}

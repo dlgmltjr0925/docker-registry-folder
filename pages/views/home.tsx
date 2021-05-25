@@ -3,7 +3,7 @@ import { useRouter } from 'next/dist/client/router';
 import { FC, KeyboardEventHandler, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
-import { closeAlertDialog, openAlertDialog } from 'reducers/alert-dialog';
+import { openAlertDialog } from 'reducers/alert-dialog';
 import { removeRegistry, search } from 'reducers/registry';
 import { RegistryDto } from 'src/registry/dto/registry.dto';
 import styled from 'styled-components';
@@ -62,7 +62,7 @@ const HomePage: FC<HomePageProps> = () => {
     <Container>
       <WidgetContainer title="Registries" titleIcon={faServer}>
         <WidgetSearch
-          placeholder="Search by name, tag, status, URL..."
+          placeholder="Search by name, host, tag..."
           value={keyword}
           onChange={handleChangeText(setKeyword)}
           onKeyPress={handleKeyPress}

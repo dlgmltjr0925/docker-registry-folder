@@ -15,11 +15,11 @@ const getRouteName = (route: string): [string, string | string[]] => {
   switch (route) {
     case '/views/home':
       return ['home', 'registries'];
-    case '/views/account':
+    case '/views/setting/account':
       return ['account', 'account management'];
-    case '/views/registries':
+    case '/views/setting/registries':
       return ['registries', 'registry management'];
-    case '/views/users':
+    case '/views/setting/users':
       return ['users', 'user management'];
     default:
       return ['', ''];
@@ -52,7 +52,7 @@ const Header: FC<HeaderProps> = () => {
           {user?.username || ''}
         </p>
         <div className="user-controll-wrapper">
-          <Link href="/account">
+          <Link href="/setting/account">
             <span className="my-account-button user-controll-button">
               <FontAwesomeIcon className="user-controll-icon" icon={faUserCog} />
               my account

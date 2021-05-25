@@ -31,6 +31,7 @@ const Container = styled.div`
   background-color: white;
   border: 1px solid #ddd;
   border-radius: 3px;
+  min-width: 480px;
 
   .title-container {
     flex: 1;

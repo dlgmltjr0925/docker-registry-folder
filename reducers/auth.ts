@@ -114,7 +114,9 @@ function* signOutSaga() {
 }
 
 const authReducer = (state = initialState, action: AuthAction): AuthState => {
-  if (axios.defaults.headers['Authorization']) delete axios.defaults.headers['Authorization'];
+  if (state.accessToken && axios.defaults.headers['Authorization'] !== `bearer ${state.accessToken}`) {
+    axios.defaults.headers['Authorization'] = `bearer ${state.accessToken}`;
+  }
   switch (action.type) {
     case AuthActionType.SIGN_UP:
     case AuthActionType.SIGN_IN:

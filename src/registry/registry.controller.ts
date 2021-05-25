@@ -1,7 +1,5 @@
-import {
-    Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, Req, UseFilters, UseGuards,
-    UsePipes
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseFilters, UseGuards, UsePipes } from '@nestjs/common';
+import { JwtAuthGuard } from '../../src/auth/jwt-auth.guard';
 
 import { Role } from '../auth/interfaces/role.enum';
 import { Roles } from '../auth/roles.decorator';
@@ -25,7 +23,7 @@ export interface RegistryListResponse {
 @Controller('api/registry')
 @UseFilters(DockerRegistryExceptionFilter)
 @UseFilters(RegistryExceptionFilter)
-// @UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard)
 export class RegistryController {
   constructor(private registryService: RegistryService, private dockerRegistryService: DockerRegistryService) {}
 
