@@ -13,9 +13,9 @@ export const search = (keyword: string): Promise<AxiosResponse<RegistryListRespo
   }
 };
 
-export const remove = (id: number): Promise<AxiosResponse> => {
+export const removeRegistries = (ids: number[]): Promise<AxiosResponse> => {
   try {
-    return axios.delete(`${window.location.origin}/api/registry/${id}`);
+    return axios.delete(`${window.location.origin}/api/registry/${ids.join(',')}`);
   } catch (error) {
     throw error;
   }

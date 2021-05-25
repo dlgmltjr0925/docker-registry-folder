@@ -1,5 +1,7 @@
+import { useRouter } from 'next/dist/client/router';
 import { ChangeEventHandler, KeyboardEventHandler, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { openAlertDialog } from 'reducers/alert-dialog';
 import { RegistryDto } from 'src/registry/dto/registry.dto';
 import styled from 'styled-components';
 
@@ -11,7 +13,7 @@ import WidgetContainer from '../../../components/widget-container';
 import WidgetSearch from '../../../components/widget-search';
 import { handleChangeText } from '../../../lib/event-handles';
 import { RootState } from '../../../reducers';
-import { search } from '../../../reducers/registry';
+import { removeRegistries, search } from '../../../reducers/registry';
 
 const RegistriesPage = () => {
   const { auth, registry } = useSelector(({ auth, registry }: RootState) => ({
@@ -22,6 +24,7 @@ const RegistriesPage = () => {
   if (!auth.accessToken) return null;
 
   const dispatch = useDispatch();
+  const route = useRouter();
 
   const [keyword, setKeyword] = useState<string>('');
   const [selectedRegistries, setSelectedRegistries] = useState<number[]>([]);
@@ -49,6 +52,34 @@ const RegistriesPage = () => {
     }
   };
 
+  const handleClickRemove = () => {
+    if (selectedRegistries.length === 0) return;
+    dispatch(
+      openAlertDialog({
+        content: 'Are you sure you want to remove the registries?',
+        options: {
+          buttons: [
+            {
+              label: 'Delete',
+              onClick: () => {
+                dispatch(removeRegistries(selectedRegistries));
+              },
+            },
+          ],
+          cancelable: true,
+        },
+      })
+    );
+  };
+
+  const handleClickAdd = () => {
+    route.push('/setting/registry/new');
+  };
+
+  useEffect(() => {
+    setSelectedRegistries([]);
+  }, [registry.searchedRegistries.length]);
+
   useEffect(() => {
     dispatch(search(''));
   }, []);
@@ -60,10 +91,11 @@ const RegistriesPage = () => {
           <IconButton
             className={`widget-button button-remove ${selectedRegistries.length > 0 ? 'button-remove-active' : ''}`}
             icon={faTrashAlt}
+            onClick={handleClickRemove}
           >
             Remove
           </IconButton>
-          <IconButton className="widget-button button-add" icon={faPlus}>
+          <IconButton className="widget-button button-add" icon={faPlus} onClick={handleClickAdd}>
             Add registry
           </IconButton>
         </div>

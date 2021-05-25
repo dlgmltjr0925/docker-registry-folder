@@ -1,6 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { JwtAuthGuard } from '../../src/auth/jwt-auth.guard';
+import {
+    BadRequestException, Body, Controller, Delete, Get, Param, Post, Put, Query, UseFilters,
+    UseGuards, UsePipes
+} from '@nestjs/common';
 
+import { JwtAuthGuard } from '../../src/auth/jwt-auth.guard';
 import { Role } from '../auth/interfaces/role.enum';
 import { Roles } from '../auth/roles.decorator';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
@@ -75,9 +78,10 @@ export class RegistryController {
     }
   }
 
-  @Delete(':id')
+  @Delete(':ids')
   @Roles(Role.ADMIN, Role.MANAGER)
-  remove(@Param('id') id: string) {
-    return this.registryService.remove(+id);
+  removeById(@Param('ids') ids: string) {
+    if (!/[\d,]*\d$/.test(ids)) throw new BadRequestException('Invalid params');
+    return this.registryService.removeByIds(ids);
   }
 }

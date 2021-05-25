@@ -148,12 +148,12 @@ export class RegistryService {
     });
   }
 
-  remove(id: number) {
+  removeByIds(ids: string) {
     return new Promise((resolve, reject) => {
       const db = connect();
       try {
-        const sql = `DELETE FROM registry WHERE id=?`;
-        db.run(sql, [id], (error) => {
+        const sql = `DELETE FROM registry WHERE id IN (${ids})`;
+        db.run(sql, (error) => {
           if (error) return reject(error);
           resolve(true);
         });
