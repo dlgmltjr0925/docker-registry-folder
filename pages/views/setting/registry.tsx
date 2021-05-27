@@ -3,6 +3,7 @@ import TextInput from 'components/text-input';
 import WidgetContainer from 'components/widget-container';
 import { handleChangeText } from 'lib/event-handles';
 import { GetServerSideProps } from 'next';
+import { useRouter } from 'next/dist/client/router';
 import { ChangeEvent, FC, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
@@ -12,7 +13,6 @@ import styled from 'styled-components';
 
 import { faEdit, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { Switch } from '@material-ui/core';
-import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 
 interface RegistryPageProps {
   prevRegistry?: UpdateRegistryDto;
@@ -27,6 +27,7 @@ const RegistryPage: FC<RegistryPageProps> = ({ prevRegistry }) => {
   if (!auth.accessToken) return null;
 
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const [name, setName] = useState<string>(prevRegistry?.name || '');
   const [host, setHost] = useState<string>(prevRegistry?.host || '');
@@ -44,7 +45,7 @@ const RegistryPage: FC<RegistryPageProps> = ({ prevRegistry }) => {
   };
 
   const handleClickSubmit = () => {
-    if (!isActive || registry.loading) return;
+    if (!isActive || registry.addRegistry.loading || registry.updateRegistry.loading) return;
     if (!prevRegistry) {
       dispatch(
         addRegistry({
@@ -58,6 +59,12 @@ const RegistryPage: FC<RegistryPageProps> = ({ prevRegistry }) => {
     } else {
     }
   };
+
+  useEffect(() => {
+    if ((isUpdateMode && registry.updateRegistry.done) || (!isUpdateMode && registry.addRegistry.done)) {
+      router.push('/setting/registries');
+    }
+  }, [registry]);
 
   return (
     <Container>
@@ -127,7 +134,7 @@ const RegistryPage: FC<RegistryPageProps> = ({ prevRegistry }) => {
           className={`button-add ${isActive ? 'button-add-active' : ''}`}
           type="submit"
           icon={isUpdateMode ? faEdit : faPlus}
-          loading={registry.loading}
+          loading={registry[isUpdateMode ? 'updateRegistry' : 'addRegistry'].loading}
           onClick={handleClickSubmit}
         >
           {isUpdateMode ? 'Update' : 'Add registry'}

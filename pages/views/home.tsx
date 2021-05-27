@@ -24,6 +24,8 @@ const HomePage: FC<HomePageProps> = () => {
 
   if (!auth.accessToken) return null;
 
+  console.log(registry);
+
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -67,11 +69,11 @@ const HomePage: FC<HomePageProps> = () => {
           onChange={handleChangeText(setKeyword)}
           onKeyPress={handleKeyPress}
         />
-        {registry.searchedRegistries.length === 0 ? (
+        {registry.search.searchedRegistries.length === 0 ? (
           <p className="empty-list-label">No registry available</p>
         ) : (
           <ul>
-            {registry.searchedRegistries.map((registry, index) => (
+            {registry.search.searchedRegistries.map((registry, index) => (
               <RegistryItem key={registry.id} item={registry} onClickRemove={handleClickRemove} />
             ))}
           </ul>

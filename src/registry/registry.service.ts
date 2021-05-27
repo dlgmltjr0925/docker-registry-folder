@@ -153,7 +153,7 @@ export class RegistryService {
   }
 
   update(updateRegistryDto: UpdateRegistryDto) {
-    return new Promise((resolve, reject) => {
+    return new Promise<boolean>((resolve, reject) => {
       const db = connect();
       try {
         const { id, name, host, username, password, tag } = updateRegistryDto;

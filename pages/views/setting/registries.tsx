@@ -40,7 +40,7 @@ const RegistriesPage: FC<RegistriesPageProps> = () => {
 
   const handleChangeAllRegistries: ChangeEventHandler<HTMLInputElement> = ({ target: { checked } }) => {
     if (checked) {
-      setSelectedRegistries(registry.searchedRegistries.map(({ id }) => id));
+      setSelectedRegistries(registry.search.searchedRegistries.map(({ id }) => id));
     } else {
       setSelectedRegistries([]);
     }
@@ -80,7 +80,7 @@ const RegistriesPage: FC<RegistriesPageProps> = () => {
 
   useEffect(() => {
     setSelectedRegistries([]);
-  }, [registry.searchedRegistries.length]);
+  }, [registry.search.searchedRegistries.length]);
 
   useEffect(() => {
     dispatch(search(''));
@@ -107,14 +107,14 @@ const RegistriesPage: FC<RegistriesPageProps> = () => {
           onChange={handleChangeText(setKeyword)}
           onKeyPress={handleKeyPress}
         />
-        {registry.searchedRegistries.length === 0 ? (
+        {registry.search.searchedRegistries.length === 0 ? (
           <p className="empty-list-label">No registry available</p>
         ) : (
           <>
             <div className="registry-list-header">
               <input
                 type="checkbox"
-                checked={selectedRegistries.length === registry.searchedRegistries.length}
+                checked={selectedRegistries.length === registry.search.searchedRegistries.length}
                 onChange={handleChangeAllRegistries}
               />
               <span className="name">name</span>
@@ -122,7 +122,7 @@ const RegistriesPage: FC<RegistriesPageProps> = () => {
               <span className="tag">tag</span>
             </div>
             <ul className="registry-list-container">
-              {registry.searchedRegistries.map((registry) => (
+              {registry.search.searchedRegistries.map((registry) => (
                 <SettingRegistryItem
                   key={registry.id}
                   item={registry}

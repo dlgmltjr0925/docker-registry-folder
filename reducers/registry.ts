@@ -13,12 +13,23 @@ interface SearchedRegistry extends RegistryDto {
   loading: boolean;
 }
 
-export interface RegistryState {
+interface SearchState {
   loading: boolean;
-  error: string | null;
   keyword: string;
   searchedRegistries: SearchedRegistry[];
-  selectedRegistry: RegistryDto | null;
+}
+
+interface AddRegistryState {
+  loading: boolean;
+  done: boolean;
+}
+
+type UpdateRegistryState = AddRegistryState;
+
+export interface RegistryState {
+  search: SearchState;
+  addRegistry: AddRegistryState;
+  updateRegistry: UpdateRegistryState;
 }
 
 export enum RegistryActionType {
@@ -76,11 +87,19 @@ interface RegistryAction<T = Payload> {
 }
 
 export const initialState: RegistryState = {
-  loading: false,
-  error: null,
-  keyword: '',
-  searchedRegistries: [],
-  selectedRegistry: null,
+  search: {
+    loading: false,
+    keyword: '',
+    searchedRegistries: [],
+  },
+  addRegistry: {
+    loading: false,
+    done: false,
+  },
+  updateRegistry: {
+    loading: false,
+    done: false,
+  },
 };
 
 export const search = (keyword: string): RegistryAction<Keyword> => ({
@@ -158,13 +177,25 @@ function* addRegistrySaga(action: RegistryAction<AddRegistry>) {
         payload: { registry: res.data.registry },
       });
     }
-    console.log(res);
   } catch (error) {
-    console.error('here', error.response);
     if (error.response) {
       const { message } = error.response.data;
       yield put({
         type: RegistryActionType.ADD_REGISTRY_ERROR,
+        payload: { error: message },
+      });
+    }
+  }
+}
+
+function* updateRegistrySaga(action: RegistryAction<UpdateRegistry>) {
+  const { registry } = action.payload;
+  try {
+  } catch (error) {
+    if (error.response) {
+      const { message } = error.response.data;
+      yield put({
+        type: RegistryActionType.UPDATE_REGISTRY_ERROR,
         payload: { error: message },
       });
     }
@@ -177,70 +208,91 @@ const registryReducer = (state = initialState, action: RegistryAction): Registry
       const { keyword } = action.payload as Keyword;
       return {
         ...state,
-        loading: true,
-        error: null,
-        keyword,
+        search: {
+          ...state.search,
+          keyword,
+          loading: true,
+        },
       };
     case RegistryActionType.SEARCH_SUCCESS:
       const { registries } = action.payload as RegistryListResponse;
       return {
         ...state,
-        loading: false,
-        error: null,
-        searchedRegistries: registries.map((registry) => ({ ...registry, loading: false, error: null })),
+        search: {
+          ...state.search,
+          loading: false,
+          searchedRegistries: registries.map((registry) => ({ ...registry, loading: false })),
+        },
       };
     case RegistryActionType.ADD_REGISTRY_ERROR:
+    case RegistryActionType.UPDATE_REGISTRY_ERROR:
     case RegistryActionType.SEARCH_ERROR: {
       const { error } = action.payload as RegistryError;
-      return {
-        ...state,
-        loading: false,
-        error,
-      };
+      return initialState;
     }
     case RegistryActionType.REMOVE: {
       const { willBeRemovedRegistryIds } = action.payload as Remove;
       return {
         ...state,
-        searchedRegistries: state.searchedRegistries.map((registry) => ({
-          ...registry,
-          loading: willBeRemovedRegistryIds.includes(registry.id),
-        })),
+        search: {
+          ...state.search,
+          searchedRegistries: state.search.searchedRegistries.map((registry) => ({
+            ...registry,
+            loading: willBeRemovedRegistryIds.includes(registry.id),
+          })),
+        },
       };
     }
     case RegistryActionType.REMOVE_SUCCESS: {
       const { willBeRemovedRegistryIds } = action.payload as Remove;
       return {
         ...state,
-        searchedRegistries: state.searchedRegistries.filter(({ id }) => !willBeRemovedRegistryIds.includes(id)),
+        search: {
+          ...state.search,
+          searchedRegistries: state.search.searchedRegistries.filter(
+            ({ id }) => !willBeRemovedRegistryIds.includes(id)
+          ),
+        },
       };
     }
     case RegistryActionType.REMOVE_ERROR: {
       const { error } = action.payload as RemoveError;
       return {
         ...state,
-        error,
-        searchedRegistries: state.searchedRegistries.map((registry) => ({
-          ...registry,
-          loading: false,
-        })),
+        search: {
+          ...state.search,
+          searchedRegistries: state.search.searchedRegistries.map((registry) => ({
+            ...registry,
+            loading: false,
+          })),
+        },
       };
     }
     case RegistryActionType.ADD_REGISTRY: {
       return {
         ...state,
-        loading: true,
+        addRegistry: {
+          ...state.addRegistry,
+          loading: true,
+        },
       };
     }
     case RegistryActionType.ADD_REGISTRY_SUCCESS: {
-      const { registry } = action.payload as CreateRegistryResponse;
       return {
         ...state,
-        loading: false,
-        searchedRegistries: state.searchedRegistries.concat({
-          ...registry,
+        addRegistry: {
           loading: false,
-        }) as SearchedRegistry[],
+          done: true,
+        },
+      };
+    }
+    case RegistryActionType.UPDATE_REGISTRY_SUCCESS: {
+      return {
+        ...state,
+        updateRegistry: {
+          loading: false,
+          done: true,
+        },
       };
     }
     case RegistryActionType.SIGN_OUT:
@@ -254,6 +306,7 @@ export function* registrySaga() {
   yield takeLatest(RegistryActionType.SEARCH, searchSaga);
   yield takeLatest(RegistryActionType.REMOVE, removeRegistrySaga);
   yield takeLatest(RegistryActionType.ADD_REGISTRY, addRegistrySaga);
+  yield takeLatest(RegistryActionType.UPDATE_REGISTRY, updateRegistrySaga);
 }
 
 export default registryReducer;

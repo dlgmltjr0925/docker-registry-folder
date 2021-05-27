@@ -68,7 +68,7 @@ export class RegistryController {
   @Put()
   @Roles(Role.ADMIN, Role.MANAGER)
   @UsePipes(new JoiValidationPipe(UpdateRegistrySchema))
-  async update(@Body() updateRegistryDto: UpdateRegistryDto) {
+  async update(@Body() updateRegistryDto: UpdateRegistryDto): Promise<boolean> {
     try {
       const { host, username, password } = updateRegistryDto;
       await this.dockerRegistryService.checkApiVersion({ host, username, password });
