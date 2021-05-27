@@ -1,17 +1,17 @@
-import { FC, PropsWithChildren } from 'react';
+import { DetailedHTMLProps, FC, HTMLAttributes, PropsWithChildren } from 'react';
 import styled from 'styled-components';
 
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-interface WidgetContainerProps {
+interface WidgetContainerProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   title?: string;
   titleIcon?: IconProp;
 }
 
-const WidgetContainer: FC<PropsWithChildren<WidgetContainerProps>> = ({ title, titleIcon, children }) => {
+const WidgetContainer: FC<PropsWithChildren<WidgetContainerProps>> = ({ title, titleIcon, children, ...props }) => {
   return (
-    <Container>
+    <Container {...props}>
       {/* title */}
       {title && (
         <div className="title-container">

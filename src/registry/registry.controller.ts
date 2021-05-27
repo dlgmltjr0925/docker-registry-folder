@@ -62,7 +62,7 @@ export class RegistryController {
   @Get(':id')
   @Roles(Role.ADMIN, Role.MANAGER, Role.VIEWER)
   findOne(@Param('id') id: string) {
-    return this.registryService.findOne(+id);
+    return this.registryService.findOneById(+id);
   }
 
   @Put()
@@ -81,7 +81,7 @@ export class RegistryController {
   @Delete(':ids')
   @Roles(Role.ADMIN, Role.MANAGER)
   removeById(@Param('ids') ids: string) {
-    if (!/[\d,]*\d$/.test(ids)) throw new BadRequestException('Invalid params');
+    if (!/^\d+(?:,\d+)*$/.test(ids)) throw new BadRequestException('Invalid params');
     return this.registryService.removeByIds(ids);
   }
 }

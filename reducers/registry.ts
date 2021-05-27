@@ -3,8 +3,9 @@ import { AxiosResponse } from 'axios';
 import { call, put, takeLatest } from '@redux-saga/core/effects';
 
 import * as registryApi from '../lib/registryApi';
+import { CreateRegistryDto } from '../src/registry/dto/create-registry.dto';
 import { RegistryDto } from '../src/registry/dto/registry.dto';
-import { RegistryListResponse } from '../src/registry/registry.controller';
+import { CreateRegistryResponse, RegistryListResponse } from '../src/registry/registry.controller';
 import { closeAlertDialog } from './alert-dialog';
 
 interface SearchedRegistry extends RegistryDto {
@@ -26,6 +27,9 @@ export enum RegistryActionType {
   REMOVE = 'REMOVE',
   REMOVE_SUCCESS = 'REMOVE_SUCCESS',
   REMOVE_ERROR = 'REMOVE_ERROR',
+  ADD_REGISTRY = 'ADD_REGISTRY',
+  ADD_REGISTRY_SUCCESS = 'ADD_REGISTRY_SUCCESS',
+  ADD_REGISTRY_ERROR = 'ADD_REGISTRY_ERROR',
   SIGN_OUT = 'SIGN_OUT',
 }
 
@@ -45,7 +49,18 @@ interface RegistryError {
   error: string;
 }
 
-type Payload = Keyword | RegistryListResponse | RegistryError | Remove | RemoveError;
+interface AddRegistry {
+  registry: CreateRegistryDto;
+}
+
+type Payload =
+  | Keyword
+  | RegistryListResponse
+  | RegistryError
+  | Remove
+  | RemoveError
+  | AddRegistry
+  | CreateRegistryResponse;
 
 interface RegistryAction<T = Payload> {
   type: RegistryActionType;
@@ -75,6 +90,11 @@ export const removeRegistries = (ids: number[]): RegistryAction<Remove> => ({
   payload: { willBeRemovedRegistryIds: ids },
 });
 
+export const addRegistry = (registry: CreateRegistryDto): RegistryAction<AddRegistry> => ({
+  type: RegistryActionType.ADD_REGISTRY,
+  payload: { registry },
+});
+
 function* searchSaga(action: RegistryAction) {
   try {
     const { keyword } = action.payload as Keyword;
@@ -94,8 +114,8 @@ function* searchSaga(action: RegistryAction) {
   }
 }
 
-function* removeRegistrySaga(action: RegistryAction) {
-  const { willBeRemovedRegistryIds } = action.payload as Remove;
+function* removeRegistrySaga(action: RegistryAction<Remove>) {
+  const { willBeRemovedRegistryIds } = action.payload;
   try {
     const res: AxiosResponse = yield call(registryApi.removeRegistries, willBeRemovedRegistryIds);
     if (res?.status === 200) {
@@ -112,6 +132,29 @@ function* removeRegistrySaga(action: RegistryAction) {
     });
   } finally {
     yield put(closeAlertDialog());
+  }
+}
+
+function* addRegistrySaga(action: RegistryAction<AddRegistry>) {
+  const { registry } = action.payload;
+  try {
+    const res: AxiosResponse = yield call(registryApi.addRegistry, registry);
+    if (res?.status === 201) {
+      yield put({
+        type: RegistryActionType.ADD_REGISTRY_SUCCESS,
+        payload: { registry: res.data.registry },
+      });
+    }
+    console.log(res);
+  } catch (error) {
+    console.error('here', error.response);
+    if (error.response) {
+      const { message } = error.response.data;
+      yield put({
+        type: RegistryActionType.ADD_REGISTRY_ERROR,
+        payload: { error: message },
+      });
+    }
   }
 }
 
@@ -133,6 +176,7 @@ const registryReducer = (state = initialState, action: RegistryAction): Registry
         error: null,
         searchedRegistries: registries.map((registry) => ({ ...registry, loading: false, error: null })),
       };
+    case RegistryActionType.ADD_REGISTRY_ERROR:
     case RegistryActionType.SEARCH_ERROR: {
       const { error } = action.payload as RegistryError;
       return {
@@ -169,6 +213,23 @@ const registryReducer = (state = initialState, action: RegistryAction): Registry
         })),
       };
     }
+    case RegistryActionType.ADD_REGISTRY: {
+      return {
+        ...state,
+        loading: true,
+      };
+    }
+    case RegistryActionType.ADD_REGISTRY_SUCCESS: {
+      const { registry } = action.payload as CreateRegistryResponse;
+      return {
+        ...state,
+        loading: false,
+        searchedRegistries: state.searchedRegistries.concat({
+          ...registry,
+          loading: false,
+        }) as SearchedRegistry[],
+      };
+    }
     case RegistryActionType.SIGN_OUT:
       return initialState;
     default:
@@ -179,6 +240,7 @@ const registryReducer = (state = initialState, action: RegistryAction): Registry
 export function* registrySaga() {
   yield takeLatest(RegistryActionType.SEARCH, searchSaga);
   yield takeLatest(RegistryActionType.REMOVE, removeRegistrySaga);
+  yield takeLatest(RegistryActionType.ADD_REGISTRY, addRegistrySaga);
 }
 
 export default registryReducer;

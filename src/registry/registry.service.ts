@@ -109,7 +109,7 @@ export class RegistryService {
     });
   }
 
-  findOne(id: number) {
+  findOneById(id: number) {
     return new Promise((resolve, reject) => {
       const db = connect();
       try {
@@ -117,6 +117,32 @@ export class RegistryService {
         db.each(sql, [id], (error, row) => {
           if (error) return reject(error);
           resolve(row);
+        });
+      } catch (error) {
+        reject(error);
+      } finally {
+        db.close();
+      }
+    });
+  }
+
+  findOneWithAccessInfoById(id: number) {
+    return new Promise<UpdateRegistryDto | null>((resolve, reject) => {
+      const db = connect();
+      try {
+        const sql = `SELECT id, name, host, tag, token FROM registry WHERE id=?`;
+        db.all(sql, [id], (error, rows) => {
+          if (error) return reject(error);
+          if (rows.length === 0) resolve(null);
+          const { token, ...registry } = rows[0];
+          if (token) {
+            const decryptedToken = this.decrypt(token);
+            const decodedToken = Buffer.from(decryptedToken, 'base64').toString('utf-8');
+            const [username, password] = decodedToken.split(':');
+            registry.username = username;
+            registry.password = password;
+          }
+          resolve(registry);
         });
       } catch (error) {
         reject(error);

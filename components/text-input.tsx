@@ -31,7 +31,6 @@ interface ContainerProps {
 
 const Container = styled.div<ContainerProps>`
   display: inline-flex;
-  min-height: 55px;
   width: 100%;
 
   input {

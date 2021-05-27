@@ -18,6 +18,7 @@ const getRouteName = (route: string): [string, string | string[]] => {
     case '/views/setting/account':
       return ['account', 'account management'];
     case '/views/setting/registries':
+    case '/views/setting/registry':
       return ['registries', 'registry management'];
     case '/views/setting/users':
       return ['users', 'user management'];

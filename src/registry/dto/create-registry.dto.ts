@@ -11,7 +11,7 @@ export class CreateRegistryDto {
 export const CreateRegistrySchema = Joi.object({
   name: Joi.string().required(),
   host: Joi.string().required(),
-  username: Joi.string().default(null),
-  password: Joi.string().default(null),
-  tag: Joi.string().default(null),
+  username: Joi.string().allow(null).default(null),
+  password: Joi.string().allow(null).default(null),
+  tag: Joi.string().allow(null).default(null),
 });

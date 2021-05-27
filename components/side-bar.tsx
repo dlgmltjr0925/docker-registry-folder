@@ -57,7 +57,7 @@ const SideBar: FC<SideBarProps> = (props) => {
           route="/setting/registries"
           label="Registries"
           icon={faServer}
-          isSelected={route === '/views/setting/registries'}
+          isSelected={route === '/views/setting/registries' || route === '/views/setting/registry'}
         />
       )}
       {user?.role === 'ADMIN' && (

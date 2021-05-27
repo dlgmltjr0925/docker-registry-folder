@@ -21,15 +21,17 @@ const Layout = ({ children }: PropsWithChildren<LayoutProps>) => {
       isOpenedSideBar,
     })
   );
+
   const dispatch = useDispatch();
 
-  if (EXCEPTION_PAGE.includes(router.pathname))
+  if (EXCEPTION_PAGE.includes(router.pathname)) {
     return (
       <Container>
         {children}
         <AlertDialog />
       </Container>
     );
+  }
 
   useEffect(() => {
     let status = isOpenedSideBar;

@@ -1,5 +1,5 @@
 import { useRouter } from 'next/dist/client/router';
-import { ChangeEventHandler, KeyboardEventHandler, useEffect, useState } from 'react';
+import { ChangeEventHandler, FC, KeyboardEventHandler, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { openAlertDialog } from 'reducers/alert-dialog';
 import { RegistryDto } from 'src/registry/dto/registry.dto';
@@ -15,7 +15,9 @@ import { handleChangeText } from '../../../lib/event-handles';
 import { RootState } from '../../../reducers';
 import { removeRegistries, search } from '../../../reducers/registry';
 
-const RegistriesPage = () => {
+interface RegistriesPageProps {}
+
+const RegistriesPage: FC<RegistriesPageProps> = () => {
   const { auth, registry } = useSelector(({ auth, registry }: RootState) => ({
     auth,
     registry,
@@ -73,7 +75,7 @@ const RegistriesPage = () => {
   };
 
   const handleClickAdd = () => {
-    route.push('/setting/registry/new');
+    route.push('/setting/registry');
   };
 
   useEffect(() => {
