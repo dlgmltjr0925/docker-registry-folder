@@ -7,7 +7,7 @@ import { useRouter } from 'next/dist/client/router';
 import { ChangeEvent, FC, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
-import { addRegistry } from 'reducers/registry';
+import { addRegistry, updateRegistry } from 'reducers/registry';
 import { UpdateRegistryDto } from 'src/registry/dto/update-registry.dto';
 import styled from 'styled-components';
 
@@ -57,6 +57,16 @@ const RegistryPage: FC<RegistryPageProps> = ({ prevRegistry }) => {
         })
       );
     } else {
+      dispatch(
+        updateRegistry({
+          ...prevRegistry,
+          name: name.trim(),
+          host: host.trim(),
+          tag: tag.trim() !== '' ? tag.trim() : null,
+          username: hasAuth ? username : null,
+          password: hasAuth ? password : null,
+        })
+      );
     }
   };
 

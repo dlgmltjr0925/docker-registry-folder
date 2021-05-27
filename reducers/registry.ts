@@ -191,6 +191,13 @@ function* addRegistrySaga(action: RegistryAction<AddRegistry>) {
 function* updateRegistrySaga(action: RegistryAction<UpdateRegistry>) {
   const { registry } = action.payload;
   try {
+    const res: AxiosResponse = yield call(registryApi.updateRegistry, registry);
+    if (res?.status === 200) {
+      yield put({
+        type: RegistryActionType.UPDATE_REGISTRY_SUCCESS,
+        payload: { registry },
+      });
+    }
   } catch (error) {
     if (error.response) {
       const { message } = error.response.data;
@@ -281,8 +288,17 @@ const registryReducer = (state = initialState, action: RegistryAction): Registry
       return {
         ...state,
         addRegistry: {
-          loading: false,
+          ...state.addRegistry,
           done: true,
+        },
+      };
+    }
+    case RegistryActionType.UPDATE_REGISTRY: {
+      return {
+        ...state,
+        updateRegistry: {
+          ...state.updateRegistry,
+          loading: true,
         },
       };
     }
@@ -290,7 +306,7 @@ const registryReducer = (state = initialState, action: RegistryAction): Registry
       return {
         ...state,
         updateRegistry: {
-          loading: false,
+          ...state.updateRegistry,
           done: true,
         },
       };
