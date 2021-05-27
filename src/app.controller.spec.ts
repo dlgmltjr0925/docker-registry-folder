@@ -10,6 +10,8 @@ import { AppController } from './app.controller';
 import { NextModule } from './app.module';
 import { DynamicJwtModule } from './auth/auth.module';
 import { AuthService } from './auth/auth.service';
+import { DockerRegistryService } from './docker-registry/docker-registry.service';
+import { RegistryService } from './registry/registry.service';
 
 const ENV_PATH = path.resolve('data/.env');
 
@@ -51,7 +53,8 @@ describe('AppController', () => {
 
   it('should be called redirect if has not system admin', async () => {
     const authService = { hasSystemAdmin: async () => false } as AuthService;
-    appController = new AppController(authService);
+    const registryService = new RegistryService(new DockerRegistryService());
+    appController = new AppController(authService, registryService);
     appController.login(res);
   });
 

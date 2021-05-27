@@ -5,6 +5,7 @@ import { call, put, takeLatest } from '@redux-saga/core/effects';
 import * as registryApi from '../lib/registryApi';
 import { CreateRegistryDto } from '../src/registry/dto/create-registry.dto';
 import { RegistryDto } from '../src/registry/dto/registry.dto';
+import { UpdateRegistryDto } from '../src/registry/dto/update-registry.dto';
 import { CreateRegistryResponse, RegistryListResponse } from '../src/registry/registry.controller';
 import { closeAlertDialog } from './alert-dialog';
 
@@ -30,6 +31,9 @@ export enum RegistryActionType {
   ADD_REGISTRY = 'ADD_REGISTRY',
   ADD_REGISTRY_SUCCESS = 'ADD_REGISTRY_SUCCESS',
   ADD_REGISTRY_ERROR = 'ADD_REGISTRY_ERROR',
+  UPDATE_REGISTRY = 'UPDATE_REGISTRY',
+  UPDATE_REGISTRY_SUCCESS = 'UPDATE_REGISTRY_SUCCESS',
+  UPDATE_REGISTRY_ERROR = 'UPDATE_REGISTRY_ERROR',
   SIGN_OUT = 'SIGN_OUT',
 }
 
@@ -51,6 +55,10 @@ interface RegistryError {
 
 interface AddRegistry {
   registry: CreateRegistryDto;
+}
+
+interface UpdateRegistry {
+  registry: UpdateRegistryDto;
 }
 
 type Payload =
@@ -92,6 +100,11 @@ export const removeRegistries = (ids: number[]): RegistryAction<Remove> => ({
 
 export const addRegistry = (registry: CreateRegistryDto): RegistryAction<AddRegistry> => ({
   type: RegistryActionType.ADD_REGISTRY,
+  payload: { registry },
+});
+
+export const updateRegistry = (registry: UpdateRegistryDto): RegistryAction<UpdateRegistry> => ({
+  type: RegistryActionType.UPDATE_REGISTRY,
   payload: { registry },
 });
 

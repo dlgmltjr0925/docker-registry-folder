@@ -1,10 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 
-import {
-    CreateRegistryResponse
-} from '../.next/production-server/src/registry/registry.controller.d';
 import { CreateRegistryDto } from '../src/registry/dto/create-registry.dto';
-import { RegistryListResponse } from '../src/registry/registry.controller';
+import { CreateRegistryResponse, RegistryListResponse } from '../src/registry/registry.controller';
 
 export const search = (keyword: string): Promise<AxiosResponse<RegistryListResponse>> => {
   try {

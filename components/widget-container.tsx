@@ -9,7 +9,13 @@ interface WidgetContainerProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivE
   titleIcon?: IconProp;
 }
 
-const WidgetContainer: FC<PropsWithChildren<WidgetContainerProps>> = ({ title, titleIcon, children, ...props }) => {
+const WidgetContainer: FC<PropsWithChildren<WidgetContainerProps>> = ({
+  title,
+  titleIcon,
+  children,
+  ref,
+  ...props
+}) => {
   return (
     <Container {...props}>
       {/* title */}
