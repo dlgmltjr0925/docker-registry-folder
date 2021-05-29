@@ -84,7 +84,6 @@ function* signInSaga(action: AuthAction) {
     const res: AxiosResponse<userApi.SignResponseData> = yield call(userApi.signIn, signInInput);
     if (res?.status === 201) {
       yield put(openSnackBar({ severity: 'success', message: 'Login success!' }));
-      yield put(openSnackBar({ severity: 'success', message: 'Login success!' }));
       yield put({
         type: AuthActionType.SIGN_IN_SUCCESS,
         payload: res.data,

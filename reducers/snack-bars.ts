@@ -15,8 +15,8 @@ export interface SnackBarsState {
 
 enum SnackBarsActionType {
   OPEN_SNACK_BAR = 'OPEN_SNACK_BAR',
-  ADD_SNACK_BAR = 'ADD_SNACK_BAR',
   CLOSE_SNACK_BAR = 'CLOSE_SNACK_BAR',
+  ADD_MESSAGE = 'ADD_MESSAGE',
 }
 
 interface OpenSnackBar {
@@ -40,6 +40,11 @@ export const openSnackBar = (args: OpenSnackBar) => ({
   payload: args,
 });
 
+const addMessage = (message: Message) => ({
+  type: SnackBarsActionType.ADD_MESSAGE,
+  payload: message,
+});
+
 export const closeSnackBar = (id?: number) => ({
   type: SnackBarsActionType.CLOSE_SNACK_BAR,
   payload: { id },
@@ -52,10 +57,7 @@ const getSnackBarId = () => {
 
 function* openSnackBarSaga(action: SnackBarsAction<OpenSnackBar>) {
   const id = getSnackBarId();
-  yield put({
-    type: SnackBarsActionType.ADD_SNACK_BAR,
-    payload: { id, ...action.payload },
-  });
+  yield put(addMessage({ id, ...action.payload }));
   yield delay(3000);
   yield put(closeSnackBar(id));
 }
@@ -67,7 +69,7 @@ const initialState: SnackBarsState = {
 
 const snackBarsReducer = (state = initialState, action: SnackBarsAction) => {
   switch (action.type) {
-    case SnackBarsActionType.ADD_SNACK_BAR: {
+    case SnackBarsActionType.ADD_MESSAGE: {
       const { id, severity, message } = action.payload as Message;
       return {
         open: true,
