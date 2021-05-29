@@ -24,8 +24,6 @@ const HomePage: FC<HomePageProps> = () => {
 
   if (!auth.accessToken) return null;
 
-  console.log(registry);
-
   const dispatch = useDispatch();
   const router = useRouter();
 

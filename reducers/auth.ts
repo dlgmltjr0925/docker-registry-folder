@@ -1,10 +1,11 @@
 import axios, { AxiosResponse } from 'axios';
-import { call, put, takeEvery } from 'redux-saga/effects';
+import { call, delay, put, takeEvery } from 'redux-saga/effects';
 import { UserDto } from 'src/auth/dto/user.dto';
 
 import * as userApi from '../lib/userApi';
 import { SignInInputDto } from '../src/auth/dto/sign-in-input.dto';
 import { SignUpInputDto } from '../src/auth/dto/sign-up-input.dto';
+import { openSnackBar } from './snack-bars';
 
 export interface AuthState {
   loading: boolean;
@@ -82,6 +83,8 @@ function* signInSaga(action: AuthAction) {
     const signInInput = action.payload as SignInInputDto;
     const res: AxiosResponse<userApi.SignResponseData> = yield call(userApi.signIn, signInInput);
     if (res?.status === 201) {
+      yield put(openSnackBar({ severity: 'success', message: 'Login success!' }));
+      yield put(openSnackBar({ severity: 'success', message: 'Login success!' }));
       yield put({
         type: AuthActionType.SIGN_IN_SUCCESS,
         payload: res.data,

@@ -9,12 +9,14 @@ import alertDialog, { AlertDialogState } from './alert-dialog';
 import auth, { authSaga, AuthState } from './auth';
 import layout, { LayoutState } from './layout';
 import registry, { registrySaga, RegistryState } from './registry';
+import snackBars, { snackBarsSaga, SnackBarsState } from './snack-bars';
 
 export interface RootState {
   auth: AuthState;
   layout: LayoutState;
   registry: RegistryState;
   alertDialog: AlertDialogState;
+  snackBars: SnackBarsState;
 }
 
 const rootReducer = combineReducers({
@@ -22,10 +24,11 @@ const rootReducer = combineReducers({
   layout,
   registry,
   alertDialog,
+  snackBars,
 });
 
 export function* rootSaga() {
-  yield all([authSaga(), registrySaga()]);
+  yield all([authSaga(), registrySaga(), snackBarsSaga()]);
 }
 
 const persistConfig: PersistConfig<RootState, any, any, any> = {

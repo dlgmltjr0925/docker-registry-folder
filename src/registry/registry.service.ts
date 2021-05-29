@@ -24,7 +24,6 @@ export class RegistryService {
     this.cipherKey = scryptSync(this.cryptoPassword, 'salt', 24);
     this.algorithm = 'aes-192-cbc';
     this.iv = Buffer.alloc(16, 0);
-    console.log('iv', this.iv);
     this.registries = [];
   }
 

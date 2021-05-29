@@ -5,6 +5,7 @@ import { RootState } from 'reducers';
 import { closeSideBar, openSideBar } from 'reducers/layout';
 import styled from 'styled-components';
 
+import SnackBars from '../components/snack-bars';
 import AlertDialog from './alert-dialog';
 import Header from './header';
 import SideBar from './side-bar';
@@ -28,6 +29,7 @@ const Layout = ({ children }: PropsWithChildren<LayoutProps>) => {
     return (
       <Container>
         {children}
+        <SnackBars />
         <AlertDialog />
       </Container>
     );
@@ -56,6 +58,7 @@ const Layout = ({ children }: PropsWithChildren<LayoutProps>) => {
     return (
       <Container>
         {children}
+        <SnackBars />
         <AlertDialog />
       </Container>
     );
@@ -65,6 +68,7 @@ const Layout = ({ children }: PropsWithChildren<LayoutProps>) => {
       <Header />
       <SideBar />
       <div className="content-container">{children}</div>
+      <SnackBars />
       <AlertDialog />
     </Container>
   );
