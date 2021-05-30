@@ -8,6 +8,7 @@ import { RegistryDto } from '../src/registry/dto/registry.dto';
 import { UpdateRegistryDto } from '../src/registry/dto/update-registry.dto';
 import { CreateRegistryResponse, RegistryListResponse } from '../src/registry/registry.controller';
 import { closeAlertDialog } from './alert-dialog';
+import { openSnackBar } from './snack-bars';
 
 interface SearchedRegistry extends RegistryDto {
   loading: boolean;
@@ -155,6 +156,12 @@ function* removeRegistrySaga(action: RegistryAction<Remove>) {
         type: RegistryActionType.REMOVE_SUCCESS,
         payload: { willBeRemovedRegistryIds },
       });
+      yield put(
+        openSnackBar({
+          message: `Removed ${willBeRemovedRegistryIds.length > 1 ? 'registries' : 'registry'}`,
+          severity: 'success',
+        })
+      );
     }
   } catch (error) {
     console.error(error);
@@ -176,6 +183,12 @@ function* addRegistrySaga(action: RegistryAction<AddRegistry>) {
         type: RegistryActionType.ADD_REGISTRY_SUCCESS,
         payload: { registry: res.data.registry },
       });
+      yield put(
+        openSnackBar({
+          message: `Added registry`,
+          severity: 'success',
+        })
+      );
     }
   } catch (error) {
     if (error.response) {
@@ -197,6 +210,12 @@ function* updateRegistrySaga(action: RegistryAction<UpdateRegistry>) {
         type: RegistryActionType.UPDATE_REGISTRY_SUCCESS,
         payload: { registry },
       });
+      yield put(
+        openSnackBar({
+          message: `Updated registry`,
+          severity: 'success',
+        })
+      );
     }
   } catch (error) {
     if (error.response) {
