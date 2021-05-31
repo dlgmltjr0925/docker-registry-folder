@@ -139,7 +139,7 @@ function* searchSaga(action: RegistryAction) {
       });
     }
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     yield put({
       type: RegistryActionType.SEARCH_ERROR,
       payload: { error: error.message },
