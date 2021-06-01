@@ -197,6 +197,7 @@ function* addRegistrySaga(action: RegistryAction<AddRegistry>) {
         type: RegistryActionType.ADD_REGISTRY_ERROR,
         payload: { error: message },
       });
+      yield put(openSnackBar({ message, severity: 'error' }));
     }
   }
 }
