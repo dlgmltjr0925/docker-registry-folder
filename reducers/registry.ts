@@ -139,6 +139,10 @@ function* searchSaga(action: RegistryAction) {
       });
     }
   } catch (error) {
+    if (error.response) {
+      const { message } = error.response.data;
+      yield put(openSnackBar({ message, severity: 'error' }));
+    }
     // console.error(error);
     yield put({
       type: RegistryActionType.SEARCH_ERROR,
@@ -164,7 +168,10 @@ function* removeRegistrySaga(action: RegistryAction<Remove>) {
       );
     }
   } catch (error) {
-    console.error(error);
+    if (error.response) {
+      const { message } = error.response.data;
+      yield put(openSnackBar({ message, severity: 'error' }));
+    }
     yield put({
       type: RegistryActionType.REMOVE_ERROR,
       payload: { willBeRemovedRegistryIds, error: error.message },
@@ -193,12 +200,12 @@ function* addRegistrySaga(action: RegistryAction<AddRegistry>) {
   } catch (error) {
     if (error.response) {
       const { message } = error.response.data;
-      yield put({
-        type: RegistryActionType.ADD_REGISTRY_ERROR,
-        payload: { error: message },
-      });
       yield put(openSnackBar({ message, severity: 'error' }));
     }
+    yield put({
+      type: RegistryActionType.ADD_REGISTRY_ERROR,
+      payload: { error: error.message },
+    });
   }
 }
 

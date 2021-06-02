@@ -11,7 +11,7 @@ export class UnauthorizedException extends HttpException {
     super(
       {
         statusCode: HttpStatus.UNAUTHORIZED,
-        message: 'Unauthorized',
+        message: 'Unauthorized docker registry',
       },
       HttpStatus.UNAUTHORIZED
     );
