@@ -62,6 +62,13 @@ function* openSnackBarSaga(action: SnackBarsAction<OpenSnackBar>) {
   yield put(closeSnackBar(id));
 }
 
+export function* openSnackBarByError(error: any) {
+  if (error.response) {
+    const { message } = error.response.data;
+    yield put(openSnackBar({ message, severity: 'error' }));
+  }
+}
+
 const initialState: SnackBarsState = {
   open: false,
   messages: [],
