@@ -1,4 +1,5 @@
 import dateFormat from 'dateformat';
+import Link from 'next/link';
 import { FC } from 'react';
 import styled from 'styled-components';
 
@@ -13,7 +14,7 @@ interface RegistryItemProps {
 }
 
 const RegistryItem: FC<RegistryItemProps> = ({ item, onClickRemove }) => {
-  const { name, status, checkedAt, host, repositories } = item;
+  const { id, name, status, checkedAt, host, repositories } = item;
   const repositoriesLength = repositories.length;
 
   const handleClickRemove = () => {
@@ -21,32 +22,34 @@ const RegistryItem: FC<RegistryItemProps> = ({ item, onClickRemove }) => {
   };
 
   return (
-    <Container className="noselect">
-      <div className="name-wrapper">
-        <span className="name">{name}</span>
-        <span className={`status status-${status === 'UP' ? 'up' : 'down'}`}>{status}</span>
-        <span className="date">{dateFormat(checkedAt, 'yyyy-mm-dd HH:MM:ss')}</span>
-      </div>
-      <div className="info-wrapper">
-        <span className="host">{host}</span>
-        <FontAwesomeIcon className="cubes-icon" icon={faCubes} />
-        <span className="repository-count">{`${repositoriesLength} ${
-          repositoriesLength <= 1 ? 'repository' : 'repositories'
-        }`}</span>
-      </div>
-      <ul className="repository-wrapper">
-        {repositories.map(({ name, tags }) => {
-          return (
-            <button key={name} className="repository-item">
-              {name}
-            </button>
-          );
-        })}
-      </ul>
-      <button className="remove-wrapper" onClick={handleClickRemove}>
-        <FontAwesomeIcon className="remove-icon" icon={faTrashAlt} />
-      </button>
-    </Container>
+    <Link href={`/dashboard/${id}`}>
+      <Container className="noselect">
+        <div className="name-wrapper">
+          <span className="name">{name}</span>
+          <span className={`status status-${status === 'UP' ? 'up' : 'down'}`}>{status}</span>
+          <span className="date">{dateFormat(checkedAt, 'yyyy-mm-dd HH:MM:ss')}</span>
+        </div>
+        <div className="info-wrapper">
+          <span className="host">{host}</span>
+          <FontAwesomeIcon className="cubes-icon" icon={faCubes} />
+          <span className="repository-count">{`${repositoriesLength} ${
+            repositoriesLength <= 1 ? 'repository' : 'repositories'
+          }`}</span>
+        </div>
+        <ul className="repository-wrapper">
+          {repositories.map(({ name, tags }) => {
+            return (
+              <button key={name} className="repository-item">
+                {name}
+              </button>
+            );
+          })}
+        </ul>
+        <button className="remove-wrapper" onClick={handleClickRemove}>
+          <FontAwesomeIcon className="remove-icon" icon={faTrashAlt} />
+        </button>
+      </Container>
+    </Link>
   );
 };
 

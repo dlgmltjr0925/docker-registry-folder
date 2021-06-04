@@ -57,4 +57,11 @@ export class AppController {
   async users() {
     return {};
   }
+
+  @Render('dashboard')
+  @Get('dashboard/:id')
+  async dashboard(@Param('id') id: string) {
+    const registry = await this.registryService.findOneById(+id);
+    return { registry: JSON.stringify(registry) };
+  }
 }

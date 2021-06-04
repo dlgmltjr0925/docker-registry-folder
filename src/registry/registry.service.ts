@@ -109,7 +109,7 @@ export class RegistryService {
   }
 
   findOneById(id: number) {
-    return new Promise((resolve, reject) => {
+    return new Promise<RegistryDto>((resolve, reject) => {
       const db = connect();
       try {
         const sql = `SELECT id, name, host, tag FROM registry WHERE id=?`;

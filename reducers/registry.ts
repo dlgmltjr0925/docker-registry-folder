@@ -7,7 +7,6 @@ import { CreateRegistryDto } from '../src/registry/dto/create-registry.dto';
 import { RegistryDto } from '../src/registry/dto/registry.dto';
 import { UpdateRegistryDto } from '../src/registry/dto/update-registry.dto';
 import { CreateRegistryResponse, RegistryListResponse } from '../src/registry/registry.controller';
-import { closeAlertDialog } from './alert-dialog';
 import { openSnackBar, openSnackBarByError } from './snack-bars';
 
 interface SearchedRegistry extends RegistryDto {
