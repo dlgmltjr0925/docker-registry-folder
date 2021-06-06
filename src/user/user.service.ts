@@ -1,6 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { connect } from 'lib/sqlite';
 import { UserDto } from 'src/auth/dto/user.dto';
+
+import { Injectable } from '@nestjs/common';
+
+import { connect } from '../../lib/sqlite';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
@@ -27,15 +29,59 @@ export class UserService {
     });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  findAllByKeyword(keyword: string) {
+    return new Promise<UserDto[]>((resolve, reject) => {
+      const db = connect();
+      try {
+        const sql = `SELECT id, username, role, system_admin FROM user WHERE username LIKE ? OR role LIKE ?`;
+        const likeKeyword = `%${keyword}%`;
+        db.all(sql, [likeKeyword, likeKeyword], (error, rows) => {
+          if (error) throw error;
+          resolve(rows);
+        });
+      } catch (error) {
+        reject(error);
+      } finally {
+        db.close();
+      }
+    });
+  }
+
+  findOneById(id: number) {
+    return new Promise<UserDto>((resolve, reject) => {
+      const db = connect();
+      try {
+        const sql = `SELECT id, username, role, system_admin FROM user WHERE id=?`;
+        db.each(sql, [id], (error, row) => {
+          if (error) return reject(error);
+          resolve(row);
+        });
+      } catch (error) {
+        reject(error);
+      } finally {
+        db.close();
+      }
+    });
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} user`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  removeByIds(ids: string) {
+    return new Promise((resolve, reject) => {
+      const db = connect();
+      try {
+        const sql = `DELETE FROM user WHERE id IN (${ids})`;
+        db.run(sql, (error) => {
+          if (error) return reject(error);
+          resolve(true);
+        });
+      } catch (error) {
+        reject(error);
+      } finally {
+        db.close();
+      }
+    });
   }
 }
