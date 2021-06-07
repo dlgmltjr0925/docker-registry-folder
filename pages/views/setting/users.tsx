@@ -1,6 +1,7 @@
 import { handleChangeText } from 'lib/event-handles';
 import { ChangeEventHandler, FC, KeyboardEventHandler, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { openAlertDialog } from 'reducers/alert-dialog';
 import styled from 'styled-components';
 
 import { faPlus, faTrashAlt, faUsers } from '@fortawesome/free-solid-svg-icons';
@@ -10,7 +11,7 @@ import SettingUserItem from '../../../components/setting-user-item';
 import WidgetContainer from '../../../components/widget-container';
 import WidgetSearch from '../../../components/widget-search';
 import { RootState } from '../../../reducers';
-import { search } from '../../../reducers/users';
+import { removeUsers, search } from '../../../reducers/users';
 import { UserDto } from '../../../src/auth/dto/user.dto';
 
 interface UsersPageProps {}
@@ -46,6 +47,22 @@ const UsersPage: FC<UsersPageProps> = (props) => {
 
   const handleClickRemove = () => {
     if (selectedUsers.length === 0) return;
+    dispatch(
+      openAlertDialog({
+        content: 'Are you sure you want to remove the users?',
+        options: {
+          buttons: [
+            {
+              label: 'Delete',
+              onClick: () => {
+                dispatch(removeUsers(selectedUsers));
+              },
+            },
+          ],
+          cancelable: true,
+        },
+      })
+    );
   };
 
   useEffect(() => {

@@ -12,3 +12,11 @@ export const search = (keyword: string): Promise<AxiosResponse<UserListResponse>
     throw error;
   }
 };
+
+export const removeUsers = (ids: number[]): Promise<AxiosResponse> => {
+  try {
+    return axios.delete(`${window.location.origin}/api/user/${ids.join(',')}`);
+  } catch (error) {
+    throw error;
+  }
+};

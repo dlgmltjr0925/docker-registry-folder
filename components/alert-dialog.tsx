@@ -1,9 +1,7 @@
-import { FC, forwardRef, Ref } from 'react';
+import { FC, forwardRef, MouseEventHandler, Ref } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import {
-    Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle
-} from '@material-ui/core';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core';
 import Slide from '@material-ui/core/Slide';
 import { TransitionProps } from '@material-ui/core/transitions/transition';
 
@@ -27,6 +25,13 @@ const AlertDialog: FC<AlertDialogProps> = () => {
     dispatch(closeAlertDialog());
   };
 
+  const handleClick = (callback?: MouseEventHandler<HTMLButtonElement>): MouseEventHandler<HTMLButtonElement> => {
+    return (e) => {
+      if (callback) callback(e);
+      handleClose();
+    };
+  };
+
   return (
     <Dialog
       open={open}
@@ -45,7 +50,7 @@ const AlertDialog: FC<AlertDialogProps> = () => {
         {options && options.buttons.length > 0 ? (
           <>
             {options.buttons.map(({ label, color = 'primary', onClick }) => (
-              <Button key={label} onClick={onClick} color={color}>
+              <Button key={label} onClick={handleClick(onClick)} color={color}>
                 {label}
               </Button>
             ))}

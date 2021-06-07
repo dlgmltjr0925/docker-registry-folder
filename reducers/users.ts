@@ -5,7 +5,7 @@ import { call, put, takeLatest } from '@redux-saga/core/effects';
 import * as usersApi from '../lib/usersApi';
 import { UserDto } from '../src/auth/dto/user.dto';
 import { UserListResponse } from '../src/user/user.controller';
-import { openSnackBarByError } from './snack-bars';
+import { openSnackBar, openSnackBarByError } from './snack-bars';
 
 interface SearchedUser extends UserDto {
   loading: boolean;
@@ -25,13 +25,20 @@ enum UsersActionType {
   SEARCH_USER = 'SEARCH_USER',
   SEARCH_USER_SUCCESS = 'SEARCH_USER_SUCCESS',
   SEARCH_USER_ERROR = 'SEARCH_USER_ERROR',
+  REMOVE_USERS = 'REMOVE_USERS',
+  REMOVE_USERS_SUCCESS = 'REMOVE_USERS_SUCCESS',
+  REMOVE_USERS_ERROR = 'REMOVE_USERS_ERROR',
 }
 
 interface Keyword {
   keyword: string;
 }
 
-type Payload = Keyword | UserListResponse;
+interface Remove {
+  willBeRemovedUserIds: number[];
+}
+
+type Payload = Keyword | UserListResponse | Remove;
 
 interface UsersAction<T = Payload> {
   type: UsersActionType;
@@ -46,9 +53,14 @@ const initialState: UsersState = {
   },
 };
 
-export const search = (keyword: string) => ({
+export const search = (keyword: string): UsersAction<Keyword> => ({
   type: UsersActionType.SEARCH_USER,
   payload: { keyword },
+});
+
+export const removeUsers = (ids: number[]): UsersAction<Remove> => ({
+  type: UsersActionType.REMOVE_USERS,
+  payload: { willBeRemovedUserIds: ids },
 });
 
 function* searchSaga(action: UsersAction) {
@@ -65,6 +77,31 @@ function* searchSaga(action: UsersAction) {
     yield put({
       type: UsersActionType.SEARCH_USER_ERROR,
       payload: { error: error.message },
+    });
+    yield openSnackBarByError(error);
+  }
+}
+
+function* removeUsersSaga(action: UsersAction<Remove>) {
+  const { willBeRemovedUserIds } = action.payload;
+  try {
+    const res: AxiosResponse = yield call(usersApi.removeUsers, willBeRemovedUserIds);
+    if (res?.status === 200) {
+      yield put({
+        type: UsersActionType.REMOVE_USERS_SUCCESS,
+        payload: { willBeRemovedUserIds },
+      });
+      yield put(
+        openSnackBar({
+          message: `Removed ${willBeRemovedUserIds.length > 1 ? 'users' : 'user'}`,
+          severity: 'success',
+        })
+      );
+    }
+  } catch (error) {
+    yield put({
+      type: UsersActionType.REMOVE_USERS_ERROR,
+      payload: { willBeRemovedUserIds, error: error.message },
     });
     yield openSnackBarByError(error);
   }
@@ -101,6 +138,40 @@ const usersReducer = (state = initialState, action: UsersAction): UsersState => 
           searchedUsers: [],
         },
       };
+    case UsersActionType.REMOVE_USERS:
+      const { willBeRemovedUserIds } = action.payload as Remove;
+      return {
+        ...state,
+        search: {
+          ...state.search,
+          searchedUsers: state.search.searchedUsers.map((user) => ({
+            ...user,
+            loading: willBeRemovedUserIds.includes(user.id),
+          })),
+        },
+      };
+    case UsersActionType.REMOVE_USERS_SUCCESS: {
+      const { willBeRemovedUserIds } = action.payload as Remove;
+      return {
+        ...state,
+        search: {
+          ...state.search,
+          searchedUsers: state.search.searchedUsers.filter(({ id }) => !willBeRemovedUserIds.includes(id)),
+        },
+      };
+    }
+    case UsersActionType.REMOVE_USERS_ERROR: {
+      return {
+        ...state,
+        search: {
+          ...state.search,
+          searchedUsers: state.search.searchedUsers.map((user) => ({
+            ...user,
+            loading: false,
+          })),
+        },
+      };
+    }
     default:
       return state;
   }
@@ -108,6 +179,7 @@ const usersReducer = (state = initialState, action: UsersAction): UsersState => 
 
 export function* usersSaga() {
   yield takeLatest(UsersActionType.SEARCH_USER, searchSaga);
+  yield takeLatest(UsersActionType.REMOVE_USERS, removeUsersSaga);
 }
 
 export default usersReducer;
