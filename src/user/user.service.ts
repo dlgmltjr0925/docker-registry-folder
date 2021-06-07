@@ -16,7 +16,7 @@ export class UserService {
     return new Promise<UserDto[]>((resolve, reject) => {
       const db = connect();
       try {
-        const sql = `SELECT id, username, role, system_admin FROM user`;
+        const sql = `SELECT id, username, role, system_admin as systemAdmin FROM user`;
         db.all(sql, (error, rows) => {
           if (error) throw error;
           resolve(rows);
@@ -33,7 +33,7 @@ export class UserService {
     return new Promise<UserDto[]>((resolve, reject) => {
       const db = connect();
       try {
-        const sql = `SELECT id, username, role, system_admin FROM user WHERE username LIKE ? OR role LIKE ?`;
+        const sql = `SELECT id, username, role, system_admin as systemAdmin FROM user WHERE username LIKE ? OR role LIKE ?`;
         const likeKeyword = `%${keyword}%`;
         db.all(sql, [likeKeyword, likeKeyword], (error, rows) => {
           if (error) throw error;
@@ -51,7 +51,7 @@ export class UserService {
     return new Promise<UserDto>((resolve, reject) => {
       const db = connect();
       try {
-        const sql = `SELECT id, username, role, system_admin FROM user WHERE id=?`;
+        const sql = `SELECT id, username, role, system_admin as systemAdmin FROM user WHERE id=?`;
         db.each(sql, [id], (error, row) => {
           if (error) return reject(error);
           resolve(row);
