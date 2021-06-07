@@ -11,7 +11,7 @@ export interface UserListResponse {
   users: UserDto[];
 }
 
-@Controller('user')
+@Controller('api/user')
 @Roles(Role.ADMIN)
 export class UserController {
   constructor(private readonly userService: UserService) {}

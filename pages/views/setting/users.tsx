@@ -1,21 +1,33 @@
-import { faPlus, faTrashAlt, faUsers } from '@fortawesome/free-solid-svg-icons';
-import IconButton from '../../../components/icon-button';
-import WidgetContainer from '../../../components/widget-container';
-import { FC, KeyboardEventHandler, useState } from 'react';
-import styled from 'styled-components';
-import { useDispatch } from 'react-redux';
-import WidgetSearch from '../../../components/widget-search';
 import { handleChangeText } from 'lib/event-handles';
-import { search } from 'reducers/users';
+import { ChangeEventHandler, FC, KeyboardEventHandler, useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import styled from 'styled-components';
+
+import { faPlus, faTrashAlt, faUsers } from '@fortawesome/free-solid-svg-icons';
+
+import IconButton from '../../../components/icon-button';
+import SettingUserItem from '../../../components/setting-user-item';
+import WidgetContainer from '../../../components/widget-container';
+import WidgetSearch from '../../../components/widget-search';
+import { RootState } from '../../../reducers';
+import { search } from '../../../reducers/users';
+import { UserDto } from '../../../src/auth/dto/user.dto';
 
 interface UsersPageProps {}
 
 const UsersPage: FC<UsersPageProps> = (props) => {
-  console.log(props);
+  const { auth, users } = useSelector(({ auth, users }: RootState) => ({ auth, users }));
+
+  if (!auth.accessToken) return null;
+
   const dispatch = useDispatch();
 
   const [keyword, setKeyword] = useState<string>('');
   const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
+
+  const searchedUsers = useMemo(() => {
+    return users.search.searchedUsers.filter(({ systemAdmin }) => !systemAdmin);
+  }, [users.search.searchedUsers]);
 
   const handleKeyPress: KeyboardEventHandler<HTMLDivElement> = ({ key }) => {
     if (key === 'Enter') {
@@ -24,9 +36,21 @@ const UsersPage: FC<UsersPageProps> = (props) => {
     }
   };
 
+  const handleChangeAllUsers: ChangeEventHandler<HTMLInputElement> = ({ target: { checked } }) => {
+    setSelectedUsers(checked ? searchedUsers.map(({ id }) => id) : []);
+  };
+
+  const handleClickUserItem = ({ id }: UserDto, checked: boolean) => {
+    setSelectedUsers(checked ? [...selectedUsers, id] : selectedUsers.filter((userId) => userId !== id));
+  };
+
   const handleClickRemove = () => {
     if (selectedUsers.length === 0) return;
   };
+
+  useEffect(() => {
+    dispatch(search(''));
+  }, []);
 
   return (
     <Container>
@@ -49,6 +73,31 @@ const UsersPage: FC<UsersPageProps> = (props) => {
           onChange={handleChangeText(setKeyword)}
           onKeyPress={handleKeyPress}
         />
+        {users.search.searchedUsers.length === 0 ? (
+          <p className="empty-list-label">No User available</p>
+        ) : (
+          <>
+            <div className="user-list-header">
+              <input
+                type="checkbox"
+                checked={selectedUsers.length === searchedUsers.length}
+                onChange={handleChangeAllUsers}
+              />
+              <span className="name">username</span>
+              <span className="host">role</span>
+            </div>
+            <ul className="user-list-container">
+              {users.search.searchedUsers.map((user) => (
+                <SettingUserItem
+                  key={user.id}
+                  item={user}
+                  checked={selectedUsers.includes(user.id)}
+                  onChange={handleClickUserItem}
+                />
+              ))}
+            </ul>
+          </>
+        )}
       </WidgetContainer>
     </Container>
   );
@@ -64,12 +113,40 @@ const Container = styled.div`
       margin-right: 12px;
     }
 
+    .button-remove-active {
+      background: var(--button-red-active);
+
+      &:hover {
+        background: var(--button-red-hover);
+      }
+    }
+
     .button-add {
       background: var(--button-blue-active);
 
       &:hover {
         background: var(--button-blue-hover);
       }
+    }
+  }
+
+  .user-list-header {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid #ccc;
+    background-color: #f6f6f6;
+
+    input[type='checkbox'] {
+      margin-right: 10px;
+      cursor: pointer;
+    }
+
+    span {
+      flex: 1;
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: capitalize;
     }
   }
 `;

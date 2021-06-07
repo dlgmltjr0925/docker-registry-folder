@@ -10,6 +10,7 @@ import auth, { authSaga, AuthState } from './auth';
 import layout, { LayoutState } from './layout';
 import registry, { registrySaga, RegistryState } from './registry';
 import snackBars, { snackBarsSaga, SnackBarsState } from './snack-bars';
+import users, { usersSaga, UsersState } from './users';
 
 export interface RootState {
   auth: AuthState;
@@ -17,6 +18,7 @@ export interface RootState {
   registry: RegistryState;
   alertDialog: AlertDialogState;
   snackBars: SnackBarsState;
+  users: UsersState;
 }
 
 const rootReducer = combineReducers({
@@ -25,10 +27,11 @@ const rootReducer = combineReducers({
   registry,
   alertDialog,
   snackBars,
+  users,
 });
 
 export function* rootSaga() {
-  yield all([authSaga(), registrySaga(), snackBarsSaga()]);
+  yield all([authSaga(), registrySaga(), snackBarsSaga(), usersSaga()]);
 }
 
 const persistConfig: PersistConfig<RootState, any, any, any> = {

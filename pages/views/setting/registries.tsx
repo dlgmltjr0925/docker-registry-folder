@@ -39,11 +39,7 @@ const RegistriesPage: FC<RegistriesPageProps> = () => {
   };
 
   const handleChangeAllRegistries: ChangeEventHandler<HTMLInputElement> = ({ target: { checked } }) => {
-    if (checked) {
-      setSelectedRegistries(registry.search.searchedRegistries.map(({ id }) => id));
-    } else {
-      setSelectedRegistries([]);
-    }
+    setSelectedRegistries(checked ? registry.search.searchedRegistries.map(({ id }) => id) : []);
   };
 
   const handleClickRegistryItem = ({ id }: RegistryDto, checked: boolean) => {
@@ -181,6 +177,7 @@ const Container = styled.div`
       flex: 1;
       font-size: 14px;
       font-weight: 700;
+      text-transform: capitalize;
     }
 
     .host {
