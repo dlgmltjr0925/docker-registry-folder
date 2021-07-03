@@ -4,7 +4,7 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-        sh "yarn && yarn build"
+        sh "docker build . -t dlgmltjr0925/docker-registry-folder:0.1.0"
       }
     }
 
