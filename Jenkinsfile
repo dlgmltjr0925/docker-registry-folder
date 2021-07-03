@@ -6,7 +6,7 @@ pipeline {
       steps {
         echo 'build'
         sh 'pwd'
-        sh 'docker build . -t dlgmltjr0925/docker-registry-folder:0.1.0'
+        sh 'docker build . -t dlgmltjr0925/docker-registry-folder:0.1.0 -f Dockerfile.arm64v8'
       }
     }
 
