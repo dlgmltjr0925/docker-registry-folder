@@ -4,7 +4,8 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-        sh "docker build . -t dlgmltjr0925/docker-registry-folder:0.1.0"
+        echo 'build'
+        sh 'docker build . -t dlgmltjr0925/docker-registry-folder:0.1.0'
       }
     }
 
