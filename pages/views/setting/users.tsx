@@ -1,18 +1,18 @@
-import { handleChangeText } from 'lib/event-handles';
 import { ChangeEventHandler, FC, KeyboardEventHandler, useEffect, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { openAlertDialog } from 'reducers/alert-dialog';
-import styled from 'styled-components';
-
 import { faPlus, faTrashAlt, faUsers } from '@fortawesome/free-solid-svg-icons';
+import { removeUsers, search } from '../../../reducers/users';
+import { useDispatch, useSelector } from 'react-redux';
 
 import IconButton from '../../../components/icon-button';
+import Link from 'next/link';
+import { RootState } from '../../../reducers';
 import SettingUserItem from '../../../components/setting-user-item';
+import { UserDto } from '../../../src/auth/dto/user.dto';
 import WidgetContainer from '../../../components/widget-container';
 import WidgetSearch from '../../../components/widget-search';
-import { RootState } from '../../../reducers';
-import { removeUsers, search } from '../../../reducers/users';
-import { UserDto } from '../../../src/auth/dto/user.dto';
+import { handleChangeText } from 'lib/event-handles';
+import { openAlertDialog } from 'reducers/alert-dialog';
+import styled from 'styled-components';
 
 interface UsersPageProps {}
 
@@ -80,9 +80,11 @@ const UsersPage: FC<UsersPageProps> = (props) => {
           >
             Remove
           </IconButton>
-          <IconButton className="widget-button button-add" icon={faPlus}>
-            Add User
-          </IconButton>
+          <Link href="#">
+            <IconButton className="widget-button button-add" icon={faPlus}>
+              Add User
+            </IconButton>
+          </Link>
         </div>
         <WidgetSearch
           placeholder="Search by name, role..."
@@ -90,30 +92,28 @@ const UsersPage: FC<UsersPageProps> = (props) => {
           onChange={handleChangeText(setKeyword)}
           onKeyPress={handleKeyPress}
         />
+        <div className="user-list-header">
+          <input
+            type="checkbox"
+            checked={selectedUsers.length > 0 && selectedUsers.length === searchedUsers.length}
+            onChange={handleChangeAllUsers}
+          />
+          <span className="name">username</span>
+          <span className="host">role</span>
+        </div>
         {users.search.searchedUsers.length === 0 ? (
           <p className="empty-list-label">No User available</p>
         ) : (
-          <>
-            <div className="user-list-header">
-              <input
-                type="checkbox"
-                checked={selectedUsers.length === searchedUsers.length}
-                onChange={handleChangeAllUsers}
+          <ul className="user-list-container">
+            {users.search.searchedUsers.map((user) => (
+              <SettingUserItem
+                key={user.id}
+                item={user}
+                checked={selectedUsers.includes(user.id)}
+                onChange={handleClickUserItem}
               />
-              <span className="name">username</span>
-              <span className="host">role</span>
-            </div>
-            <ul className="user-list-container">
-              {users.search.searchedUsers.map((user) => (
-                <SettingUserItem
-                  key={user.id}
-                  item={user}
-                  checked={selectedUsers.includes(user.id)}
-                  onChange={handleClickUserItem}
-                />
-              ))}
-            </ul>
-          </>
+            ))}
+          </ul>
         )}
       </WidgetContainer>
     </Container>
