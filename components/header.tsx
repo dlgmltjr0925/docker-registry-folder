@@ -1,13 +1,13 @@
-import { useRouter } from 'next/dist/client/router';
-import Link from 'next/link';
 import { FC, useCallback, useMemo } from 'react';
+import { faSignOutAlt, faUserCircle, faUserCog } from '@fortawesome/free-solid-svg-icons';
 import { useDispatch, useSelector } from 'react-redux';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Link from 'next/link';
 import { RootState } from 'reducers';
 import { signOut } from 'reducers/auth';
 import styled from 'styled-components';
-
-import { faSignOutAlt, faUserCircle, faUserCog } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useRouter } from 'next/dist/client/router';
 
 interface HeaderProps {}
 
@@ -18,10 +18,13 @@ const getRouteName = (route: string): [string, string | string[]] => {
     case '/views/setting/account':
       return ['account', 'account management'];
     case '/views/setting/registries':
-    case '/views/setting/registry':
       return ['registries', 'registry management'];
+    case '/views/setting/registry':
+      return ['registry', 'registry management'];
     case '/views/setting/users':
       return ['users', 'user management'];
+    case '/views/setting/user':
+      return ['user', 'user management'];
     default:
       return ['', ''];
   }

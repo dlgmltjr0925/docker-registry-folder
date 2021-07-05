@@ -80,7 +80,7 @@ const UsersPage: FC<UsersPageProps> = (props) => {
           >
             Remove
           </IconButton>
-          <Link href="#">
+          <Link href="/setting/user">
             <IconButton className="widget-button button-add" icon={faPlus}>
               Add User
             </IconButton>

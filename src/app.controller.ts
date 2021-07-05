@@ -58,6 +58,18 @@ export class AppController {
     return {};
   }
 
+  @Render('setting/user')
+  @Get('setting/user')
+  async newUser(@Param('id') id: string) {
+    return {};
+  }
+
+  @Render('setting/user')
+  @Get('setting/user/:id')
+  async user(@Param('id') id: string) {
+    return {};
+  }
+
   @Render('dashboard')
   @Get('dashboard/:id')
   async dashboard(@Param('id') id: string) {
