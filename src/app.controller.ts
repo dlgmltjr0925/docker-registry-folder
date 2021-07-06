@@ -4,10 +4,15 @@ import { Controller, Get, Param, Render, Res } from '@nestjs/common';
 
 import { AuthService } from './auth/auth.service';
 import { RegistryService } from './registry/registry.service';
+import { UserService } from './user/user.service';
 
 @Controller()
 export class AppController {
-  constructor(private authService: AuthService, private registryService: RegistryService) {}
+  constructor(
+    private authService: AuthService,
+    private registryService: RegistryService,
+    private userService: UserService
+  ) {}
   @Render('home')
   @Get()
   async home() {
@@ -67,7 +72,8 @@ export class AppController {
   @Render('setting/user')
   @Get('setting/user/:id')
   async user(@Param('id') id: string) {
-    return {};
+    const user = await this.userService.findOneById(+id);
+    return { user: JSON.stringify(user) };
   }
 
   @Render('dashboard')

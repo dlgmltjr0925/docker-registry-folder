@@ -1,11 +1,11 @@
-import { AxiosResponse } from 'axios';
+import * as usersApi from '../lib/usersApi';
 
 import { call, put, takeLatest } from '@redux-saga/core/effects';
+import { openSnackBar, openSnackBarByError } from './snack-bars';
 
-import * as usersApi from '../lib/usersApi';
+import { AxiosResponse } from 'axios';
 import { UserDto } from '../src/auth/dto/user.dto';
 import { UserListResponse } from '../src/user/user.controller';
-import { openSnackBar, openSnackBarByError } from './snack-bars';
 
 interface SearchedUser extends UserDto {
   loading: boolean;
@@ -17,7 +17,7 @@ interface SearchState {
   searchedUsers: SearchedUser[];
 }
 
-export interface UsersState {
+export interface UserState {
   search: SearchState;
 }
 
@@ -45,7 +45,7 @@ interface UsersAction<T = Payload> {
   payload: T;
 }
 
-const initialState: UsersState = {
+const initialState: UserState = {
   search: {
     loading: false,
     keyword: '',
@@ -107,7 +107,7 @@ function* removeUsersSaga(action: UsersAction<Remove>) {
   }
 }
 
-const usersReducer = (state = initialState, action: UsersAction): UsersState => {
+const userReducer = (state = initialState, action: UsersAction): UserState => {
   switch (action.type) {
     case UsersActionType.SEARCH_USER:
       const { keyword } = action.payload as Keyword;
@@ -182,4 +182,4 @@ export function* usersSaga() {
   yield takeLatest(UsersActionType.REMOVE_USERS, removeUsersSaga);
 }
 
-export default usersReducer;
+export default userReducer;

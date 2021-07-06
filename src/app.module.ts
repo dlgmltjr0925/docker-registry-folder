@@ -1,14 +1,11 @@
-import { RenderModule } from 'nest-next';
-import Next from 'next';
-
-import { Module } from '@nestjs/common';
-
 import { AppController } from './app.controller';
 import { AuthModule } from './auth/auth.module';
 import { AuthService } from './auth/auth.service';
 import { DockerRegistryService } from './docker-registry/docker-registry.service';
+import { Module } from '@nestjs/common';
+import Next from 'next';
 import { RegistryModule } from './registry/registry.module';
-import { RegistryService } from './registry/registry.service';
+import { RenderModule } from 'nest-next';
 import { UserModule } from './user/user.module';
 
 export const NextModule = RenderModule.forRootAsync(
@@ -20,6 +17,6 @@ export const NextModule = RenderModule.forRootAsync(
 @Module({
   imports: [NextModule, AuthModule, RegistryModule, UserModule],
   controllers: [AppController],
-  providers: [AuthService, DockerRegistryService, RegistryService],
+  providers: [AuthService, DockerRegistryService],
 })
 export class AppModule {}

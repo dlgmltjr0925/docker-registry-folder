@@ -1,6 +1,5 @@
 import { CreateUserDto } from './create-user.dto';
 import Joi from 'joi';
-import { Role } from '../../auth/interfaces/role.enum';
 
 export class UpdateUserDto extends CreateUserDto {
   id!: number;

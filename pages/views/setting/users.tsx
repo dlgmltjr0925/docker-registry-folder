@@ -1,6 +1,6 @@
 import { ChangeEventHandler, FC, KeyboardEventHandler, useEffect, useMemo, useState } from 'react';
 import { faPlus, faTrashAlt, faUsers } from '@fortawesome/free-solid-svg-icons';
-import { removeUsers, search } from '../../../reducers/users';
+import { removeUsers, search } from '../../../reducers/user';
 import { useDispatch, useSelector } from 'react-redux';
 
 import IconButton from '../../../components/icon-button';
@@ -17,7 +17,7 @@ import styled from 'styled-components';
 interface UsersPageProps {}
 
 const UsersPage: FC<UsersPageProps> = (props) => {
-  const { auth, users } = useSelector(({ auth, users }: RootState) => ({ auth, users }));
+  const { auth, user } = useSelector(({ auth, user }: RootState) => ({ auth, user }));
 
   if (!auth.accessToken) return null;
 
@@ -27,8 +27,8 @@ const UsersPage: FC<UsersPageProps> = (props) => {
   const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
 
   const searchedUsers = useMemo(() => {
-    return users.search.searchedUsers.filter(({ systemAdmin }) => !systemAdmin);
-  }, [users.search.searchedUsers]);
+    return user.search.searchedUsers.filter(({ systemAdmin }) => !systemAdmin);
+  }, [user.search.searchedUsers]);
 
   const handleKeyPress: KeyboardEventHandler<HTMLDivElement> = ({ key }) => {
     if (key === 'Enter') {
@@ -101,15 +101,15 @@ const UsersPage: FC<UsersPageProps> = (props) => {
           <span className="name">username</span>
           <span className="host">role</span>
         </div>
-        {users.search.searchedUsers.length === 0 ? (
+        {user.search.searchedUsers.length === 0 ? (
           <p className="empty-list-label">No User available</p>
         ) : (
           <ul className="user-list-container">
-            {users.search.searchedUsers.map((user) => (
+            {user.search.searchedUsers.map((searchedUser) => (
               <SettingUserItem
-                key={user.id}
-                item={user}
-                checked={selectedUsers.includes(user.id)}
+                key={searchedUser.id}
+                item={searchedUser}
+                checked={selectedUsers.includes(searchedUser.id)}
                 onChange={handleClickUserItem}
               />
             ))}

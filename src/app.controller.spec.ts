@@ -1,17 +1,18 @@
 import * as Express from 'express';
-import path from 'path';
-import request from 'supertest';
 
-import { INestApplication } from '@nestjs/common';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { AppController } from './app.controller';
-import { NextModule } from './app.module';
-import { DynamicJwtModule } from './auth/auth.module';
 import { AuthService } from './auth/auth.service';
 import { DockerRegistryService } from './docker-registry/docker-registry.service';
+import { DynamicJwtModule } from './auth/auth.module';
+import { INestApplication } from '@nestjs/common';
+import { NextModule } from './app.module';
 import { RegistryService } from './registry/registry.service';
+import { UserService } from './user/user.service';
+import path from 'path';
+import request from 'supertest';
 
 const ENV_PATH = path.resolve('data/.env');
 
@@ -54,7 +55,8 @@ describe('AppController', () => {
   it('should be called redirect if has not system admin', async () => {
     const authService = { hasSystemAdmin: async () => false } as AuthService;
     const registryService = new RegistryService(new DockerRegistryService());
-    appController = new AppController(authService, registryService);
+    const userService = new UserService();
+    appController = new AppController(authService, registryService, userService);
     appController.login(res);
   });
 

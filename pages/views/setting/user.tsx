@@ -1,28 +1,30 @@
 import { ChangeEvent, FC, useEffect, useState } from 'react';
-import { addRegistry, updateRegistry } from 'reducers/registry';
 import { faEdit, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { handleChangeSelectValue, handleChangeText } from 'lib/event-handles';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { GetServerSideProps } from 'next';
 import IconButton from 'components/icon-button';
+import { MenuItem } from '@material-ui/core';
 import { Role } from 'src/auth/interfaces/role.enum';
 import { RootState } from 'reducers';
-import { Switch } from '@material-ui/core';
+import Select from '@material-ui/core/Select';
 import TextInput from 'components/text-input';
 import { UpdateUserDto } from 'src/user/dto/update-user.dto';
+import { UserDto } from '../../../src/auth/dto/user.dto';
 import WidgetContainer from 'components/widget-container';
-import { handleChangeText } from 'lib/event-handles';
 import styled from 'styled-components';
 import { useRouter } from 'next/dist/client/router';
 
+interface PrevUser extends Omit<UpdateUserDto, 'password'> {}
 interface UserPageProps {
-  prevUser?: UpdateUserDto;
+  prevUser?: PrevUser;
 }
 
 const UserPage: FC<UserPageProps> = ({ prevUser }) => {
-  const { auth, registry } = useSelector(({ auth, registry }: RootState) => ({
+  const { auth, user } = useSelector(({ auth, user }: RootState) => ({
     auth,
-    registry,
+    user,
   }));
 
   if (!auth.accessToken) return null;
@@ -32,13 +34,13 @@ const UserPage: FC<UserPageProps> = ({ prevUser }) => {
 
   const [username, setUsername] = useState<string>(prevUser?.username || '');
   const [password, setPassword] = useState<string>('');
-  const [role, setRole] = useState<Role>(Role.ADMIN);
+  const [role, setRole] = useState<Role>(prevUser?.role || Role.ADMIN);
 
   const isUpdateMode = prevUser ? true : false;
   const isActive = username.trim() !== '' && password.trim() !== '';
 
   const handleClickSubmit = () => {
-    if (!isActive || registry.addRegistry.loading || registry.updateRegistry.loading) return;
+    // if (!isActive || user.addRegistry.loading || user.updateRegistry.loading) return;
     // if (!prevRegistry) {
     //   dispatch(
     //     addRegistry({
@@ -92,12 +94,22 @@ const UserPage: FC<UserPageProps> = ({ prevUser }) => {
             onChange={handleChangeText(setPassword)}
           />
         </div>
+        <div className="input-wrapper">
+          <span className="category">Role</span>
+          <div className="input-select-wrapper">
+            <Select value={role} onChange={handleChangeSelectValue(setRole)}>
+              <MenuItem value={Role.ADMIN}>ADMIN</MenuItem>
+              <MenuItem value={Role.MANAGER}>MANAGER</MenuItem>
+              <MenuItem value={Role.VIEWER}>VIEWER</MenuItem>
+            </Select>
+          </div>
+        </div>
 
         <IconButton
           className={`button-add ${isActive ? 'button-add-active' : ''}`}
           type="submit"
           icon={isUpdateMode ? faEdit : faPlus}
-          loading={registry[isUpdateMode ? 'updateRegistry' : 'addRegistry'].loading}
+          // loading={registry[isUpdateMode ? 'updateRegistry' : 'addRegistry'].loading}
           onClick={handleClickSubmit}
         >
           {isUpdateMode ? 'Update' : 'Add registry'}
@@ -111,7 +123,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const props: UserPageProps = {};
   const { user } = context.query;
   if (user) {
-    props.prevUser = JSON.parse(user as string) as UpdateUserDto;
+    const { id, username, role } = JSON.parse(user as string) as UserDto;
+    props.prevUser = {
+      id,
+      username,
+      role,
+    };
   }
 
   return {
@@ -143,6 +160,20 @@ const Container = styled.div`
 
         & > div {
           height: 40px;
+        }
+      }
+
+      .input-select-wrapper {
+        display: inline-flex;
+        width: 100%;
+
+        & > div {
+          width: 150px;
+          font-size: 14px;
+        }
+
+        .MuiSelect-root {
+          padding-left: 14px;
         }
       }
 

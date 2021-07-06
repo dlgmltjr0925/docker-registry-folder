@@ -1,16 +1,15 @@
+import alertDialog, { AlertDialogState } from './alert-dialog';
+import auth, { AuthState, authSaga } from './auth';
+import layout, { LayoutState } from './layout';
+import registry, { RegistryState, registrySaga } from './registry';
+import snackBars, { SnackBarsState, snackBarsSaga } from './snack-bars';
+import user, { UserState, usersSaga } from './user';
+
+import { PersistConfig } from 'redux-persist/es/types';
+import { all } from '@redux-saga/core/effects';
 import { combineReducers } from 'redux';
 import { persistReducer } from 'redux-persist';
-import { PersistConfig } from 'redux-persist/es/types';
 import storage from 'redux-persist/lib/storage/session';
-
-import { all } from '@redux-saga/core/effects';
-
-import alertDialog, { AlertDialogState } from './alert-dialog';
-import auth, { authSaga, AuthState } from './auth';
-import layout, { LayoutState } from './layout';
-import registry, { registrySaga, RegistryState } from './registry';
-import snackBars, { snackBarsSaga, SnackBarsState } from './snack-bars';
-import users, { usersSaga, UsersState } from './users';
 
 export interface RootState {
   auth: AuthState;
@@ -18,7 +17,7 @@ export interface RootState {
   registry: RegistryState;
   alertDialog: AlertDialogState;
   snackBars: SnackBarsState;
-  users: UsersState;
+  user: UserState;
 }
 
 const rootReducer = combineReducers({
@@ -27,7 +26,7 @@ const rootReducer = combineReducers({
   registry,
   alertDialog,
   snackBars,
-  users,
+  user,
 });
 
 export function* rootSaga() {
