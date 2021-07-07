@@ -1,19 +1,18 @@
-import { useRouter } from 'next/dist/client/router';
 import { ChangeEventHandler, FC, KeyboardEventHandler, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { openAlertDialog } from 'reducers/alert-dialog';
-import { RegistryDto } from 'src/registry/dto/registry.dto';
-import styled from 'styled-components';
-
 import { faDatabase, faPlus, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { removeRegistries, searchRegistry } from '../../../reducers/registry';
+import { useDispatch, useSelector } from 'react-redux';
 
 import IconButton from '../../../components/icon-button';
+import { RegistryDto } from 'src/registry/dto/registry.dto';
+import { RootState } from '../../../reducers';
 import SettingRegistryItem from '../../../components/setting-registry-item';
 import WidgetContainer from '../../../components/widget-container';
 import WidgetSearch from '../../../components/widget-search';
 import { handleChangeText } from '../../../lib/event-handles';
-import { RootState } from '../../../reducers';
-import { removeRegistries, search } from '../../../reducers/registry';
+import { openAlertDialog } from 'reducers/alert-dialog';
+import styled from 'styled-components';
+import { useRouter } from 'next/dist/client/router';
 
 interface RegistriesPageProps {}
 
@@ -33,7 +32,7 @@ const RegistriesPage: FC<RegistriesPageProps> = () => {
 
   const handleKeyPress: KeyboardEventHandler<HTMLDivElement> = ({ key }) => {
     if (key === 'Enter') {
-      dispatch(search(keyword));
+      dispatch(searchRegistry(keyword));
       setSelectedRegistries([]);
     }
   };
@@ -79,7 +78,7 @@ const RegistriesPage: FC<RegistriesPageProps> = () => {
   }, [registry.search.searchedRegistries.length]);
 
   useEffect(() => {
-    dispatch(search(''));
+    dispatch(searchRegistry(''));
   }, []);
 
   return (

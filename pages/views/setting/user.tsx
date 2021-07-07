@@ -65,11 +65,11 @@ const UserPage: FC<UserPageProps> = ({ prevUser }) => {
     // }
   };
 
-  useEffect(() => {
-    if ((isUpdateMode && registry.updateRegistry.done) || (!isUpdateMode && registry.addRegistry.done)) {
-      router.push('/setting/registries');
-    }
-  }, [registry]);
+  // useEffect(() => {
+  //   if ((isUpdateMode && registry.updateRegistry.done) || (!isUpdateMode && registry.addRegistry.done)) {
+  //     router.push('/setting/registries');
+  //   }
+  // }, [registry]);
 
   return (
     <Container>
@@ -79,7 +79,7 @@ const UserPage: FC<UserPageProps> = ({ prevUser }) => {
           <TextInput
             className="input"
             type="text"
-            placeholder="my-custom-registry"
+            placeholder="Username"
             value={username}
             onChange={handleChangeText(setUsername)}
           />

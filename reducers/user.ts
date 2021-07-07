@@ -17,8 +17,17 @@ interface SearchState {
   searchedUsers: SearchedUser[];
 }
 
+interface AddUserState {
+  loading: boolean;
+  done: boolean;
+}
+
+type UpdateUserState = AddUserState;
+
 export interface UserState {
   search: SearchState;
+  addUser: AddUserState;
+  updateUser: UpdateUserState;
 }
 
 enum UsersActionType {
@@ -28,6 +37,12 @@ enum UsersActionType {
   REMOVE_USERS = 'REMOVE_USERS',
   REMOVE_USERS_SUCCESS = 'REMOVE_USERS_SUCCESS',
   REMOVE_USERS_ERROR = 'REMOVE_USERS_ERROR',
+  ADD_USER = 'ADD_USER',
+  ADD_USER_SUCCESS = 'ADD_USER_SUCCESS',
+  ADD_USER_ERROR = 'ADD_USER_ERROR',
+  UPDATE_USER = 'UPDATE_USER',
+  UPDATE_USER_SUCCESS = 'UPDATE_USER_SUCCESS',
+  UPDATE_USER_ERROR = 'UPDATE_USER_ERROR',
 }
 
 interface Keyword {
@@ -50,6 +65,14 @@ const initialState: UserState = {
     loading: false,
     keyword: '',
     searchedUsers: [],
+  },
+  addUser: {
+    loading: false,
+    done: false,
+  },
+  updateUser: {
+    loading: false,
+    done: false,
   },
 };
 

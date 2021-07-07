@@ -1,13 +1,13 @@
-import { AxiosResponse } from 'axios';
-
-import { call, put, takeLatest } from '@redux-saga/core/effects';
-
 import * as registryApi from '../lib/registryApi';
+
+import { CreateRegistryResponse, RegistryListResponse } from '../src/registry/registry.controller';
+import { call, put, takeLatest } from '@redux-saga/core/effects';
+import { openSnackBar, openSnackBarByError } from './snack-bars';
+
+import { AxiosResponse } from 'axios';
 import { CreateRegistryDto } from '../src/registry/dto/create-registry.dto';
 import { RegistryDto } from '../src/registry/dto/registry.dto';
 import { UpdateRegistryDto } from '../src/registry/dto/update-registry.dto';
-import { CreateRegistryResponse, RegistryListResponse } from '../src/registry/registry.controller';
-import { openSnackBar, openSnackBarByError } from './snack-bars';
 
 interface SearchedRegistry extends RegistryDto {
   loading: boolean;
@@ -33,12 +33,12 @@ export interface RegistryState {
 }
 
 export enum RegistryActionType {
-  SEARCH = 'SEARCH',
-  SEARCH_SUCCESS = 'SEARCH_SUCCESS',
-  SEARCH_ERROR = 'SEARCH_ERROR',
-  REMOVE = 'REMOVE',
-  REMOVE_SUCCESS = 'REMOVE_SUCCESS',
-  REMOVE_ERROR = 'REMOVE_ERROR',
+  SEARCH_REGISTRY = 'SEARCH',
+  SEARCH_REGISTRY_SUCCESS = 'SEARCH_SUCCESS',
+  SEARCH_REGISTRY_ERROR = 'SEARCH_ERROR',
+  REMOVE_REGISTRY = 'REMOVE',
+  REMOVE_REGISTRY_SUCCESS = 'REMOVE_SUCCESS',
+  REMOVE_REGISTRY_ERROR = 'REMOVE_ERROR',
   ADD_REGISTRY = 'ADD_REGISTRY',
   ADD_REGISTRY_SUCCESS = 'ADD_REGISTRY_SUCCESS',
   ADD_REGISTRY_ERROR = 'ADD_REGISTRY_ERROR',
@@ -102,18 +102,18 @@ export const initialState: RegistryState = {
   },
 };
 
-export const search = (keyword: string): RegistryAction<Keyword> => ({
-  type: RegistryActionType.SEARCH,
+export const searchRegistry = (keyword: string): RegistryAction<Keyword> => ({
+  type: RegistryActionType.SEARCH_REGISTRY,
   payload: { keyword },
 });
 
 export const removeRegistry = (id: number): RegistryAction<Remove> => ({
-  type: RegistryActionType.REMOVE,
+  type: RegistryActionType.REMOVE_REGISTRY,
   payload: { willBeRemovedRegistryIds: [id] },
 });
 
 export const removeRegistries = (ids: number[]): RegistryAction<Remove> => ({
-  type: RegistryActionType.REMOVE,
+  type: RegistryActionType.REMOVE_REGISTRY,
   payload: { willBeRemovedRegistryIds: ids },
 });
 
@@ -133,13 +133,13 @@ function* searchSaga(action: RegistryAction) {
     const res: AxiosResponse<RegistryListResponse> = yield call(registryApi.search, keyword);
     if (res?.status === 200) {
       yield put({
-        type: RegistryActionType.SEARCH_SUCCESS,
+        type: RegistryActionType.SEARCH_REGISTRY_SUCCESS,
         payload: res.data,
       });
     }
   } catch (error) {
     yield put({
-      type: RegistryActionType.SEARCH_ERROR,
+      type: RegistryActionType.SEARCH_REGISTRY_ERROR,
       payload: { error: error.message },
     });
     yield openSnackBarByError(error);
@@ -152,7 +152,7 @@ function* removeRegistrySaga(action: RegistryAction<Remove>) {
     const res: AxiosResponse = yield call(registryApi.removeRegistries, willBeRemovedRegistryIds);
     if (res?.status === 200) {
       yield put({
-        type: RegistryActionType.REMOVE_SUCCESS,
+        type: RegistryActionType.REMOVE_REGISTRY_SUCCESS,
         payload: { willBeRemovedRegistryIds },
       });
       yield put(
@@ -164,7 +164,7 @@ function* removeRegistrySaga(action: RegistryAction<Remove>) {
     }
   } catch (error) {
     yield put({
-      type: RegistryActionType.REMOVE_ERROR,
+      type: RegistryActionType.REMOVE_REGISTRY_ERROR,
       payload: { willBeRemovedRegistryIds, error: error.message },
     });
     yield openSnackBarByError(error);
@@ -223,7 +223,7 @@ function* updateRegistrySaga(action: RegistryAction<UpdateRegistry>) {
 
 const registryReducer = (state = initialState, action: RegistryAction): RegistryState => {
   switch (action.type) {
-    case RegistryActionType.SEARCH:
+    case RegistryActionType.SEARCH_REGISTRY:
       const { keyword } = action.payload as Keyword;
       return {
         ...state,
@@ -233,7 +233,7 @@ const registryReducer = (state = initialState, action: RegistryAction): Registry
           loading: true,
         },
       };
-    case RegistryActionType.SEARCH_SUCCESS:
+    case RegistryActionType.SEARCH_REGISTRY_SUCCESS:
       const { registries } = action.payload as RegistryListResponse;
       return {
         ...state,
@@ -245,11 +245,11 @@ const registryReducer = (state = initialState, action: RegistryAction): Registry
       };
     case RegistryActionType.ADD_REGISTRY_ERROR:
     case RegistryActionType.UPDATE_REGISTRY_ERROR:
-    case RegistryActionType.SEARCH_ERROR: {
+    case RegistryActionType.SEARCH_REGISTRY_ERROR: {
       const { error } = action.payload as RegistryError;
       return initialState;
     }
-    case RegistryActionType.REMOVE: {
+    case RegistryActionType.REMOVE_REGISTRY: {
       const { willBeRemovedRegistryIds } = action.payload as Remove;
       return {
         ...state,
@@ -262,7 +262,7 @@ const registryReducer = (state = initialState, action: RegistryAction): Registry
         },
       };
     }
-    case RegistryActionType.REMOVE_SUCCESS: {
+    case RegistryActionType.REMOVE_REGISTRY_SUCCESS: {
       const { willBeRemovedRegistryIds } = action.payload as Remove;
       return {
         ...state,
@@ -274,7 +274,7 @@ const registryReducer = (state = initialState, action: RegistryAction): Registry
         },
       };
     }
-    case RegistryActionType.REMOVE_ERROR: {
+    case RegistryActionType.REMOVE_REGISTRY_ERROR: {
       const { error } = action.payload as RemoveError;
       return {
         ...state,
@@ -331,8 +331,8 @@ const registryReducer = (state = initialState, action: RegistryAction): Registry
 };
 
 export function* registrySaga() {
-  yield takeLatest(RegistryActionType.SEARCH, searchSaga);
-  yield takeLatest(RegistryActionType.REMOVE, removeRegistrySaga);
+  yield takeLatest(RegistryActionType.SEARCH_REGISTRY, searchSaga);
+  yield takeLatest(RegistryActionType.REMOVE_REGISTRY, removeRegistrySaga);
   yield takeLatest(RegistryActionType.ADD_REGISTRY, addRegistrySaga);
   yield takeLatest(RegistryActionType.UPDATE_REGISTRY, updateRegistrySaga);
 }
