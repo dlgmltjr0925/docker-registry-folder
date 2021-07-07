@@ -1,10 +1,11 @@
+import * as userApi from '../lib/authApi';
+
 import axios, { AxiosResponse } from 'axios';
 import { call, delay, put, takeEvery } from 'redux-saga/effects';
-import { UserDto } from 'src/auth/dto/user.dto';
 
-import * as userApi from '../lib/userApi';
 import { SignInInputDto } from '../src/auth/dto/sign-in-input.dto';
 import { SignUpInputDto } from '../src/auth/dto/sign-up-input.dto';
+import { UserDto } from '../src/auth/dto/user.dto';
 import { openSnackBar } from './snack-bars';
 
 export interface AuthState {

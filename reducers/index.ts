@@ -36,7 +36,7 @@ export function* rootSaga() {
 const persistConfig: PersistConfig<RootState, any, any, any> = {
   key: 'docker-registry-folder',
   storage,
-  blacklist: ['registry', 'alertDialog'],
+  blacklist: ['registry', 'alertDialog', 'user'],
 };
 
 export default persistReducer(persistConfig, rootReducer);

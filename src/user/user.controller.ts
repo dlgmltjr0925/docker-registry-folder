@@ -7,6 +7,10 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
 
+export interface CreateUserResponse {
+  user: UserDto;
+}
+
 export interface UserListResponse {
   users: UserDto[];
 }
@@ -17,7 +21,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
+  create(@Body() createUserDto: CreateUserDto): Promise<UserDto> {
     return this.userService.create(createUserDto);
   }
 

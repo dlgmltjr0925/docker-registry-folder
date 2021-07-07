@@ -1,15 +1,26 @@
-import { UserDto } from 'src/auth/dto/user.dto';
-
-import { Injectable } from '@nestjs/common';
-
-import { connect } from '../../lib/sqlite';
+import { AuthService } from '../auth/auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
+import { Injectable } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UserDto } from '../auth/dto/user.dto';
+import { connect } from '../../lib/sqlite';
 
 @Injectable()
 export class UserService {
+  constructor(private authService: AuthService) {}
+
   create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+    return new Promise<UserDto>(async (resolve, reject) => {
+      const db = connect();
+      try {
+        const { user } = await this.authService.signUp({ ...createUserDto, systemAdmin: false });
+        resolve(user);
+      } catch (error) {
+        reject(error);
+      } finally {
+        db.close();
+      }
+    });
   }
 
   findAll() {

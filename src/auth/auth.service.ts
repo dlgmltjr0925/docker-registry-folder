@@ -1,15 +1,14 @@
 import * as bcrypt from 'bcrypt';
-import { Request } from 'express';
 
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 
-import { getUserByAccessToken } from '../../lib/jwt';
-import { connect } from '../../lib/sqlite';
 import { JwtPayload } from './dto/jwt-payload.dto';
+import { JwtService } from '@nestjs/jwt';
+import { Request } from 'express';
 import { SignInInputDto } from './dto/sign-in-input.dto';
 import { SignUpInputDto } from './dto/sign-up-input.dto';
 import { UserDto } from './dto/user.dto';
+import { connect } from '../../lib/sqlite';
 
 @Injectable()
 export class AuthService {

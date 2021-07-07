@@ -1,8 +1,8 @@
+import { CreateRegistryResponse, RegistryListResponse } from '../src/registry/registry.controller';
 import axios, { AxiosResponse } from 'axios';
 
 import { CreateRegistryDto } from '../src/registry/dto/create-registry.dto';
 import { UpdateRegistryDto } from '../src/registry/dto/update-registry.dto';
-import { CreateRegistryResponse, RegistryListResponse } from '../src/registry/registry.controller';
 
 export const search = (keyword: string): Promise<AxiosResponse<RegistryListResponse>> => {
   try {

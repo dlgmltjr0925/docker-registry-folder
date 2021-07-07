@@ -1,18 +1,17 @@
-import { handleChangeText } from 'lib/event-handles';
-import { useRouter } from 'next/dist/client/router';
 import { FC, KeyboardEventHandler, useEffect, useState } from 'react';
+import { removeRegistry, searchRegistry } from 'reducers/registry';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'reducers';
-import { openAlertDialog } from 'reducers/alert-dialog';
-import { removeRegistry, search } from 'reducers/registry';
+
 import { RegistryDto } from 'src/registry/dto/registry.dto';
-import styled from 'styled-components';
-
-import { faServer } from '@fortawesome/free-solid-svg-icons';
-
 import RegistryItem from '../../components/registry-item';
+import { RootState } from 'reducers';
 import WidgetContainer from '../../components/widget-container';
 import WidgetSearch from '../../components/widget-search';
+import { faServer } from '@fortawesome/free-solid-svg-icons';
+import { handleChangeText } from 'lib/event-handles';
+import { openAlertDialog } from 'reducers/alert-dialog';
+import styled from 'styled-components';
+import { useRouter } from 'next/dist/client/router';
 
 interface HomePageProps {}
 
@@ -31,7 +30,7 @@ const HomePage: FC<HomePageProps> = () => {
 
   const handleKeyPress: KeyboardEventHandler<HTMLDivElement> = ({ key }) => {
     if (key === 'Enter') {
-      dispatch(search(keyword));
+      dispatch(searchRegistry(keyword));
     }
   };
 
@@ -55,7 +54,7 @@ const HomePage: FC<HomePageProps> = () => {
   };
 
   useEffect(() => {
-    dispatch(search(''));
+    dispatch(searchRegistry(''));
   }, []);
 
   return (

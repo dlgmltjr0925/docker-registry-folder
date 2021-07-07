@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { faEdit, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { handleChangeSelectValue, handleChangeText } from 'lib/event-handles';
 import { useDispatch, useSelector } from 'react-redux';
@@ -6,14 +6,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { GetServerSideProps } from 'next';
 import IconButton from 'components/icon-button';
 import { MenuItem } from '@material-ui/core';
-import { Role } from 'src/auth/interfaces/role.enum';
+import { Role } from '../../../src/auth/interfaces/role.enum';
 import { RootState } from 'reducers';
 import Select from '@material-ui/core/Select';
 import TextInput from 'components/text-input';
-import { UpdateUserDto } from 'src/user/dto/update-user.dto';
+import { UpdateUserDto } from '../../../src/user/dto/update-user.dto';
 import { UserDto } from '../../../src/auth/dto/user.dto';
 import WidgetContainer from 'components/widget-container';
+import { addUser } from '../../../reducers/user';
 import styled from 'styled-components';
+import { updateUser } from 'lib/userApi';
 import { useRouter } from 'next/dist/client/router';
 
 interface PrevUser extends Omit<UpdateUserDto, 'password'> {}
@@ -40,36 +42,32 @@ const UserPage: FC<UserPageProps> = ({ prevUser }) => {
   const isActive = username.trim() !== '' && password.trim() !== '';
 
   const handleClickSubmit = () => {
-    // if (!isActive || user.addRegistry.loading || user.updateRegistry.loading) return;
-    // if (!prevRegistry) {
-    //   dispatch(
-    //     addRegistry({
-    //       name: name.trim(),
-    //       host: host.trim(),
-    //       tag: tag.trim() !== '' ? tag.trim() : null,
-    //       username: hasAuth ? username : null,
-    //       password: hasAuth ? password : null,
-    //     })
-    //   );
-    // } else {
-    //   dispatch(
-    //     updateRegistry({
-    //       ...prevRegistry,
-    //       name: name.trim(),
-    //       host: host.trim(),
-    //       tag: tag.trim() !== '' ? tag.trim() : null,
-    //       username: hasAuth ? username : null,
-    //       password: hasAuth ? password : null,
-    //     })
-    //   );
-    // }
+    if (!isActive || user.addUser.loading || user.updateUser.loading) return;
+    if (!prevUser) {
+      dispatch(
+        addUser({
+          username: username.trim(),
+          password: password.trim(),
+          role,
+        })
+      );
+    } else {
+      dispatch(
+        updateUser({
+          ...prevUser,
+          username: username.trim(),
+          password: password.trim(),
+          role,
+        })
+      );
+    }
   };
 
-  // useEffect(() => {
-  //   if ((isUpdateMode && registry.updateRegistry.done) || (!isUpdateMode && registry.addRegistry.done)) {
-  //     router.push('/setting/registries');
-  //   }
-  // }, [registry]);
+  useEffect(() => {
+    if ((isUpdateMode && user.updateUser.done) || (!isUpdateMode && user.addUser.done)) {
+      router.push('/setting/users');
+    }
+  }, [user]);
 
   return (
     <Container>
@@ -82,6 +80,7 @@ const UserPage: FC<UserPageProps> = ({ prevUser }) => {
             placeholder="Username"
             value={username}
             onChange={handleChangeText(setUsername)}
+            disabled={prevUser !== undefined}
           />
         </div>
         <div className="input-wrapper">
@@ -89,7 +88,7 @@ const UserPage: FC<UserPageProps> = ({ prevUser }) => {
           <TextInput
             className="input"
             type="password"
-            placeholder="myregistry.myserver.io"
+            placeholder="Password"
             value={password}
             onChange={handleChangeText(setPassword)}
           />
@@ -109,7 +108,7 @@ const UserPage: FC<UserPageProps> = ({ prevUser }) => {
           className={`button-add ${isActive ? 'button-add-active' : ''}`}
           type="submit"
           icon={isUpdateMode ? faEdit : faPlus}
-          // loading={registry[isUpdateMode ? 'updateRegistry' : 'addRegistry'].loading}
+          loading={user[isUpdateMode ? 'updateUser' : 'addUser'].loading}
           onClick={handleClickSubmit}
         >
           {isUpdateMode ? 'Update' : 'Add registry'}

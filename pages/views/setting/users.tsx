@@ -4,7 +4,6 @@ import { removeUsers, search } from '../../../reducers/user';
 import { useDispatch, useSelector } from 'react-redux';
 
 import IconButton from '../../../components/icon-button';
-import Link from 'next/link';
 import { RootState } from '../../../reducers';
 import SettingUserItem from '../../../components/setting-user-item';
 import { UserDto } from '../../../src/auth/dto/user.dto';
@@ -13,6 +12,7 @@ import WidgetSearch from '../../../components/widget-search';
 import { handleChangeText } from 'lib/event-handles';
 import { openAlertDialog } from 'reducers/alert-dialog';
 import styled from 'styled-components';
+import { useRouter } from 'next/dist/client/router';
 
 interface UsersPageProps {}
 
@@ -22,6 +22,7 @@ const UsersPage: FC<UsersPageProps> = (props) => {
   if (!auth.accessToken) return null;
 
   const dispatch = useDispatch();
+  const route = useRouter();
 
   const [keyword, setKeyword] = useState<string>('');
   const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
@@ -65,6 +66,10 @@ const UsersPage: FC<UsersPageProps> = (props) => {
     );
   };
 
+  const handleClickAdd = () => {
+    route.push('/setting/user');
+  };
+
   useEffect(() => {
     dispatch(search(''));
   }, []);
@@ -80,11 +85,9 @@ const UsersPage: FC<UsersPageProps> = (props) => {
           >
             Remove
           </IconButton>
-          <Link href="/setting/user">
-            <IconButton className="widget-button button-add" icon={faPlus}>
-              Add User
-            </IconButton>
-          </Link>
+          <IconButton className="widget-button button-add" icon={faPlus} onClick={handleClickAdd}>
+            Add User
+          </IconButton>
         </div>
         <WidgetSearch
           placeholder="Search by name, role..."
