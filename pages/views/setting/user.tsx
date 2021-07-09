@@ -1,4 +1,5 @@
 import { FC, useEffect, useState } from 'react';
+import { addUser, updateUser } from '../../../reducers/user';
 import { faEdit, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { handleChangeSelectValue, handleChangeText } from 'lib/event-handles';
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,9 +14,7 @@ import TextInput from 'components/text-input';
 import { UpdateUserDto } from '../../../src/user/dto/update-user.dto';
 import { UserDto } from '../../../src/auth/dto/user.dto';
 import WidgetContainer from 'components/widget-container';
-import { addUser } from '../../../reducers/user';
 import styled from 'styled-components';
-import { updateUser } from 'lib/userApi';
 import { useRouter } from 'next/dist/client/router';
 
 interface PrevUser extends Omit<UpdateUserDto, 'password'> {}
@@ -54,7 +53,7 @@ const UserPage: FC<UserPageProps> = ({ prevUser }) => {
     } else {
       dispatch(
         updateUser({
-          ...prevUser,
+          id: prevUser.id,
           username: username.trim(),
           password: password.trim(),
           role,

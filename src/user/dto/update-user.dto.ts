@@ -1,6 +1,5 @@
 import { CreateUserDto } from './create-user.dto';
 import Joi from 'joi';
-
 export class UpdateUserDto extends CreateUserDto {
   id!: number;
 }

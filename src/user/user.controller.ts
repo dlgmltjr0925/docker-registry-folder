@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post, Put } from '@nestjs/common';
 
 import { UserDto } from '../auth/dto/user.dto';
 import { Role } from '../auth/interfaces/role.enum';
@@ -21,8 +21,13 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto): Promise<UserDto> {
-    return this.userService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto): Promise<UserDto> {
+    return await this.userService.create(createUserDto);
+  }
+
+  @Put()
+  async update(@Body() updateUserDto: UpdateUserDto): Promise<boolean> {
+    return await this.userService.update(updateUserDto);
   }
 
   @Get('list')
@@ -39,11 +44,6 @@ export class UserController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.userService.findOneById(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
   }
 
   @Delete(':ids')

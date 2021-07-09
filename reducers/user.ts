@@ -171,6 +171,7 @@ function* addUserSaga(action: UserAction<AddUser>) {
       type: UserActionType.ADD_USER_ERROR,
       payload: { error: error.message },
     });
+    yield openSnackBarByError(error);
   }
 }
 
@@ -263,7 +264,6 @@ const userReducer = (state = initialState, action: UserAction): UserState => {
       return {
         ...state,
         addUser: {
-          ...state.addUser,
           loading: true,
           done: false,
         },
@@ -273,7 +273,6 @@ const userReducer = (state = initialState, action: UserAction): UserState => {
       return {
         ...state,
         addUser: {
-          ...state.addUser,
           loading: false,
           done: true,
         },
@@ -283,7 +282,6 @@ const userReducer = (state = initialState, action: UserAction): UserState => {
       return {
         ...state,
         updateUser: {
-          ...state.updateUser,
           loading: true,
           done: false,
         },
@@ -293,7 +291,6 @@ const userReducer = (state = initialState, action: UserAction): UserState => {
       return {
         ...state,
         updateUser: {
-          ...state.updateUser,
           loading: false,
           done: true,
         },

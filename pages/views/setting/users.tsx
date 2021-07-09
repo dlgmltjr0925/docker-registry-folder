@@ -57,6 +57,7 @@ const UsersPage: FC<UsersPageProps> = (props) => {
               label: 'Delete',
               onClick: () => {
                 dispatch(removeUsers(selectedUsers));
+                setSelectedUsers([]);
               },
             },
           ],

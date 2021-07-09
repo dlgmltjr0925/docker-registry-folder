@@ -4,6 +4,8 @@ import { Injectable } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserDto } from '../auth/dto/user.dto';
 import { connect } from '../../lib/sqlite';
+import * as bcrypt from 'bcrypt';
+import dateFormat from 'dateformat';
 
 @Injectable()
 export class UserService {
@@ -15,6 +17,36 @@ export class UserService {
       try {
         const { user } = await this.authService.signUp({ ...createUserDto, systemAdmin: false });
         resolve(user);
+      } catch (error) {
+        reject(error);
+      } finally {
+        db.close();
+      }
+    });
+  }
+
+  update(updateUserDto: UpdateUserDto) {
+    return new Promise<boolean>(async (resolve, reject) => {
+      const db = connect();
+      try {
+        const { id, password, role } = updateUserDto;
+        const updatedAt = dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss');
+
+        if (password !== '') {
+          const hashedPassword = await bcrypt.hash(password, this.authService.salt);
+          const sql = `UPDATE user SET password=?, role=?, updated_at=? WHERE id=?`;
+          db.run(sql, [hashedPassword, role, updatedAt, id], (error) => {
+            if (error) throw error;
+            resolve(true);
+          });
+        } else {
+          const sql = `UPDATE user SET role=?, updated_at=? WHERE id=?`;
+          db.run(sql, [role, updatedAt, id], (error) => {
+            if (error) throw error;
+            resolve(true);
+          });
+        }
+        resolve(true);
       } catch (error) {
         reject(error);
       } finally {
@@ -73,10 +105,6 @@ export class UserService {
         db.close();
       }
     });
-  }
-
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
   }
 
   removeByIds(ids: string) {
