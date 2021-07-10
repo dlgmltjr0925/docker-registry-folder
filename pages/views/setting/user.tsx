@@ -4,12 +4,14 @@ import { faEdit, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { handleChangeSelectValue, handleChangeText } from 'lib/event-handles';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { ChangeEvent } from 'react';
 import { GetServerSideProps } from 'next';
 import IconButton from 'components/icon-button';
 import { MenuItem } from '@material-ui/core';
 import { Role } from '../../../src/auth/interfaces/role.enum';
 import { RootState } from 'reducers';
 import Select from '@material-ui/core/Select';
+import { Switch } from '@material-ui/core';
 import TextInput from 'components/text-input';
 import { UpdateUserDto } from '../../../src/user/dto/update-user.dto';
 import { UserDto } from '../../../src/auth/dto/user.dto';
@@ -33,12 +35,19 @@ const UserPage: FC<UserPageProps> = ({ prevUser }) => {
   const dispatch = useDispatch();
   const router = useRouter();
 
+  const isUpdateMode = prevUser ? true : false;
+
   const [username, setUsername] = useState<string>(prevUser?.username || '');
+  const [changePassword, setChangePassword] = useState<boolean>(false);
   const [password, setPassword] = useState<string>('');
   const [role, setRole] = useState<Role>(prevUser?.role || Role.ADMIN);
 
-  const isUpdateMode = prevUser ? true : false;
-  const isActive = username.trim() !== '' && password.trim() !== '';
+  const isActive =
+    username.trim() !== '' && !isUpdateMode ? password.trim() !== '' : !changePassword || password.trim() !== '';
+
+  const handleChangePassword = (e: ChangeEvent<HTMLInputElement>, checked: boolean) => {
+    setChangePassword(checked);
+  };
 
   const handleClickSubmit = () => {
     if (!isActive || user.addUser.loading || user.updateUser.loading) return;
@@ -55,7 +64,7 @@ const UserPage: FC<UserPageProps> = ({ prevUser }) => {
         updateUser({
           id: prevUser.id,
           username: username.trim(),
-          password: password.trim(),
+          password: changePassword ? password.trim() : '',
           role,
         })
       );
@@ -82,16 +91,28 @@ const UserPage: FC<UserPageProps> = ({ prevUser }) => {
             disabled={prevUser !== undefined}
           />
         </div>
-        <div className="input-wrapper">
-          <span className="category">Password</span>
-          <TextInput
-            className="input"
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={handleChangeText(setPassword)}
-          />
-        </div>
+        {isUpdateMode && (
+          <div className="input-wrapper">
+            <span className="category">Change password</span>
+            <span className="switch-wrapper">
+              <Switch className="switch" checked={changePassword} color="primary" onChange={handleChangePassword} />
+            </span>
+          </div>
+        )}
+
+        {(!isUpdateMode || changePassword) && (
+          <div className="input-wrapper">
+            <span className="category">Password</span>
+            <TextInput
+              className="input"
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={handleChangeText(setPassword)}
+            />
+          </div>
+        )}
+
         <div className="input-wrapper">
           <span className="category">Role</span>
           <div className="input-select-wrapper">
