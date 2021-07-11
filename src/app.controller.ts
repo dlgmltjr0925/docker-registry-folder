@@ -1,10 +1,11 @@
 import { Response } from 'express';
 
-import { Controller, Get, Param, Render, Res } from '@nestjs/common';
+import { Controller, Get, Param, Render, Res, UseGuards } from '@nestjs/common';
 
 import { AuthService } from './auth/auth.service';
 import { RegistryService } from './registry/registry.service';
 import { UserService } from './user/user.service';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
 @Controller()
 export class AppController {
@@ -30,50 +31,6 @@ export class AppController {
   @Get('sign-up/admin')
   async signUpAdmin() {
     return {};
-  }
-
-  @Render('setting/account')
-  @Get('setting/account')
-  async account() {
-    return {};
-  }
-
-  @Render('setting/registries')
-  @Get('setting/registries')
-  async registries() {
-    return {};
-  }
-
-  @Render('setting/registry')
-  @Get('setting/registry')
-  async newRegistry() {
-    return {};
-  }
-
-  @Render('setting/registry')
-  @Get('setting/registry/:id')
-  async registry(@Param('id') id: string) {
-    const registry = await this.registryService.findOneWithAccessInfoById(+id);
-    return { registry: JSON.stringify(registry) };
-  }
-
-  @Render('setting/users')
-  @Get('setting/users')
-  async users() {
-    return {};
-  }
-
-  @Render('setting/user')
-  @Get('setting/user')
-  async newUser(@Param('id') id: string) {
-    return {};
-  }
-
-  @Render('setting/user')
-  @Get('setting/user/:id')
-  async user(@Param('id') id: string) {
-    const user = await this.userService.findOneById(+id);
-    return { user: JSON.stringify(user) };
   }
 
   @Render('dashboard')

@@ -7,6 +7,7 @@ import Next from 'next';
 import { RegistryModule } from './registry/registry.module';
 import { RenderModule } from 'nest-next';
 import { UserModule } from './user/user.module';
+import { SettingModule } from './setting/setting.module';
 
 export const NextModule = RenderModule.forRootAsync(
   Next({
@@ -15,7 +16,7 @@ export const NextModule = RenderModule.forRootAsync(
   })
 );
 @Module({
-  imports: [NextModule, AuthModule, RegistryModule, UserModule],
+  imports: [NextModule, AuthModule, RegistryModule, UserModule, SettingModule],
   controllers: [AppController],
   providers: [AuthService, DockerRegistryService],
 })

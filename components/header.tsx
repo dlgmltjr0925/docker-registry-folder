@@ -56,7 +56,7 @@ const Header: FC<HeaderProps> = () => {
           {user?.username || ''}
         </p>
         <div className="user-controll-wrapper">
-          <Link href="/setting/account">
+          <Link href={{ pathname: '/setting/account' }}>
             <span className="my-account-button user-controll-button">
               <FontAwesomeIcon className="user-controll-icon" icon={faUserCog} />
               my account
