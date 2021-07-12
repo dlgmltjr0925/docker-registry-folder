@@ -1,14 +1,14 @@
-import IconButton from 'components/icon-button';
-import TextInput from 'components/text-input';
-import { handleChangeText } from 'lib/event-handles';
-import { useRouter } from 'next/dist/client/router';
 import { KeyboardEventHandler, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+
+import IconButton from 'components/icon-button';
 import { RootState } from 'reducers';
+import TextInput from 'components/text-input';
+import { faSignInAlt } from '@fortawesome/free-solid-svg-icons';
+import { handleChangeText } from 'lib/event-handles';
 import { signIn } from 'reducers/auth';
 import styled from 'styled-components';
-
-import { faSignInAlt } from '@fortawesome/free-solid-svg-icons';
+import { useRouter } from 'next/dist/client/router';
 
 const LoginPage = () => {
   const auth = useSelector(({ auth }: RootState) => auth);

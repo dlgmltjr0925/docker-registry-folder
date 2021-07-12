@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useCallback, useState } from 'react';
 
 import { GetServerSideProps } from 'next';
 import IconButton from 'components/icon-button';
@@ -19,7 +19,7 @@ interface AccountPageProps {
 const AccountPage: FC<AccountPageProps> = () => {
   const { auth, user } = useSelector(({ auth, user }: RootState) => ({ auth, user }));
 
-  const [username, setUsername] = useState<string>('');
+  const [username, setUsername] = useState<string>(auth.user?.username || '');
   const [password, setPassword] = useState<string>('');
 
   const isActive = password.trim() !== '';
@@ -46,7 +46,7 @@ const AccountPage: FC<AccountPageProps> = () => {
             className="input"
             type="password"
             placeholder="Password"
-            value={username}
+            value={password}
             onChange={handleChangeText(setPassword)}
           />
         </div>
@@ -62,23 +62,6 @@ const AccountPage: FC<AccountPageProps> = () => {
       </WidgetContainer>
     </Container>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const props: AccountPageProps = {};
-  const { user } = context.query;
-  if (user) {
-    const { id, username, role } = JSON.parse(user as string) as UserDto;
-    props.prevAccount = {
-      id,
-      username,
-      role,
-    };
-  }
-
-  return {
-    props,
-  };
 };
 
 const Container = styled.div`

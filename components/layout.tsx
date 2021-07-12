@@ -1,14 +1,15 @@
-import { useRouter } from 'next/dist/client/router';
 import { PropsWithChildren, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'reducers';
 import { closeSideBar, openSideBar } from 'reducers/layout';
-import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux';
 
-import SnackBars from '../components/snack-bars';
 import AlertDialog from './alert-dialog';
+import { GetServerSideProps } from 'next';
 import Header from './header';
+import { RootState } from 'reducers';
 import SideBar from './side-bar';
+import SnackBars from '../components/snack-bars';
+import styled from 'styled-components';
+import { useRouter } from 'next/dist/client/router';
 
 interface LayoutProps {}
 
@@ -51,7 +52,9 @@ const Layout = ({ children }: PropsWithChildren<LayoutProps>) => {
   }, [isOpenedSideBar]);
 
   useEffect(() => {
-    if (!accessToken) router.replace('/login');
+    if (!accessToken) {
+      router.replace('/login');
+    }
   }, [accessToken]);
 
   if (!accessToken)

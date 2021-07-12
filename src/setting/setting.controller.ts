@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Render } from '@nestjs/common';
+import { Controller, Get, Param, Render, Session } from '@nestjs/common';
 import { RegistryService } from '../registry/registry.service';
 import { UserService } from '../user/user.service';
 

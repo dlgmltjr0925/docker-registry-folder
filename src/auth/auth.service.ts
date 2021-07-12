@@ -2,13 +2,16 @@ import * as bcrypt from 'bcrypt';
 
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 
-import { JwtPayload } from './dto/jwt-payload.dto';
+import { AccessTokenPayload } from './dto/access-token-payload.dto';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { SignInInputDto } from './dto/sign-in-input.dto';
 import { SignUpInputDto } from './dto/sign-up-input.dto';
 import { UserDto } from './dto/user.dto';
 import { connect } from '../../lib/sqlite';
+import { UpdateProfileDto } from './dto/update-profile.dto';
+import dateFormat from 'dateformat';
+import { RefreshTokenPayload } from './dto/refresh-token-payload.dto';
 
 @Injectable()
 export class AuthService {
@@ -53,8 +56,24 @@ export class AuthService {
     });
   }
 
+  async issueRefreshToken({ id }: UserDto): Promise<string> {
+    try {
+      const date = new Date();
+      const iat = date.valueOf();
+      const payload: RefreshTokenPayload = {
+        iss: 'docker_registry_folder',
+        aud: id,
+        iat,
+      };
+      return this.jwtService.sign(payload, { secret: this.jwtSecret, expiresIn: '30m' });
+    } catch (error) {
+      console.log('error', error);
+      return '';
+    }
+  }
+
   async issueAccessToken({ id, username, role, systemAdmin }: UserDto): Promise<string> {
-    const payload: JwtPayload = {
+    const payload: AccessTokenPayload = {
       sub: id,
       username,
       role,
@@ -115,5 +134,32 @@ export class AuthService {
       });
       db.close();
     });
+  }
+
+  async update({ id, password }: UpdateProfileDto) {
+    return new Promise<boolean>(async (resolve, reject) => {
+      const db = connect();
+      try {
+        const updatedAt = dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss');
+        const hashedPassword = await bcrypt.hash(password, this.salt);
+        const sql = `UPDATE user SET password=?, updated_at=? WHERE id=?`;
+        db.run(sql, [hashedPassword, updatedAt, id], (error) => {
+          if (error) throw error;
+          resolve(true);
+        });
+      } catch (error) {
+        reject(error);
+      } finally {
+        db.close();
+      }
+    });
+  }
+
+  getCookieWithJwtToken(token: String) {
+    return `DRFR=${token}; HttpOnly; Path=/; Max-Age=${process.env.NODE_ENV === 'production' ? '30m' : '4h'})}`;
+  }
+
+  getCookieForSignOut() {
+    return `DRFR=; HttpOnly; Path=/; Max-Age=0`;
   }
 }

@@ -1,9 +1,7 @@
-import session from 'express-session';
-
-import { NestFactory } from '@nestjs/core';
-
-import initialize from '../lib/initialize';
 import { AppModule } from './app.module';
+import { NestFactory } from '@nestjs/core';
+import initialize from '../lib/initialize';
+import session from 'express-session';
 
 const bootstrap = async () => {
   await initialize();

@@ -1,21 +1,20 @@
-import { verify } from 'jsonwebtoken';
-import path from 'path';
-
 import { BadRequestException, UnauthorizedException } from '@nestjs/common';
-import { PassportModule } from '@nestjs/passport';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { connect } from '../../lib/sqlite';
+import { AccessTokenPayload } from './dto/access-token-payload.dto';
 import { AuthController } from './auth.controller';
-import { DynamicJwtModule } from './auth.module';
 import { AuthService } from './auth.service';
-import { JwtPayload } from './dto/jwt-payload.dto';
-import { SignUpInputDto } from './dto/sign-up-input.dto';
-import { UserDto } from './dto/user.dto';
-import { Role } from './interfaces/role.enum';
+import { DynamicJwtModule } from './auth.module';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { JwtStrategy } from './jwt.strategy';
 import { LocalStrategy } from './local.strategy';
+import { PassportModule } from '@nestjs/passport';
+import { Role } from './interfaces/role.enum';
+import { SignUpInputDto } from './dto/sign-up-input.dto';
+import { UserDto } from './dto/user.dto';
+import { connect } from '../../lib/sqlite';
+import path from 'path';
+import { verify } from 'jsonwebtoken';
 
 const deleteTestUser = (): Promise<any> => {
   return new Promise((resolve, reject) => {
@@ -126,7 +125,7 @@ describe('AuthController', () => {
 
     it('should be return user info', async () => {
       const jwtStrategy = new JwtStrategy();
-      const jwtPayload = verify(accessToken, process.env.JWT_SECRET as string) as JwtPayload;
+      const jwtPayload = verify(accessToken, process.env.JWT_SECRET as string) as AccessTokenPayload;
       const testUser: UserDto = await jwtStrategy.validate(jwtPayload);
       const result = await controller.profile({ user: testUser });
       expect(result.user).toEqual(user);

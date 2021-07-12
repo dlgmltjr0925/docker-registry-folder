@@ -46,7 +46,6 @@ export class UserService {
             resolve(true);
           });
         }
-        resolve(true);
       } catch (error) {
         reject(error);
       } finally {

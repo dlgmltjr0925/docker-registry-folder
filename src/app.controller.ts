@@ -4,16 +4,12 @@ import { Controller, Get, Param, Render, Res, UseGuards } from '@nestjs/common';
 
 import { AuthService } from './auth/auth.service';
 import { RegistryService } from './registry/registry.service';
-import { UserService } from './user/user.service';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
 @Controller()
 export class AppController {
-  constructor(
-    private authService: AuthService,
-    private registryService: RegistryService,
-    private userService: UserService
-  ) {}
+  constructor(private authService: AuthService, private registryService: RegistryService) {}
+
   @Render('home')
   @Get()
   async home() {
