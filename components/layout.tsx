@@ -12,7 +12,7 @@ import { useRouter } from 'next/dist/client/router';
 
 interface LayoutProps {}
 
-const EXCEPTION_PAGE = ['/404', '/views/login', '/views/sign-up/admin'];
+const EXCEPTION_PAGE = ['/404', '/views/login', '/views/sign-up/admin', '/views/refresh'];
 
 const Layout = ({ children }: PropsWithChildren<LayoutProps>) => {
   const router = useRouter();
@@ -52,7 +52,7 @@ const Layout = ({ children }: PropsWithChildren<LayoutProps>) => {
 
   useEffect(() => {
     if (!accessToken) {
-      // router.replace('/login');
+      router.replace(`/refresh?redirect=${router.asPath}`);
     }
   }, [accessToken]);
 

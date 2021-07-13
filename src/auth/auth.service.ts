@@ -81,6 +81,36 @@ export class AuthService {
     return this.jwtService.sign(payload, { secret: this.jwtSecret });
   }
 
+  findUserById(id: number) {
+    return new Promise<UserDto>((resolve, reject) => {
+      const db = connect();
+      try {
+        const sql = `SELECT id, username, role, system_admin as systemAdmin FROM user WHERE id=?`;
+        db.each(sql, [id], (error, row) => {
+          if (error) return reject(error);
+          resolve(row);
+        });
+      } catch (error) {
+        reject(error);
+      } finally {
+        db.close();
+      }
+    });
+  }
+
+  async issueAccessTokenByRefreshToken(refreshToken: string): Promise<{ user: UserDto; accessToken: string }> {
+    try {
+      const { aud: id } = await this.jwtService.verifyAsync(refreshToken, {
+        secret: process.env.JWT_SECRET as string,
+      });
+      const user = await this.findUserById(id);
+      const accessToken = await this.issueAccessToken(user);
+      return { user, accessToken };
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async signUp({
     username,
     password,

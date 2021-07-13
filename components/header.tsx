@@ -42,6 +42,7 @@ const Header: FC<HeaderProps> = () => {
 
   const handleClickLogout = useCallback(() => {
     dispatch(signOut());
+    router.replace('/login');
   }, []);
 
   return (

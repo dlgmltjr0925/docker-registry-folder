@@ -29,6 +29,7 @@ export enum AuthActionType {
   UPDATE_PROFILE = 'UPDATE_PROFILE',
   UPDATE_PROFILE_SUCCESS = 'UPDATE_PROFILE_SUCCESS',
   UPDATE_PROFILE_ERROR = 'UPDATE_PROFILE_ERROR',
+  UPDATE_AUTH_STATE = 'UPDATE_AUTH_STATE',
 }
 
 interface SignInResponse {
@@ -40,7 +41,7 @@ interface SignInError {
   error: string;
 }
 
-type Payload = SignInResponse | SignUpInputDto | SignInInputDto | SignInError;
+type Payload = SignInResponse | SignUpInputDto | SignInInputDto | SignInError | Partial<AuthState>;
 
 interface AuthAction {
   type: AuthActionType;
@@ -61,6 +62,11 @@ export const signUp = (signUpInput: SignUpInputDto): AuthAction => ({
 export const signIn = (signInInput: SignInInputDto): AuthAction => ({
   type: AuthActionType.SIGN_IN,
   payload: signInInput,
+});
+
+export const updateAuthState = (authState: Partial<AuthState>) => ({
+  type: AuthActionType.UPDATE_AUTH_STATE,
+  payload: authState,
 });
 
 function* signUpSaga(action: AuthAction) {
@@ -159,6 +165,9 @@ const authReducer = (state = initialState, action: AuthAction): AuthState => {
       };
     case AuthActionType.SIGN_OUT_SUCCESS:
       return initialState;
+    case AuthActionType.UPDATE_AUTH_STATE:
+      console.log('here', action.payload);
+      return { ...initialState, ...(action.payload as Partial<AuthState>) };
     default:
       return state;
   }
