@@ -1,12 +1,15 @@
 import { Response } from 'express';
 
-import { Controller, Get, Param, Render, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Render, Res, UseFilters, UseGuards } from '@nestjs/common';
 
 import { AuthService } from './auth/auth.service';
 import { RegistryService } from './registry/registry.service';
-import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { NoAuthCookieGuard } from './auth/no-auth-cookie.guard';
+import { NoAuthCookieExceptionFilter } from './auth/no-auth-cookie-exception.filter';
 
 @Controller()
+@UseGuards(NoAuthCookieGuard)
+@UseFilters(NoAuthCookieExceptionFilter)
 export class AppController {
   constructor(private authService: AuthService, private registryService: RegistryService) {}
 

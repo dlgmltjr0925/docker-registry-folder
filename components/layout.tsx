@@ -3,7 +3,6 @@ import { closeSideBar, openSideBar } from 'reducers/layout';
 import { useDispatch, useSelector } from 'react-redux';
 
 import AlertDialog from './alert-dialog';
-import { GetServerSideProps } from 'next';
 import Header from './header';
 import { RootState } from 'reducers';
 import SideBar from './side-bar';
@@ -53,7 +52,7 @@ const Layout = ({ children }: PropsWithChildren<LayoutProps>) => {
 
   useEffect(() => {
     if (!accessToken) {
-      router.replace('/login');
+      // router.replace('/login');
     }
   }, [accessToken]);
 

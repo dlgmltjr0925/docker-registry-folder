@@ -15,6 +15,15 @@ export const getUserByAccessToken = (accessToken: string): UserDto => {
   }
 };
 
+export const verifyRefreshToken = (refreshToken: string): boolean => {
+  try {
+    jwt.verify(refreshToken, process.env.JWT_SECRET as string);
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
 export const getUserByContext = (context: GetServerSidePropsContext): UserDto | null => {
   const { session } = context.req;
   const { accessToken } = session;

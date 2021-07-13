@@ -1,8 +1,12 @@
-import { Controller, Get, Param, Render, Session } from '@nestjs/common';
+import { Controller, Get, Param, Render, Session, UseFilters, UseGuards } from '@nestjs/common';
+import { NoAuthCookieGuard } from '../auth/no-auth-cookie.guard';
+import { NoAuthCookieExceptionFilter } from '../auth/no-auth-cookie-exception.filter';
 import { RegistryService } from '../registry/registry.service';
 import { UserService } from '../user/user.service';
 
 @Controller('setting')
+@UseGuards(NoAuthCookieGuard)
+@UseFilters(NoAuthCookieExceptionFilter)
 export class SettingController {
   constructor(private registryService: RegistryService, private userService: UserService) {}
 
