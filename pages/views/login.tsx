@@ -1,4 +1,5 @@
 import { KeyboardEventHandler, useEffect, useState } from 'react';
+import { signIn, signOut } from 'reducers/auth';
 import { useDispatch, useSelector } from 'react-redux';
 
 import IconButton from 'components/icon-button';
@@ -6,7 +7,6 @@ import { RootState } from 'reducers';
 import TextInput from 'components/text-input';
 import { faSignInAlt } from '@fortawesome/free-solid-svg-icons';
 import { handleChangeText } from 'lib/event-handles';
-import { signIn } from 'reducers/auth';
 import styled from 'styled-components';
 import { useRouter } from 'next/dist/client/router';
 
@@ -30,6 +30,12 @@ const LoginPage = () => {
   const handleKeyPress: KeyboardEventHandler<HTMLDivElement> = ({ key }) => {
     if (key === 'Enter') handleLogin();
   };
+
+  useEffect(() => {
+    if (auth.accessToken) {
+      dispatch(signOut());
+    }
+  }, []);
 
   useEffect(() => {
     if (auth.accessToken) router.replace('/');

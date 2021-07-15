@@ -131,7 +131,7 @@ const UserPage: FC<UserPageProps> = ({ prevUser }) => {
           loading={user[isUpdateMode ? 'updateUser' : 'addUser'].loading}
           onClick={handleClickSubmit}
         >
-          {isUpdateMode ? 'Update' : 'Add registry'}
+          {isUpdateMode ? 'Update' : 'Add user'}
         </IconButton>
       </WidgetContainer>
     </Container>

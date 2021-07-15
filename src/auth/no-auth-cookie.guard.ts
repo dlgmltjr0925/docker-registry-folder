@@ -1,10 +1,11 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable, Logger } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { verifyRefreshToken } from '../../lib/jwt';
 import { NoAuthCookieException } from './exceptions/no-auth-cookie.exception';
 
 @Injectable()
 export class NoAuthCookieGuard implements CanActivate {
+  logger = new Logger('NoAuthCookieGuard');
   static paths = ['/login', '/sign-up/admin'];
 
   canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
