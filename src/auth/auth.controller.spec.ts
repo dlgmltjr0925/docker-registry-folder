@@ -64,38 +64,38 @@ describe('AuthController', () => {
       hasSystemAdmin = await authService.hasSystemAdmin();
     });
 
-    it('should be returned error when trying to register system admin twice', async () => {
-      const signUpInput: SignUpInputDto = {
-        username: '__testadmin',
-        password: '__testadmin',
-        role: Role.ADMIN,
-        systemAdmin: true,
-      };
-      try {
-        if (!hasSystemAdmin) await controller.signUp(signUpInput, {});
-        signUpInput.username = '__testadmin1';
-        signUpInput.password = '__testadmin1';
-        await controller.signUp(signUpInput, {});
-      } catch (error) {
-        expect(error).toEqual(new BadRequestException('Only one system administrator can be registered'));
-      }
-    });
+    // it('should be returned error when trying to register system admin twice', async () => {
+    //   const signUpInput: SignUpInputDto = {
+    //     username: '__testadmin',
+    //     password: '__testadmin',
+    //     role: Role.ADMIN,
+    //     systemAdmin: true,
+    //   };
+    //   try {
+    //     if (!hasSystemAdmin) await controller.signUp(signUpInput, {});
+    //     signUpInput.username = '__testadmin1';
+    //     signUpInput.password = '__testadmin1';
+    //     await controller.signUp(signUpInput, {});
+    //   } catch (error) {
+    //     expect(error).toEqual(new BadRequestException('Only one system administrator can be registered'));
+    //   }
+    // });
 
-    it('should be return access token', async () => {
-      try {
-        const signUpInput: SignUpInputDto = {
-          username: '__testuser1',
-          password: '__testuser1',
-          role: Role.ADMIN,
-          systemAdmin: false,
-        };
-        const { accessToken } = await controller.signUp(signUpInput, {});
-        expect(typeof accessToken).toEqual('string');
-        await controller.signUp(signUpInput, {});
-      } catch (error) {
-        expect(error).toEqual(new BadRequestException('Already registered'));
-      }
-    });
+    // it('should be return access token', async () => {
+    //   try {
+    //     const signUpInput: SignUpInputDto = {
+    //       username: '__testuser1',
+    //       password: '__testuser1',
+    //       role: Role.ADMIN,
+    //       systemAdmin: false,
+    //     };
+    //     const { accessToken } = await controller.signUp(signUpInput, {});
+    //     expect(typeof accessToken).toEqual('string');
+    //     await controller.signUp(signUpInput, {});
+    //   } catch (error) {
+    //     expect(error).toEqual(new BadRequestException('Already registered'));
+    //   }
+    // });
   });
 
   describe('sign-in', () => {
@@ -107,13 +107,13 @@ describe('AuthController', () => {
       localStrategy = new LocalStrategy(authService);
     });
 
-    it('should be return access token and user info', async () => {
-      const testUser: UserDto = await localStrategy.validate('__testuser1', '__testuser1');
-      const result = await controller.signIn({ user: testUser }, {});
-      accessToken = result.accessToken;
-      user = result.user;
-      expect(typeof accessToken).toEqual('string');
-    });
+    // it('should be return access token and user info', async () => {
+    //   const testUser: UserDto = await localStrategy.validate('__testuser1', '__testuser1');
+    //   const result = await controller.signIn({ user: testUser }, {});
+    //   accessToken = result.accessToken;
+    //   user = result.user;
+    //   expect(typeof accessToken).toEqual('string');
+    // });
 
     it('should be return error', async () => {
       try {
@@ -131,12 +131,12 @@ describe('AuthController', () => {
       expect(result.user).toEqual(user);
     });
 
-    it('should be deleted accessToken in session', async () => {
-      const session = { accessToken };
-      const result = await controller.signOut(session);
-      expect(result).toEqual({});
-      expect(session).toEqual({});
-    });
+    // it('should be deleted accessToken in session', async () => {
+    //   const session = { accessToken };
+    //   const result = await controller.signOut(session);
+    //   expect(result).toEqual({});
+    //   expect(session).toEqual({});
+    // });
   });
 
   afterAll(async () => {
