@@ -1,10 +1,12 @@
+import * as bcrypt from 'bcrypt';
+
 import { AuthService } from '../auth/auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Injectable } from '@nestjs/common';
+import { Role } from '../auth/interfaces/role.enum';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserDto } from '../auth/dto/user.dto';
 import { connect } from '../../lib/sqlite';
-import * as bcrypt from 'bcrypt';
 import dateFormat from 'dateformat';
 
 @Injectable()
@@ -29,7 +31,9 @@ export class UserService {
     return new Promise<boolean>(async (resolve, reject) => {
       const db = connect();
       try {
-        const { id, password, role } = updateUserDto;
+        const { id, password, systemAdmin } = updateUserDto;
+        const role = systemAdmin ? Role.ADMIN : updateUserDto.role;
+
         const updatedAt = dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss');
 
         if (password !== '') {
@@ -79,7 +83,7 @@ export class UserService {
         const likeKeyword = `%${keyword}%`;
         db.all(sql, [likeKeyword, likeKeyword], (error, rows) => {
           if (error) throw error;
-          resolve(rows);
+          resolve(rows.map((row) => ({ ...row, systemAdmin: row.systemAdmin === 1 })));
         });
       } catch (error) {
         reject(error);
@@ -96,7 +100,7 @@ export class UserService {
         const sql = `SELECT id, username, role, system_admin as systemAdmin FROM user WHERE id=?`;
         db.each(sql, [id], (error, row) => {
           if (error) return reject(error);
-          resolve(row);
+          resolve({ ...row, systemAdmin: row.systemAdmin === 1 });
         });
       } catch (error) {
         reject(error);

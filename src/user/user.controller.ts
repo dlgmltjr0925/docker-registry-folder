@@ -1,10 +1,23 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post, Put } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Logger,
+  Param,
+  Patch,
+  Post,
+  Put,
+  UsePipes,
+} from '@nestjs/common';
+import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 
 import { UserDto } from '../auth/dto/user.dto';
 import { Role } from '../auth/interfaces/role.enum';
 import { Roles } from '../auth/roles.decorator';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDto, CreateUserSchema } from './dto/create-user.dto';
+import { UpdateUserDto, UpdateUserSchema } from './dto/update-user.dto';
 import { UserService } from './user.service';
 
 export interface CreateUserResponse {
@@ -18,14 +31,17 @@ export interface UserListResponse {
 @Controller('api/user')
 @Roles(Role.ADMIN)
 export class UserController {
+  logger = new Logger('UserController');
   constructor(private readonly userService: UserService) {}
 
   @Post()
+  @UsePipes(new JoiValidationPipe(CreateUserSchema))
   async create(@Body() createUserDto: CreateUserDto): Promise<UserDto> {
     return await this.userService.create(createUserDto);
   }
 
   @Put()
+  @UsePipes(new JoiValidationPipe(UpdateUserSchema))
   async update(@Body() updateUserDto: UpdateUserDto): Promise<boolean> {
     return await this.userService.update(updateUserDto);
   }

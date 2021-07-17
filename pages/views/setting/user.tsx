@@ -62,7 +62,7 @@ const UserPage: FC<UserPageProps> = ({ prevUser }) => {
     } else {
       dispatch(
         updateUser({
-          id: prevUser.id,
+          ...prevUser,
           username: username.trim(),
           password: changePassword ? password.trim() : '',
           role,
@@ -95,7 +95,13 @@ const UserPage: FC<UserPageProps> = ({ prevUser }) => {
           <div className="input-wrapper">
             <span className="category">Change password</span>
             <span className="switch-wrapper">
-              <Switch className="switch" checked={changePassword} color="primary" onChange={handleChangePassword} />
+              <Switch
+                className="switch"
+                checked={changePassword}
+                color="primary"
+                onChange={handleChangePassword}
+                disabled={!!prevUser?.systemAdmin}
+              />
             </span>
           </div>
         )}
@@ -116,7 +122,7 @@ const UserPage: FC<UserPageProps> = ({ prevUser }) => {
         <div className="input-wrapper">
           <span className="category">Role</span>
           <div className="input-select-wrapper">
-            <Select value={role} onChange={handleChangeSelectValue(setRole)}>
+            <Select value={role} onChange={handleChangeSelectValue(setRole)} disabled={!!prevUser?.systemAdmin}>
               <MenuItem value={Role.ADMIN}>ADMIN</MenuItem>
               <MenuItem value={Role.MANAGER}>MANAGER</MenuItem>
               <MenuItem value={Role.VIEWER}>VIEWER</MenuItem>
@@ -124,15 +130,17 @@ const UserPage: FC<UserPageProps> = ({ prevUser }) => {
           </div>
         </div>
 
-        <IconButton
-          className={`button-add ${isActive ? 'button-add-active' : ''}`}
-          type="submit"
-          icon={isUpdateMode ? faEdit : faPlus}
-          loading={user[isUpdateMode ? 'updateUser' : 'addUser'].loading}
-          onClick={handleClickSubmit}
-        >
-          {isUpdateMode ? 'Update' : 'Add user'}
-        </IconButton>
+        {!prevUser?.systemAdmin && (
+          <IconButton
+            className={`button-add ${isActive ? 'button-add-active' : ''}`}
+            type="submit"
+            icon={isUpdateMode ? faEdit : faPlus}
+            loading={user[isUpdateMode ? 'updateUser' : 'addUser'].loading}
+            onClick={handleClickSubmit}
+          >
+            {isUpdateMode ? 'Update' : 'Add user'}
+          </IconButton>
+        )}
       </WidgetContainer>
     </Container>
   );
@@ -142,12 +150,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const props: UserPageProps = {};
   const { user } = context.query;
   if (user) {
-    const { id, username, role } = JSON.parse(user as string) as UserDto;
-    props.prevUser = {
-      id,
-      username,
-      role,
-    };
+    props.prevUser = JSON.parse(user as string) as UserDto;
   }
 
   return {
