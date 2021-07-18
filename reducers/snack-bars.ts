@@ -1,6 +1,6 @@
-import { takeEvery } from 'redux-saga/effects';
-
 import { delay, put } from '@redux-saga/core/effects';
+
+import { takeEvery } from 'redux-saga/effects';
 
 interface Message {
   id: number;

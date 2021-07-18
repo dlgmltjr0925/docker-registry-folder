@@ -16,6 +16,7 @@ import TextInput from 'components/text-input';
 import { UpdateUserDto } from '../../../src/user/dto/update-user.dto';
 import { UserDto } from '../../../src/auth/dto/user.dto';
 import WidgetContainer from 'components/widget-container';
+import { route } from 'next/dist/next-server/server/router';
 import styled from 'styled-components';
 import { useRouter } from 'next/dist/client/router';
 
@@ -60,14 +61,18 @@ const UserPage: FC<UserPageProps> = ({ prevUser }) => {
         })
       );
     } else {
-      dispatch(
-        updateUser({
-          ...prevUser,
-          username: username.trim(),
-          password: changePassword ? password.trim() : '',
-          role,
-        })
-      );
+      if (prevUser.role === role && (!changePassword || password.trim() === '')) {
+        router.push('/setting/users');
+      } else {
+        dispatch(
+          updateUser({
+            ...prevUser,
+            username: username.trim(),
+            password: changePassword ? password.trim() : '',
+            role,
+          })
+        );
+      }
     }
   };
 
@@ -100,7 +105,7 @@ const UserPage: FC<UserPageProps> = ({ prevUser }) => {
                 checked={changePassword}
                 color="primary"
                 onChange={handleChangePassword}
-                disabled={!!prevUser?.systemAdmin}
+                disabled={!auth.user?.systemAdmin && !!prevUser?.systemAdmin}
               />
             </span>
           </div>
@@ -130,7 +135,7 @@ const UserPage: FC<UserPageProps> = ({ prevUser }) => {
           </div>
         </div>
 
-        {!prevUser?.systemAdmin && (
+        {(auth.user?.systemAdmin || !prevUser?.systemAdmin) && (
           <IconButton
             className={`button-add ${isActive ? 'button-add-active' : ''}`}
             type="submit"

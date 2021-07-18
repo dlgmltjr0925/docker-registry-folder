@@ -9,5 +9,5 @@ export class UpdateProfileDto {
 export const UpdateProfileSchema = Joi.object({
   id: Joi.number().required(),
   username: Joi.string().required(),
-  password: Joi.string().required(),
+  password: Joi.string().min(6).required(),
 });

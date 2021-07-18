@@ -9,6 +9,6 @@ export class CreateUserDto {
 
 export const CreateUserSchema = Joi.object({
   username: Joi.string().required(),
-  password: Joi.string().required(),
+  password: Joi.string().min(6).required(),
   role: Joi.string().required(),
 });
