@@ -66,10 +66,10 @@ const UserPage: FC<UserPageProps> = ({ prevUser }) => {
       } else {
         dispatch(
           updateUser({
-            ...prevUser,
-            username: username.trim(),
-            password: changePassword ? password.trim() : '',
+            id: prevUser.id,
+            password: changePassword ? password.trim() : undefined,
             role,
+            systemAdmin: prevUser.systemAdmin,
           })
         );
       }

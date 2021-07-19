@@ -1,14 +1,15 @@
-import { CreateUserDto } from './create-user.dto';
 import Joi from 'joi';
-export class UpdateUserDto extends CreateUserDto {
+import { Role } from '../../auth/interfaces/role.enum';
+export class UpdateUserDto {
   id!: number;
+  password?: string;
+  role!: Role;
   systemAdmin!: boolean;
 }
 
 export const UpdateUserSchema = Joi.object({
   id: Joi.number().required(),
-  username: Joi.string().required(),
-  password: Joi.string().min(6).required(),
+  password: Joi.string().min(6).optional(),
   role: Joi.string().required(),
   systemAdmin: Joi.boolean().required(),
 });

@@ -36,7 +36,7 @@ export class UserService {
 
         const updatedAt = dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss');
 
-        if (password !== '') {
+        if (password) {
           const hashedPassword = await bcrypt.hash(password, this.authService.salt);
           const sql = `UPDATE user SET password=?, role=?, updated_at=? WHERE id=?`;
           db.run(sql, [hashedPassword, role, updatedAt, id], (error) => {

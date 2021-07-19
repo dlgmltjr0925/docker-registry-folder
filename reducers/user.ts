@@ -192,6 +192,7 @@ function* updateUserSaga(action: UserAction<UpdateUser>) {
       );
     }
   } catch (error) {
+    console.log('here', error.message);
     yield put({
       type: UserActionType.UPDATE_USER_ERROR,
       payload: { error: error.message },
