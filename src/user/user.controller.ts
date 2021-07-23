@@ -6,9 +6,9 @@ import {
   Get,
   Logger,
   Param,
-  Patch,
   Post,
   Put,
+  UseFilters,
   UsePipes,
 } from '@nestjs/common';
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
@@ -19,6 +19,7 @@ import { Roles } from '../auth/roles.decorator';
 import { CreateUserDto, CreateUserSchema } from './dto/create-user.dto';
 import { UpdateUserDto, UpdateUserSchema } from './dto/update-user.dto';
 import { UserService } from './user.service';
+import { ValidationExceptionFilter } from '../common/pipes/validation-exception.filter';
 
 export interface CreateUserResponse {
   user: UserDto;
@@ -30,6 +31,7 @@ export interface UserListResponse {
 
 @Controller('api/user')
 @Roles(Role.ADMIN)
+@UseFilters(ValidationExceptionFilter)
 export class UserController {
   logger = new Logger('UserController');
   constructor(private readonly userService: UserService) {}
@@ -37,13 +39,21 @@ export class UserController {
   @Post()
   @UsePipes(new JoiValidationPipe(CreateUserSchema))
   async create(@Body() createUserDto: CreateUserDto): Promise<UserDto> {
-    return await this.userService.create(createUserDto);
+    try {
+      return await this.userService.create(createUserDto);
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Put()
   @UsePipes(new JoiValidationPipe(UpdateUserSchema))
   async update(@Body() updateUserDto: UpdateUserDto): Promise<boolean> {
-    return await this.userService.update(updateUserDto);
+    try {
+      return await this.userService.update(updateUserDto);
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Get('list')

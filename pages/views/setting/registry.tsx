@@ -1,18 +1,18 @@
+import { ChangeEvent, FC, useEffect, useState } from 'react';
+import { addRegistry, updateRegistry } from 'reducers/registry';
+import { faEdit, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { GetServerSideProps } from 'next';
 import IconButton from 'components/icon-button';
+import { RootState } from 'reducers';
+import { Switch } from '@material-ui/core';
 import TextInput from 'components/text-input';
+import { UpdateRegistryDto } from 'src/registry/dto/update-registry.dto';
 import WidgetContainer from 'components/widget-container';
 import { handleChangeText } from 'lib/event-handles';
-import { GetServerSideProps } from 'next';
-import { useRouter } from 'next/dist/client/router';
-import { ChangeEvent, FC, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'reducers';
-import { addRegistry, updateRegistry } from 'reducers/registry';
-import { UpdateRegistryDto } from 'src/registry/dto/update-registry.dto';
 import styled from 'styled-components';
-
-import { faEdit, faPlus } from '@fortawesome/free-solid-svg-icons';
-import { Switch } from '@material-ui/core';
+import { useRouter } from 'next/dist/client/router';
 
 interface RegistryPageProps {
   prevRegistry?: UpdateRegistryDto;

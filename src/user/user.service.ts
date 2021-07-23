@@ -1,11 +1,13 @@
 import * as bcrypt from 'bcrypt';
 
+import { CreateUserDto, CreateUserSchema } from './dto/create-user.dto';
+
 import { AuthService } from '../auth/auth.service';
-import { CreateUserDto } from './dto/create-user.dto';
 import { Injectable } from '@nestjs/common';
 import { Role } from '../auth/interfaces/role.enum';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserDto } from '../auth/dto/user.dto';
+import { ValidationException } from '../common/pipes/exceptions/validation.exception';
 import { connect } from '../../lib/sqlite';
 import dateFormat from 'dateformat';
 

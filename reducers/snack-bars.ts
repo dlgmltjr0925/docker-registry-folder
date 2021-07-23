@@ -63,6 +63,7 @@ function* openSnackBarSaga(action: SnackBarsAction<OpenSnackBar>) {
 }
 
 export function* openSnackBarByError(error: any) {
+  console.log(error.response.data);
   if (error.response) {
     const { message } = error.response.data;
     yield put(openSnackBar({ message, severity: 'error' }));
