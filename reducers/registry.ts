@@ -26,7 +26,7 @@ interface AddRegistryState {
 
 type UpdateRegistryState = AddRegistryState;
 
-export interface SettingRegistryState {
+export interface RegistryState {
   search: SearchState;
   addRegistry: AddRegistryState;
   updateRegistry: UpdateRegistryState;
@@ -86,7 +86,7 @@ interface RegistryAction<T = Payload> {
   payload: T;
 }
 
-export const initialState: SettingRegistryState = {
+export const initialState: RegistryState = {
   search: {
     loading: false,
     keyword: '',
@@ -218,7 +218,7 @@ function* updateRegistrySaga(action: RegistryAction<UpdateRegistry>) {
   }
 }
 
-const settingRegistryReducer = (state = initialState, action: RegistryAction): SettingRegistryState => {
+const settingRegistryReducer = (state = initialState, action: RegistryAction): RegistryState => {
   switch (action.type) {
     case RegistryActionType.SEARCH_REGISTRY:
       const { keyword } = action.payload as Keyword;

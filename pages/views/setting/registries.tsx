@@ -1,6 +1,6 @@
 import { ChangeEventHandler, FC, KeyboardEventHandler, useEffect, useState } from 'react';
 import { faDatabase, faPlus, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-import { removeRegistries, searchRegistry } from '../../../reducers/setting-registry';
+import { removeRegistries, searchRegistry } from '../../../reducers/registry';
 import { useDispatch, useSelector } from 'react-redux';
 
 import IconButton from '../../../components/icon-button';
