@@ -1,18 +1,15 @@
-import { useRouter } from 'next/dist/client/router';
+import { faCog, faExchangeAlt, faHome, faServer, faUsersCog } from '@fortawesome/free-solid-svg-icons';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { FC } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Image from 'next/image';
 import Link from 'next/link';
-import { FC } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
-import { toggleSideBar } from 'reducers/layout';
-import styled from 'styled-components';
-
-import {
-    faCog, faExchangeAlt, faHome, faServer, faUsersCog
-} from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
 import SideMenu from './side-menu';
+import styled from 'styled-components';
+import { toggleSideBar } from 'reducers/layout';
+import { useRouter } from 'next/dist/client/router';
 
 interface SideBarProps {}
 

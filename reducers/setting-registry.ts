@@ -26,7 +26,7 @@ interface AddRegistryState {
 
 type UpdateRegistryState = AddRegistryState;
 
-export interface RegistryState {
+export interface SettingRegistryState {
   search: SearchState;
   addRegistry: AddRegistryState;
   updateRegistry: UpdateRegistryState;
@@ -86,7 +86,7 @@ interface RegistryAction<T = Payload> {
   payload: T;
 }
 
-export const initialState: RegistryState = {
+export const initialState: SettingRegistryState = {
   search: {
     loading: false,
     keyword: '',
@@ -140,7 +140,6 @@ function* searchSaga(action: RegistryAction) {
   } catch (error) {
     yield put({
       type: RegistryActionType.SEARCH_REGISTRY_ERROR,
-      payload: { error: error.message },
     });
     yield openSnackBarByError(error);
   }
@@ -165,7 +164,7 @@ function* removeRegistrySaga(action: RegistryAction<Remove>) {
   } catch (error) {
     yield put({
       type: RegistryActionType.REMOVE_REGISTRY_ERROR,
-      payload: { willBeRemovedRegistryIds, error: error.message },
+      payload: { willBeRemovedRegistryIds },
     });
     yield openSnackBarByError(error);
   }
@@ -190,7 +189,6 @@ function* addRegistrySaga(action: RegistryAction<AddRegistry>) {
   } catch (error) {
     yield put({
       type: RegistryActionType.ADD_REGISTRY_ERROR,
-      payload: { error: error.message },
     });
     yield openSnackBarByError(error);
   }
@@ -215,13 +213,12 @@ function* updateRegistrySaga(action: RegistryAction<UpdateRegistry>) {
   } catch (error) {
     yield put({
       type: RegistryActionType.UPDATE_REGISTRY_ERROR,
-      payload: { error: error.message },
     });
     yield openSnackBarByError(error);
   }
 }
 
-const registryReducer = (state = initialState, action: RegistryAction): RegistryState => {
+const settingRegistryReducer = (state = initialState, action: RegistryAction): SettingRegistryState => {
   switch (action.type) {
     case RegistryActionType.SEARCH_REGISTRY:
       const { keyword } = action.payload as Keyword;
@@ -337,4 +334,4 @@ export function* registrySaga() {
   yield takeLatest(RegistryActionType.UPDATE_REGISTRY, updateRegistrySaga);
 }
 
-export default registryReducer;
+export default settingRegistryReducer;

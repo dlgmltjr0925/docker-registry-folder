@@ -1,7 +1,7 @@
 import alertDialog, { AlertDialogState } from './alert-dialog';
 import auth, { AuthState, authSaga } from './auth';
 import layout, { LayoutState } from './layout';
-import registry, { RegistryState, registrySaga } from './registry';
+import settingRegistry, { SettingRegistryState, registrySaga } from './setting-registry';
 import snackBars, { SnackBarsState, snackBarsSaga } from './snack-bars';
 import user, { UserState, usersSaga } from './user';
 
@@ -14,7 +14,7 @@ import storage from 'redux-persist/lib/storage/session';
 export interface RootState {
   auth: AuthState;
   layout: LayoutState;
-  registry: RegistryState;
+  settingRegistry: SettingRegistryState;
   alertDialog: AlertDialogState;
   snackBars: SnackBarsState;
   user: UserState;
@@ -23,7 +23,7 @@ export interface RootState {
 const rootReducer = combineReducers({
   auth,
   layout,
-  registry,
+  settingRegistry,
   alertDialog,
   snackBars,
   user,
