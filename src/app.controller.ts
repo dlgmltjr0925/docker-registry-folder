@@ -1,6 +1,6 @@
 import { request, Response } from 'express';
 
-import { Controller, Get, Param, Render, Req, Res, UseFilters, UseGuards } from '@nestjs/common';
+import { Controller, Get, Logger, Param, Render, Req, Res, UseFilters, UseGuards } from '@nestjs/common';
 
 import { AuthService } from './auth/auth.service';
 import { RegistryService } from './registry/registry.service';
@@ -14,6 +14,7 @@ interface RequestWithCookie extends Request {
 @UseGuards(NoAuthCookieGuard)
 @UseFilters(NoAuthCookieExceptionFilter)
 export class AppController {
+  logger = new Logger('AppController');
   constructor(private authService: AuthService, private registryService: RegistryService) {}
 
   @Render('home')
@@ -48,7 +49,12 @@ export class AppController {
   @Render('dashboard')
   @Get('dashboard/:id')
   async dashboard(@Param('id') id: string) {
-    const registry = await this.registryService.findOneById(+id);
-    return { registry: JSON.stringify(registry) };
+    try {
+      const registry = await this.registryService.findOneById(+id);
+
+      return { registry: registry ? JSON.stringify(registry) : null };
+    } catch (error) {
+      throw error;
+    }
   }
 }

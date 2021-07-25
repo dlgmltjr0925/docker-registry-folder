@@ -1,16 +1,15 @@
-import { useRouter } from 'next/dist/client/router';
-import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'reducers';
-import { signUp } from 'reducers/auth';
-import { Role } from 'src/auth/interfaces/role.enum';
-import styled from 'styled-components';
-
-import { faUserPlus } from '@fortawesome/free-solid-svg-icons';
+import { useEffect, useMemo, useState } from 'react';
 
 import IconButton from '../../../components/icon-button';
+import { Role } from 'src/auth/interfaces/role.enum';
+import { RootState } from 'reducers';
 import TextInput from '../../../components/text-input';
+import { faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { handleChangeText } from '../../../lib/event-handles';
+import { signUp } from 'reducers/auth';
+import styled from 'styled-components';
+import { useRouter } from 'next/dist/client/router';
 
 const AdminPage = () => {
   const auth = useSelector(({ auth }: RootState) => auth);
@@ -63,7 +62,7 @@ const AdminPage = () => {
             className="input"
             type="password"
             label="password"
-            helperText="The password must be at least 8 characters long"
+            helperText="The password must be at least 6 characters long"
             value={password}
             onChange={handleChangeText(setPassword)}
             valid={isLongPassword}

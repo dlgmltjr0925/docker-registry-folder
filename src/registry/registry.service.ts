@@ -1,15 +1,14 @@
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { createCipheriv, createDecipheriv, scryptSync } from 'crypto';
-import dateFormat from 'dateformat';
 
-import { Injectable } from '@nestjs/common';
-
-import { connect } from '../../lib/sqlite';
-import { DockerRegistryService } from '../docker-registry/docker-registry.service';
 import { CreateRegistryDto } from './dto/create-registry.dto';
-import { RegistryWithTokenDto } from './dto/registry-with-token.dto';
-import { RegistryDto } from './dto/registry.dto';
-import { UpdateRegistryDto } from './dto/update-registry.dto';
+import { DockerRegistryService } from '../docker-registry/docker-registry.service';
 import { HostDuplicateException } from './exceptions/host-duplicate.exception';
+import { RegistryDto } from './dto/registry.dto';
+import { RegistryWithTokenDto } from './dto/registry-with-token.dto';
+import { UpdateRegistryDto } from './dto/update-registry.dto';
+import { connect } from '../../lib/sqlite';
+import dateFormat from 'dateformat';
 
 @Injectable()
 export class RegistryService {
@@ -18,6 +17,8 @@ export class RegistryService {
   algorithm;
   iv;
   registries: RegistryDto[];
+
+  logger = new Logger('RegistryService');
 
   constructor(private dockerRegistryService: DockerRegistryService) {
     this.cryptoPassword = Buffer.from(process.env.CRYPTO_PASSWORD as string);
@@ -109,13 +110,14 @@ export class RegistryService {
   }
 
   findOneById(id: number) {
-    return new Promise<RegistryDto>((resolve, reject) => {
+    return new Promise<RegistryDto | null>((resolve, reject) => {
       const db = connect();
       try {
         const sql = `SELECT id, name, host, tag FROM registry WHERE id=?`;
-        db.each(sql, [id], (error, row) => {
+        db.all(sql, [id], (error, rows) => {
           if (error) return reject(error);
-          resolve(row);
+          if (rows.length === 0) return resolve(null);
+          resolve(rows[0]);
         });
       } catch (error) {
         reject(error);

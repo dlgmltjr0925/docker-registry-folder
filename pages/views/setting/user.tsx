@@ -20,7 +20,9 @@ import { route } from 'next/dist/next-server/server/router';
 import styled from 'styled-components';
 import { useRouter } from 'next/dist/client/router';
 
-interface PrevUser extends Omit<UpdateUserDto, 'password'> {}
+interface PrevUser extends Omit<UpdateUserDto, 'password'> {
+  username: string;
+}
 interface UserPageProps {
   prevUser?: PrevUser;
 }

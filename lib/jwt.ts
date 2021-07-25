@@ -1,15 +1,15 @@
-import { AccessTokenPayload } from '../src/auth/dto/access-token-payload.dto';
+import jwt, { JwtPayload } from 'jsonwebtoken';
+
 import { GetServerSidePropsContext } from '../interfaces/next';
 import { UserDto } from '../src/auth/dto/user.dto';
-import jwt from 'jsonwebtoken';
 
 export const getUserByAccessToken = (accessToken: string): UserDto => {
   try {
     const { sub, username, role, systemAdmin } = jwt.verify(
       accessToken,
       process.env.JWT_SECRET as string
-    ) as AccessTokenPayload;
-    return { id: sub, username, role, systemAdmin };
+    ) as JwtPayload;
+    return { id: parseInt(sub as string), username, role, systemAdmin };
   } catch (error) {
     throw error;
   }

@@ -1,8 +1,8 @@
 import { DetailedHTMLProps, FC, InputHTMLAttributes } from 'react';
-import styled from 'styled-components';
 
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import styled from 'styled-components';
 
 interface WidgetSearchProps extends DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> {}
 

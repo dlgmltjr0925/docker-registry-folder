@@ -15,6 +15,8 @@ const getRouteName = (route: string): [string, string | string[]] => {
   switch (route) {
     case '/views/home':
       return ['home', 'registries'];
+    case '/views/dashboard':
+      return ['dashboard', ''];
     case '/views/setting/account':
       return ['account', 'account management'];
     case '/views/setting/registries':

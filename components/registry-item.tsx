@@ -1,12 +1,11 @@
-import dateFormat from 'dateformat';
-import Link from 'next/link';
-import { FC } from 'react';
-import styled from 'styled-components';
-
 import { faCubes, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import { FC } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Link from 'next/link';
 import { RegistryDto } from '../src/registry/dto/registry.dto';
+import dateFormat from 'dateformat';
+import styled from 'styled-components';
 
 interface RegistryItemProps {
   item: RegistryDto;

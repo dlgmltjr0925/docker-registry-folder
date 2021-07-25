@@ -30,6 +30,7 @@ export interface RegistryState {
   search: SearchState;
   addRegistry: AddRegistryState;
   updateRegistry: UpdateRegistryState;
+  currentRegistry: RegistryDto | null;
 }
 
 export enum RegistryActionType {
@@ -45,6 +46,8 @@ export enum RegistryActionType {
   UPDATE_REGISTRY = 'UPDATE_REGISTRY',
   UPDATE_REGISTRY_SUCCESS = 'UPDATE_REGISTRY_SUCCESS',
   UPDATE_REGISTRY_ERROR = 'UPDATE_REGISTRY_ERROR',
+  SET_CURRENT_REGISTRY = 'SET_CURRENT_REGISTRY',
+  RESET_CURRENT_REGISTRY = 'RESET_CURRENT_REGISTRY',
   SIGN_OUT = 'SIGN_OUT',
 }
 
@@ -70,6 +73,10 @@ interface AddRegistry {
 
 interface UpdateRegistry {
   registry: UpdateRegistryDto;
+}
+
+interface CurrentRegistry {
+  registry: RegistryDto;
 }
 
 type Payload =
@@ -100,6 +107,7 @@ export const initialState: RegistryState = {
     loading: false,
     done: false,
   },
+  currentRegistry: null,
 };
 
 export const searchRegistry = (keyword: string): RegistryAction<Keyword> => ({
@@ -125,6 +133,16 @@ export const addRegistry = (registry: CreateRegistryDto): RegistryAction<AddRegi
 export const updateRegistry = (registry: UpdateRegistryDto): RegistryAction<UpdateRegistry> => ({
   type: RegistryActionType.UPDATE_REGISTRY,
   payload: { registry },
+});
+
+export const setCurrentRegistry = (registry: RegistryDto): RegistryAction<CurrentRegistry> => ({
+  type: RegistryActionType.SET_CURRENT_REGISTRY,
+  payload: { registry },
+});
+
+export const resetCurrentRegistry = (): RegistryAction<null> => ({
+  type: RegistryActionType.RESET_CURRENT_REGISTRY,
+  payload: null,
 });
 
 function* searchSaga(action: RegistryAction) {
@@ -318,6 +336,19 @@ const settingRegistryReducer = (state = initialState, action: RegistryAction): R
           ...state.updateRegistry,
           done: true,
         },
+      };
+    }
+    case RegistryActionType.SET_CURRENT_REGISTRY: {
+      const { registry } = action.payload as CurrentRegistry;
+      return {
+        ...state,
+        currentRegistry: registry,
+      };
+    }
+    case RegistryActionType.RESET_CURRENT_REGISTRY: {
+      return {
+        ...state,
+        currentRegistry: null,
       };
     }
     case RegistryActionType.SIGN_OUT:
