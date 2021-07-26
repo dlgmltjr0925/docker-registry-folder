@@ -1,4 +1,5 @@
 import * as bcrypt from 'bcrypt';
+
 import fs from 'fs';
 import path from 'path';
 import { verbose } from 'sqlite3';
@@ -43,6 +44,15 @@ export const createTables = async () => {
         "description"	TEXT,
         "created_at"	TEXT NOT NULL DEFAULT (datetime('now','localtime')),
         "updated_at"	TEXT NOT NULL DEFAULT (datetime('now','localtime')),
+        PRIMARY KEY("id" AUTOINCREMENT)
+      )`);
+
+      db.run(`CREATE TABLE "tag" (
+        "id"	INTEGER NOT NULL,
+        "repository_id" INTEGER NOT NULL,
+        "name"  TEXT NOT NULL,
+        "created_at"  TEXT NOT NULL DEFAULT (datetime('now','localtime')),
+        "updated_at"  TEXT NOT NULL DEFAULT (datetime('now','localtime')),
         PRIMARY KEY("id" AUTOINCREMENT)
       )`);
     });
