@@ -8,6 +8,7 @@ import { RegistryModule } from './registry/registry.module';
 import { RenderModule } from 'nest-next';
 import { UserModule } from './user/user.module';
 import { SettingModule } from './setting/setting.module';
+import { SyncService } from './sync/sync.service';
 
 export const NextModule = RenderModule.forRootAsync(
   Next({
@@ -18,6 +19,6 @@ export const NextModule = RenderModule.forRootAsync(
 @Module({
   imports: [NextModule, AuthModule, RegistryModule, UserModule, SettingModule],
   controllers: [AppController],
-  providers: [AuthService, DockerRegistryService],
+  providers: [AuthService, DockerRegistryService, SyncService],
 })
 export class AppModule {}

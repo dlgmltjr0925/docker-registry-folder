@@ -41,9 +41,10 @@ export const createTables = async () => {
         "registry_id"	INTEGER NOT NULL,
         "name"	TEXT NOT NULL,
         "git_repository_url"	TEXT DEFAULT NULL,
-        "description"	TEXT,
+        "description"	TEXT DEFAULT NULL,
         "created_at"	TEXT NOT NULL DEFAULT (datetime('now','localtime')),
         "updated_at"	TEXT NOT NULL DEFAULT (datetime('now','localtime')),
+        "deleted_at"	TEXT NOT NULL DEFAULT (datetime('now','localtime')),
         PRIMARY KEY("id" AUTOINCREMENT)
       )`);
 
@@ -53,6 +54,7 @@ export const createTables = async () => {
         "name"  TEXT NOT NULL,
         "created_at"  TEXT NOT NULL DEFAULT (datetime('now','localtime')),
         "updated_at"  TEXT NOT NULL DEFAULT (datetime('now','localtime')),
+        "deleted_at"	TEXT NOT NULL DEFAULT (datetime('now','localtime')),
         PRIMARY KEY("id" AUTOINCREMENT)
       )`);
     });

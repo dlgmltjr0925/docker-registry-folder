@@ -6,6 +6,7 @@ import { DockerRegistryService } from '../docker-registry/docker-registry.servic
 import { HostDuplicateException } from './exceptions/host-duplicate.exception';
 import { RegistryDto } from './dto/registry.dto';
 import { RegistryWithTokenDto } from './dto/registry-with-token.dto';
+import { SyncService } from '../sync/sync.service';
 import { UpdateRegistryDto } from './dto/update-registry.dto';
 import { connect } from '../../lib/sqlite';
 import dateFormat from 'dateformat';
@@ -20,7 +21,7 @@ export class RegistryService {
 
   logger = new Logger('RegistryService');
 
-  constructor(private dockerRegistryService: DockerRegistryService) {
+  constructor(private dockerRegistryService: DockerRegistryService, private syncService: SyncService) {
     this.cryptoPassword = Buffer.from(process.env.CRYPTO_PASSWORD as string);
     this.cipherKey = scryptSync(this.cryptoPassword, 'salt', 24);
     this.algorithm = 'aes-192-cbc';
@@ -194,33 +195,46 @@ export class RegistryService {
 
   async getRegistriesWithRepositories(registries: RegistryWithTokenDto[]): Promise<RegistryDto[]> {
     return await Promise.all(
-      registries.map(async ({ token: encryptedToken, ...registry }) => {
-        try {
-          registry.status = 'UP';
-          const { host } = registry;
-          const token = encryptedToken ? this.decrypt(encryptedToken) : null;
-          const res = await this.dockerRegistryService.getRepositories({ host, token });
-          if (res?.status === 200) {
-            registry.repositories = await Promise.all(
-              res.data.repositories.map(async (name) => {
-                const res = await this.dockerRegistryService.getTags({ host, token, name });
-                let tags: string[] = [];
-                if (res?.status === 200 && res.data.tags !== null) {
-                  tags = res.data.tags;
-                }
-                return { name, tags };
-              })
-            );
-          }
-        } catch (error) {
-          registry.status = 'DOWN';
-          registry.repositories = [];
-          registry.message = error.message;
-        } finally {
-          registry.checkedAt = new Date();
-          return registry;
-        }
+      registries.map(async (registry) => {
+        return await this.getRegistryWithRepositories(registry);
       })
     );
+  }
+
+  async getRegistryWithRepositories({
+    token: encryptedToken,
+    ...registry
+  }: RegistryWithTokenDto): Promise<RegistryDto> {
+    try {
+      registry.status = 'UP';
+      const { host } = registry;
+      const token = encryptedToken ? this.decrypt(encryptedToken) : null;
+      const res = await this.dockerRegistryService.getRepositories({ host, token });
+      if (res?.status === 200) {
+        // Sync
+        this.syncService.addRepositorySyncJob({ registryId: registry.id, repositories: res.data.repositories });
+
+        registry.repositories = await Promise.all(
+          res.data.repositories.map(async (name) => {
+            const res = await this.dockerRegistryService.getTags({ host, token, name });
+            let tags: string[] = [];
+            if (res?.status === 200 && res.data.tags !== null) {
+              tags = res.data.tags;
+
+              // Sync
+              this.syncService.addTagSyncJob({ registryId: registry.id, repository: name, tags });
+            }
+            return { name, tags };
+          })
+        );
+      }
+    } catch (error) {
+      registry.status = 'DOWN';
+      registry.repositories = [];
+      registry.message = error.message;
+    } finally {
+      registry.checkedAt = new Date();
+      return registry;
+    }
   }
 }
