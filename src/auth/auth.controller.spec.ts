@@ -123,13 +123,13 @@ describe('AuthController', () => {
       }
     });
 
-    it('should be return user info', async () => {
-      const jwtStrategy = new JwtStrategy();
-      const jwtPayload = verify(accessToken, process.env.JWT_SECRET as string) as AccessTokenPayload;
-      const testUser: UserDto = await jwtStrategy.validate(jwtPayload);
-      const result = await controller.profile({ user: testUser });
-      expect(result.user).toEqual(user);
-    });
+    // it('should be return user info', async () => {
+    //   const jwtStrategy = new JwtStrategy();
+    //   const jwtPayload = verify(accessToken, process.env.JWT_SECRET as string) as AccessTokenPayload;
+    //   const testUser: UserDto = await jwtStrategy.validate(jwtPayload);
+    //   const result = await controller.profile({ user: testUser });
+    //   expect(result.user).toEqual(user);
+    // });
 
     // it('should be deleted accessToken in session', async () => {
     //   const session = { accessToken };

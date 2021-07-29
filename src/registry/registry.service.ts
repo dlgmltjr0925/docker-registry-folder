@@ -6,6 +6,7 @@ import { DockerRegistryService } from '../docker-registry/docker-registry.servic
 import { HostDuplicateException } from './exceptions/host-duplicate.exception';
 import { RegistryDto } from './dto/registry.dto';
 import { RegistryWithTokenDto } from './dto/registry-with-token.dto';
+import { RepositoryDto } from './dto/repository.dto';
 import { SyncService } from '../sync/sync.service';
 import { UpdateRegistryDto } from './dto/update-registry.dto';
 import { connect } from '../../lib/sqlite';
@@ -154,6 +155,34 @@ export class RegistryService {
     });
   }
 
+  getRepositoriesByRegistryId(id: number) {
+    return new Promise<RepositoryDto[]>((resolve, reject) => {
+      const db = connect();
+      try {
+        const sql = `
+        SELECT r.name AS name, IFNULL(GROUP_CONCAT(t.name, ':'), '') AS tags
+        FROM repository r
+        LEFT JOIN tag t
+        ON r.id=t.repository_id
+        WHERE registry_id=?
+        GROUP BY r.name
+        `;
+        db.all(sql, [id], (error, rows: { name: string; tags: string }[]) => {
+          if (error) throw error;
+          const repositories = rows.map(({ name, tags }) => ({
+            name,
+            tags: tags.split(':'),
+          }));
+          resolve(repositories);
+        });
+      } catch (error) {
+        reject(error);
+      } finally {
+        db.close();
+      }
+    });
+  }
+
   update(updateRegistryDto: UpdateRegistryDto) {
     return new Promise<boolean>((resolve, reject) => {
       const db = connect();
@@ -230,7 +259,7 @@ export class RegistryService {
       }
     } catch (error) {
       registry.status = 'DOWN';
-      registry.repositories = [];
+      registry.repositories = await this.getRepositoriesByRegistryId(registry.id);
       registry.message = error.message;
     } finally {
       registry.checkedAt = new Date();
