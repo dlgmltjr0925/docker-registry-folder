@@ -1,5 +1,5 @@
 import { FC, KeyboardEventHandler, useEffect, useState } from 'react';
-import { removeRegistry, searchRegistry } from 'reducers/registry';
+import { removeRegistry, searchRegistry, setCurrentRegistry } from 'reducers/registry';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { RegistryDto } from 'src/registry/dto/registry.dto';
@@ -53,6 +53,11 @@ const HomePage: FC<HomePageProps> = () => {
     );
   };
 
+  const handleClickItem = (registry: RegistryDto) => {
+    dispatch(setCurrentRegistry(registry));
+    router.push(`/dashboard/${registry.id}`);
+  };
+
   useEffect(() => {
     dispatch(searchRegistry(''));
   }, []);
@@ -71,7 +76,12 @@ const HomePage: FC<HomePageProps> = () => {
         ) : (
           <ul>
             {registry.search.searchedRegistries.map((registry, index) => (
-              <RegistryItem key={registry.id} item={registry} onClickRemove={handleClickRemove} />
+              <RegistryItem
+                key={registry.id}
+                item={registry}
+                onClickRemove={handleClickRemove}
+                onClickItem={handleClickItem}
+              />
             ))}
           </ul>
         )}

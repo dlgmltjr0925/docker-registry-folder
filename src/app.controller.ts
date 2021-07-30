@@ -50,11 +50,24 @@ export class AppController {
   @Get('dashboard/:id')
   async dashboard(@Param('id') id: string) {
     try {
-      const registry = await this.registryService.findOneById(+id);
+      let registry = await this.registryService.findOneWithTokenById(+id);
+      let registryWithRepositories;
 
-      return { registry: registry ? JSON.stringify(registry) : null };
+      if (registry) {
+        registryWithRepositories = await this.registryService.getRegistryWithRepositories(registry);
+      }
+
+      return { registry: registryWithRepositories ? JSON.stringify(registryWithRepositories) : null };
     } catch (error) {
       throw error;
     }
+  }
+
+  @Render('repository')
+  @Get('repository/:id/*')
+  async repository(@Req() request: RequestWithCookie, @Param('id') id: string) {
+    const name = request.url.split('/').slice(3).join('/');
+
+    return {};
   }
 }

@@ -1,9 +1,8 @@
-import Link from 'next/link';
 import { FC } from 'react';
-import styled from 'styled-components';
-
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import Link from 'next/link';
+import styled from 'styled-components';
 
 interface SideMenuProps {
   label: string;
@@ -15,7 +14,7 @@ interface SideMenuProps {
 const SideMenu: FC<SideMenuProps> = ({ route, label, icon, isSelected }) => {
   return (
     <Link href={route}>
-      <Container isSelected={isSelected}>
+      <Container isSelected={isSelected} title={label}>
         <span className="menu-label">{label}</span>
         <FontAwesomeIcon className="menu-icon" icon={icon} />
       </Container>
@@ -57,6 +56,9 @@ const Container = styled.div<ContainerProps>`
     line-height: 21px;
     padding-top: 5px;
     font-weight: 700;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 `;
 

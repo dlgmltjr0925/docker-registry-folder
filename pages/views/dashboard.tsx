@@ -2,10 +2,12 @@ import { FC, useEffect, useState } from 'react';
 import { faCubes, faServer } from '@fortawesome/free-solid-svg-icons';
 
 import { GetServerSideProps } from 'next';
-import { RegistryDto } from 'src/registry/dto/registry.dto';
+import { RegistryDto } from '../../src/registry/dto/registry.dto';
+import RepositoryItem from '../../components/repository-item';
 import WidgetContainer from 'components/widget-container';
 import WidgetItem from 'components/widget-item';
 import WidgetSearch from 'components/widget-search';
+import dateFormat from 'dateformat';
 import styled from 'styled-components';
 import { useRouter } from 'next/dist/client/router';
 
@@ -19,6 +21,8 @@ const DashboardPage: FC<DashboardPageProps> = ({ registry }) => {
   const router = useRouter();
 
   const [keyword, setKeyword] = useState<string>('');
+
+  console.log(registry);
 
   if (!registry) {
     useEffect(() => {
@@ -48,11 +52,19 @@ const DashboardPage: FC<DashboardPageProps> = ({ registry }) => {
       <WidgetContainer title="Registry Info" titleIcon={faServer}>
         <WidgetItem label="name" value={registry.name} />
         <WidgetItem label="host" value={registry.host} />
-        {/* <WidgetItem label="status" value={`UP <${new Date()}>`} /> */}
+        <WidgetItem
+          label="status"
+          value={`${registry.status} <${dateFormat(registry.checkedAt, 'yyyy-mm-dd HH:MM:ss')}>`}
+        />
       </WidgetContainer>
 
       <WidgetContainer title="Registories" titleIcon={faCubes}>
         <WidgetSearch placeholder="Search by name, tag..." />
+        <ul>
+          {registry.repositories.map((repository) => (
+            <RepositoryItem key={repository.name} item={repository} />
+          ))}
+        </ul>
       </WidgetContainer>
     </Container>
   );

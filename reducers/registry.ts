@@ -339,6 +339,7 @@ const settingRegistryReducer = (state = initialState, action: RegistryAction): R
       };
     }
     case RegistryActionType.SET_CURRENT_REGISTRY: {
+      console.log('SET_CURRENT_REGISTRY');
       const { registry } = action.payload as CurrentRegistry;
       return {
         ...state,

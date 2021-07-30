@@ -129,6 +129,24 @@ export class RegistryService {
     });
   }
 
+  findOneWithTokenById(id: number) {
+    return new Promise<RegistryWithTokenDto | null>((resolve, reject) => {
+      const db = connect();
+      try {
+        const sql = `SELECT id, name, host, tag, token FROM registry WHERE id=?`;
+        db.all(sql, [id], (error, rows) => {
+          if (error) return reject(error);
+          if (rows.length === 0) return resolve(null);
+          resolve(rows[0]);
+        });
+      } catch (error) {
+        reject(error);
+      } finally {
+        db.close();
+      }
+    });
+  }
+
   findOneWithAccessInfoById(id: number) {
     return new Promise<UpdateRegistryDto | null>((resolve, reject) => {
       const db = connect();
@@ -136,7 +154,7 @@ export class RegistryService {
         const sql = `SELECT id, name, host, tag, token FROM registry WHERE id=?`;
         db.all(sql, [id], (error, rows) => {
           if (error) return reject(error);
-          if (rows.length === 0) resolve(null);
+          if (rows.length === 0) return resolve(null);
           const { token, ...registry } = rows[0];
           if (token) {
             const decryptedToken = this.decrypt(token);

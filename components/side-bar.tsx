@@ -1,4 +1,4 @@
-import { faCog, faExchangeAlt, faHome, faServer, faUsersCog } from '@fortawesome/free-solid-svg-icons';
+import { faCog, faCube, faExchangeAlt, faHome, faServer, faUsersCog } from '@fortawesome/free-solid-svg-icons';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { FC } from 'react';
@@ -17,9 +17,10 @@ const SideBar: FC<SideBarProps> = (props) => {
   const {
     auth: { user },
     layout,
-  } = useSelector(({ auth, layout }: RootState) => ({ auth, layout }));
+    currentRegistry,
+  } = useSelector(({ auth, layout, registry: { currentRegistry } }: RootState) => ({ auth, layout, currentRegistry }));
   const dispatch = useDispatch();
-  const { route } = useRouter();
+  const { route, asPath, ...router } = useRouter();
 
   const handleClickOpen = () => {
     dispatch(toggleSideBar());
@@ -40,6 +41,31 @@ const SideBar: FC<SideBarProps> = (props) => {
       </div>
       {/* Home */}
       <SideMenu route="/" label="Home" icon={faHome} isSelected={route === '/views/home'} />
+
+      {/* Registry */}
+      {currentRegistry && (
+        <>
+          <div className="category">
+            <span>{currentRegistry.name}</span>
+          </div>
+          <SideMenu
+            route={`/dashboard/${currentRegistry.id}`}
+            label="Dashboard"
+            icon={faServer}
+            isSelected={route === '/views/dashboard'}
+          />
+          {currentRegistry.repositories.map(({ name }) => (
+            <SideMenu
+              key={name}
+              route={`/repository/${currentRegistry.id}/${name}`}
+              label={name}
+              icon={faCube}
+              isSelected={asPath === `/repository/${currentRegistry.id}/${name}`}
+            />
+          ))}
+        </>
+      )}
+
       {/* Setting */}
       {user?.role !== 'VIEWER' && (
         <div className="category">
