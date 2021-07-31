@@ -8,7 +8,9 @@ import WidgetContainer from 'components/widget-container';
 import WidgetItem from 'components/widget-item';
 import WidgetSearch from 'components/widget-search';
 import dateFormat from 'dateformat';
+import { resetCurrentRegistry } from 'reducers/registry';
 import styled from 'styled-components';
+import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/dist/client/router';
 
 interface DashboardPageProps {
@@ -19,13 +21,13 @@ const REDIRECT_TIMEOUT = 3;
 
 const DashboardPage: FC<DashboardPageProps> = ({ registry }) => {
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const [keyword, setKeyword] = useState<string>('');
 
-  console.log(registry);
-
   if (!registry) {
     useEffect(() => {
+      dispatch(resetCurrentRegistry());
       let timeout: NodeJS.Timeout | null = setTimeout(() => {
         router.replace('/');
       }, REDIRECT_TIMEOUT * 1000);
@@ -62,7 +64,7 @@ const DashboardPage: FC<DashboardPageProps> = ({ registry }) => {
         <WidgetSearch placeholder="Search by name, tag..." />
         <ul>
           {registry.repositories.map((repository) => (
-            <RepositoryItem key={repository.name} item={repository} />
+            <RepositoryItem key={repository.name} item={{ ...repository, registryId: registry.id }} />
           ))}
         </ul>
       </WidgetContainer>

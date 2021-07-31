@@ -1,4 +1,12 @@
-import { faCog, faCube, faExchangeAlt, faHome, faServer, faUsersCog } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCog,
+  faCube,
+  faExchangeAlt,
+  faHome,
+  faNetworkWired,
+  faServer,
+  faUsersCog,
+} from '@fortawesome/free-solid-svg-icons';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { FC } from 'react';
@@ -47,6 +55,9 @@ const SideBar: FC<SideBarProps> = (props) => {
         <>
           <div className="category">
             <span>{currentRegistry.name}</span>
+            <div className="icon-wrapper">
+              <FontAwesomeIcon icon={faNetworkWired} />
+            </div>
           </div>
           <SideMenu
             route={`/dashboard/${currentRegistry.id}`}
@@ -54,15 +65,17 @@ const SideBar: FC<SideBarProps> = (props) => {
             icon={faServer}
             isSelected={route === '/views/dashboard'}
           />
-          {currentRegistry.repositories.map(({ name }) => (
-            <SideMenu
-              key={name}
-              route={`/repository/${currentRegistry.id}/${name}`}
-              label={name}
-              icon={faCube}
-              isSelected={asPath === `/repository/${currentRegistry.id}/${name}`}
-            />
-          ))}
+          <ul className="repository-wrapper">
+            {currentRegistry.repositories.map(({ name }) => (
+              <SideMenu
+                key={name}
+                route={`/repository/${currentRegistry.id}/${name}`}
+                label={name}
+                icon={faCube}
+                isSelected={asPath === `/repository/${currentRegistry.id}/${name}`}
+              />
+            ))}
+          </ul>
         </>
       )}
 
@@ -176,6 +189,10 @@ const Container = styled.div<ContainerProps>`
         color: #ccc;
       }
     }
+  }
+
+  .repository-wrapper {
+    margin-top: 10px;
   }
 `;
 

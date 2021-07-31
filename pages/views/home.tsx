@@ -54,8 +54,13 @@ const HomePage: FC<HomePageProps> = () => {
   };
 
   const handleClickItem = (registry: RegistryDto) => {
-    dispatch(setCurrentRegistry(registry));
     router.push(`/dashboard/${registry.id}`);
+    dispatch(setCurrentRegistry(registry));
+  };
+
+  const handleClickRepository = (registry: RegistryDto, name: string) => {
+    router.push(`/repository/${registry.id}/${name}`);
+    dispatch(setCurrentRegistry(registry));
   };
 
   useEffect(() => {
@@ -81,6 +86,7 @@ const HomePage: FC<HomePageProps> = () => {
                 item={registry}
                 onClickRemove={handleClickRemove}
                 onClickItem={handleClickItem}
+                onClickRepository={handleClickRepository}
               />
             ))}
           </ul>

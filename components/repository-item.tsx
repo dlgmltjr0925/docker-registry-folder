@@ -3,13 +3,16 @@ import Link from 'next/link';
 import { RepositoryDto } from '../src/registry/dto/repository.dto';
 import styled from 'styled-components';
 
+interface Item extends RepositoryDto {
+  registryId: number;
+}
 interface RepositoryItemProps {
-  item: RepositoryDto;
+  item: Item;
 }
 
 const RepositoryItem: FC<RepositoryItemProps> = ({ item }) => {
   return (
-    <Link href={`/repository`}>
+    <Link href={`/repository/${item.registryId}/${item.name}`}>
       <div>{item.name}</div>
     </Link>
   );

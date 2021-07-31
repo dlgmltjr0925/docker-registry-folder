@@ -3,6 +3,7 @@ import { faCubes, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { FC } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
+import { MouseEventHandler } from 'react';
 import { RegistryDto } from '../src/registry/dto/registry.dto';
 import dateFormat from 'dateformat';
 import styled from 'styled-components';
@@ -11,9 +12,10 @@ interface RegistryItemProps {
   item: RegistryDto;
   onClickRemove: (item: RegistryDto) => void;
   onClickItem: (item: RegistryDto) => void;
+  onClickRepository: (item: RegistryDto, name: string) => void;
 }
 
-const RegistryItem: FC<RegistryItemProps> = ({ item, onClickRemove, onClickItem }) => {
+const RegistryItem: FC<RegistryItemProps> = ({ item, onClickRemove, onClickItem, onClickRepository }) => {
   const { id, name, status, checkedAt, host, repositories } = item;
   const repositoriesLength = repositories.length;
 
@@ -21,8 +23,15 @@ const RegistryItem: FC<RegistryItemProps> = ({ item, onClickRemove, onClickItem 
     onClickRemove(item);
   };
 
-  const handleClickItem = () => {
+  const handleClickItem: MouseEventHandler = (e) => {
     onClickItem(item);
+  };
+
+  const handleClickRepository = (name: string): MouseEventHandler => {
+    return (e) => {
+      e.stopPropagation();
+      onClickRepository(item, name);
+    };
   };
 
   return (
@@ -40,9 +49,9 @@ const RegistryItem: FC<RegistryItemProps> = ({ item, onClickRemove, onClickItem 
         }`}</span>
       </div>
       <ul className="repository-wrapper">
-        {repositories.map(({ name, tags }) => {
+        {repositories.map(({ name }) => {
           return (
-            <button key={name} className="repository-item">
+            <button key={name} className="repository-item" onClick={handleClickRepository(name)}>
               {name}
             </button>
           );
