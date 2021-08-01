@@ -6,6 +6,8 @@ import { AuthService } from './auth/auth.service';
 import { RegistryService } from './registry/registry.service';
 import { NoAuthCookieGuard } from './auth/no-auth-cookie.guard';
 import { NoAuthCookieExceptionFilter } from './auth/no-auth-cookie-exception.filter';
+import { DockerRegistryService } from './docker-registry/docker-registry.service';
+import { RepositoryDto } from './registry/dto/repository.dto';
 
 interface RequestWithCookie extends Request {
   cookies: Record<string, string>;
@@ -15,7 +17,11 @@ interface RequestWithCookie extends Request {
 @UseFilters(NoAuthCookieExceptionFilter)
 export class AppController {
   logger = new Logger('AppController');
-  constructor(private authService: AuthService, private registryService: RegistryService) {}
+  constructor(
+    private authService: AuthService,
+    private registryService: RegistryService,
+    private dockerRegistryService: DockerRegistryService
+  ) {}
 
   @Render('home')
   @Get()
@@ -50,7 +56,7 @@ export class AppController {
   @Get('dashboard/:id')
   async dashboard(@Param('id') id: string) {
     try {
-      let registry = await this.registryService.findOneWithTokenById(+id);
+      const registry = await this.registryService.findOneWithTokenById(+id);
       let registryWithRepositories;
 
       if (registry) {
@@ -66,8 +72,19 @@ export class AppController {
   @Render('repository')
   @Get('repository/:id/*')
   async repository(@Req() request: RequestWithCookie, @Param('id') id: string) {
-    const name = request.url.split('/').slice(3).join('/');
+    try {
+      const name = request.url.split('/').slice(3).join('/');
+      let repository: RepositoryDto = { name, tags: [] };
+      const registry = await this.registryService.findOneWithTokenById(+id);
 
-    return {};
+      if (registry) {
+        const { host, token } = registry;
+        const tags = await this.dockerRegistryService.getTags({ host, token, name });
+      }
+
+      return { repository };
+    } catch (error) {
+      throw error;
+    }
   }
 }
