@@ -39,9 +39,11 @@ const RepositoryItem: FC<RepositoryItemProps> = ({ item: { registryId, name, tag
           <ul className="tag-wrapper">
             {sortedTags.map((tag) => {
               return (
-                <button key={tag} className="tag-item">
-                  {tag}
-                </button>
+                <Link href={`/repository/${registryId}/${name}?keyword=${tag}`}>
+                  <button key={tag} className="tag-item">
+                    {tag}
+                  </button>
+                </Link>
               );
             })}
           </ul>
