@@ -71,6 +71,7 @@ const Container = styled.div`
   border: 1px solid #ddd;
   border-radius: 3px;
   cursor: pointer;
+  transition: all 0.3s;
 
   &:hover {
     box-shadow: 2px 2px 3px #ccc;

@@ -39,7 +39,7 @@ const SideBar: FC<SideBarProps> = (props) => {
       <div className="home-logo-container">
         <Link href="/">
           <span className="home-logo-wrapper">
-            <Image className="home-logo" src="/images/home-logo.png" alt="Home Logo" width={48} height={33} />
+            <Image className="home-logo" src="/images/home-logo.png" alt="Home Logo" width={40} height={29} />
             <span>Docker Registry Folder</span>
           </span>
         </Link>
@@ -53,7 +53,7 @@ const SideBar: FC<SideBarProps> = (props) => {
       {/* Registry */}
       {currentRegistry && (
         <>
-          <div className="category">
+          <div className="category catogory-repository">
             <span>{currentRegistry.name}</span>
             <div className="icon-wrapper">
               <FontAwesomeIcon icon={faNetworkWired} />
@@ -144,10 +144,7 @@ const Container = styled.div<ContainerProps>`
     width: 100%;
     height: 60px;
     background: #273657;
-
-    &:hover {
-      cursor: pointer;
-    }
+    cursor: pointer;
 
     .home-logo-wrapper {
       height: 40px;
@@ -159,7 +156,6 @@ const Container = styled.div<ContainerProps>`
       span {
         display: inline-block;
         font-size: 18px;
-        letter-spacing: -0.5px;
         font-weight: 500;
         margin: 10px 0 0 8px;
       }
@@ -188,6 +184,10 @@ const Container = styled.div<ContainerProps>`
       &:hover {
         color: #ccc;
       }
+    }
+
+    .catogory-repository {
+      cursor: pointer;
     }
   }
 

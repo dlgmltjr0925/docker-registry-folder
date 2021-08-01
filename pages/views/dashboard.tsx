@@ -8,9 +8,11 @@ import WidgetContainer from 'components/widget-container';
 import WidgetItem from 'components/widget-item';
 import WidgetSearch from 'components/widget-search';
 import dateFormat from 'dateformat';
+import { handleChangeText } from 'lib/event-handles';
 import { resetCurrentRegistry } from 'reducers/registry';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
+import { useMemo } from 'react';
 import { useRouter } from 'next/dist/client/router';
 
 interface DashboardPageProps {
@@ -24,6 +26,12 @@ const DashboardPage: FC<DashboardPageProps> = ({ registry }) => {
   const dispatch = useDispatch();
 
   const [keyword, setKeyword] = useState<string>('');
+
+  const searchedRegistry = useMemo(() => {
+    if (!registry) return [];
+    const regExp = new RegExp(keyword);
+    return registry.repositories.filter(({ name, tags }) => regExp.test(name) || tags.some((tag) => regExp.test(tag)));
+  }, [keyword]);
 
   if (!registry) {
     useEffect(() => {
@@ -61,9 +69,9 @@ const DashboardPage: FC<DashboardPageProps> = ({ registry }) => {
       </WidgetContainer>
 
       <WidgetContainer title="Registories" titleIcon={faCubes}>
-        <WidgetSearch placeholder="Search by name, tag..." />
+        <WidgetSearch placeholder="Search by name, tag..." onChange={handleChangeText(setKeyword)} />
         <ul>
-          {registry.repositories.map((repository) => (
+          {searchedRegistry.map((repository) => (
             <RepositoryItem key={repository.name} item={{ ...repository, registryId: registry.id }} />
           ))}
         </ul>
