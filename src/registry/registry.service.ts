@@ -240,6 +240,35 @@ export class RegistryService {
     });
   }
 
+  async getRepositoriesByRegistry({ host, token: encryptedToken }: RegistryWithTokenDto): Promise<string[]> {
+    try {
+      const token = encryptedToken ? this.decrypt(encryptedToken) : null;
+      const res = await this.dockerRegistryService.getRepositories({ host, token });
+      if (res?.status === 200) {
+        return res.data.repositories;
+      }
+      return [];
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getTagsByRegistryIdAndName(
+    { host, token: encryptedToken }: RegistryWithTokenDto,
+    name: string
+  ): Promise<string[]> {
+    try {
+      const token = encryptedToken ? this.decrypt(encryptedToken) : null;
+      const res = await this.dockerRegistryService.getTags({ host, token, name });
+      if (res?.status === 200 && res.data.tags !== null) {
+        return res.data.tags;
+      }
+      return [];
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getRegistriesWithRepositories(registries: RegistryWithTokenDto[]): Promise<RegistryDto[]> {
     return await Promise.all(
       registries.map(async (registry) => {

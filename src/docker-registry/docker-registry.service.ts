@@ -1,9 +1,8 @@
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import axios, { AxiosRequestConfig } from 'axios';
-import { stringify } from 'query-string';
-
-import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { UnauthorizedException } from './exceptions/unauthorized.exception';
+import { stringify } from 'query-string';
 
 export interface RegistryAccessInfo {
   host: string;
@@ -25,6 +24,7 @@ export interface GetTagsArgs extends RegistryAccessInfo {
 
 @Injectable()
 export class DockerRegistryService {
+  logger = new Logger('DockerRegistryService');
   static getRegistryUrl(host: string, path: string = '/') {
     return `https://${host}/v2${path}`;
   }

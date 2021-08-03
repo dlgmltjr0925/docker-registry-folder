@@ -19,7 +19,8 @@ const RegistryItem: FC<RegistryItemProps> = ({ item, onClickRemove, onClickItem,
   const { id, name, status, checkedAt, host, repositories } = item;
   const repositoriesLength = repositories.length;
 
-  const handleClickRemove = () => {
+  const handleClickRemove: MouseEventHandler = (e) => {
+    e.stopPropagation();
     onClickRemove(item);
   };
 
