@@ -72,7 +72,7 @@ const SideBar: FC<SideBarProps> = (props) => {
                 route={`/repository/${currentRegistry.id}/${name}`}
                 label={name}
                 icon={faCube}
-                isSelected={asPath === `/repository/${currentRegistry.id}/${name}`}
+                isSelected={asPath.split('?')[0] === `/repository/${currentRegistry.id}/${name}`}
               />
             ))}
           </ul>
