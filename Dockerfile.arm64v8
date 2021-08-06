@@ -12,6 +12,8 @@ RUN yarn && yarn build
 # Production
 FROM arm64v8/node:14-alpine
 
+WORKDIR /app
+
 COPY --from=builder /app/package.json /app/
 COPY --from=builder /app/yarn.lock /app/
 
