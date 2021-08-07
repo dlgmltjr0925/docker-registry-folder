@@ -9,19 +9,16 @@ COPY . .
 
 RUN yarn && yarn build
 
+RUN rm -rf node_modules && yarn --production
+
 # Production
 FROM arm64v8/node:14-alpine
-
-RUN apk add --no-cache make gcc g++ python
 
 WORKDIR /app
 
 COPY --from=builder /app/package.json /app/
 COPY --from=builder /app/yarn.lock /app/
-
-RUN yarn --production
-
-RUN apk del make gcc g++ python
+COPY --from=builder /app/node_modules /app/
 
 COPY --from=builder /app/.next /app/.next
 
