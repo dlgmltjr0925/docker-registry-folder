@@ -4,6 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import { verbose } from 'sqlite3';
 
+const DATA_PATH = path.resolve('data');
 const ENV_PATH = path.resolve('data/.env');
 const CHARS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz';
 
@@ -105,9 +106,12 @@ const genDotEnvFile = async () => {
 };
 
 const initialize = async () => {
+  if (!fs.existsSync(DATA_PATH)) fs.mkdirSync(DATA_PATH);
   await createTables();
   await genDotEnvFile();
   require('dotenv').config({ path: ENV_PATH });
 };
+
+initialize();
 
 export default initialize;

@@ -17,7 +17,7 @@
     "build:clean": "rimraf .next",
     "build:ui": "npx next build",
     "build:server": "npx tsc --project tsconfig.server.json && npx babel .next/production-server -d .next/production-server --extensions \".js\"",
-    "build": "yarn build:clean && yarn build:ui && yarn build:server",
+    "build": "yarn build:clean && yarn build:ui && yarn build:server && node .next/production-server/lib/initialize.js",
     "start": "cross-env NODE_ENV=production node .next/production-server/src/main.js",
     "test": "jest --config ./test/jest.json",
     "test:cov": "echo $(pwd)/test/coverage/lcov-report/index.html && yarn test --coverage",
