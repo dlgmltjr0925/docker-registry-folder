@@ -16,6 +16,8 @@ FROM arm64v8/node:14-alpine
 
 WORKDIR /app
 
+ENV NODE_ENV production
+
 COPY --from=builder /app/package.json /app/
 COPY --from=builder /app/yarn.lock /app/
 COPY --from=builder /app/node_modules /app/node_modules
