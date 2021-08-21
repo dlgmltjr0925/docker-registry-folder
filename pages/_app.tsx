@@ -8,7 +8,6 @@ import { FC } from 'react';
 import Layout from 'components/layout';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Persistor } from 'redux-persist/es/types';
-import axios from 'axios';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import createSagaMiddleware from 'redux-saga';
 import { createWrapper } from 'next-redux-wrapper';

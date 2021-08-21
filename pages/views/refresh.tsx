@@ -32,7 +32,7 @@ const RefreshPage: FC<RefreshPageProps> = ({ user, accessToken }) => {
     }
   }, [auth]);
 
-  return null;
+  return <div />;
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {

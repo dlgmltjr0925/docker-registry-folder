@@ -1,9 +1,11 @@
 import { FC, useEffect } from 'react';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { GetServerSideProps } from 'next';
 import { RegistryDto } from '../../src/registry/dto/registry.dto';
 import { RepositoryDto } from '../../src/registry/dto/repository.dto';
 import WidgetContainer from 'components/widget-container';
+import { faClone } from '@fortawesome/free-regular-svg-icons';
 import { faCube } from '@fortawesome/free-solid-svg-icons';
 import { resetCurrentRegistry } from 'reducers/registry';
 import styled from 'styled-components';
@@ -49,7 +51,22 @@ const RepositoryPage: FC<RepositoryPageProps> = ({ registry, repository }) => {
 
   return (
     <Container>
-      <WidgetContainer title="Repository" titleIcon={faCube}></WidgetContainer>
+      <WidgetContainer title="Repository" titleIcon={faCube}>
+        <div className="summary-wrapper">
+          <h1 className="name">{repository.name}</h1>
+          {repository.tags.length > 0 ? (
+            <>
+              <p className="description">Copy and paste to pull this image</p>
+              <div className="copy-wrapper">
+                <FontAwesomeIcon className="copy-icon" icon={faClone} />
+                <span className="copy-content">{`docker pull ${registry.host}/${repository.name}:${repository.tags[0]}`}</span>
+              </div>
+            </>
+          ) : (
+            <p className="description">There are no images available for download.</p>
+          )}
+        </div>
+      </WidgetContainer>
     </Container>
   );
 };
@@ -86,6 +103,35 @@ const Container = styled.div`
     p {
       margin-top: 10px;
       color: #777;
+    }
+  }
+
+  .summary-wrapper {
+    padding: 12px;
+
+    .name {
+      font-size: 19px;
+      font-weight: 700;
+      vertical-align: middle;
+      color: #333333;
+    }
+
+    .description {
+      font-size: 14px;
+      color: #999999;
+      margin-top: 10px;
+    }
+
+    .copy-wrapper {
+      margin-top: 5px;
+      padding: 10px;
+      background-color: #2a3a5d;
+      color: white;
+      cursor: pointer;
+
+      .copy-content {
+        margin: auto 10px;
+      }
     }
   }
 `;

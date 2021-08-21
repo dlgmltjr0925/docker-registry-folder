@@ -80,3 +80,11 @@ table {
 	--button-blue-active: #286090;
 	--button-blue-hover: #1a4e7a;
 }
+
+.no-drag {
+	-ms-user-select: none; 
+	-moz-user-select: -moz-none; 
+	-webkit-user-select: none; 
+	-khtml-user-select: none; 
+	user-select:none;
+}
