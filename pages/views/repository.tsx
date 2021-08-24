@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react';
+import { FC, useCallback, useEffect } from 'react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { GetServerSideProps } from 'next';
@@ -7,9 +7,11 @@ import { RepositoryDto } from '../../src/registry/dto/repository.dto';
 import WidgetContainer from 'components/widget-container';
 import { faClone } from '@fortawesome/free-regular-svg-icons';
 import { faCube } from '@fortawesome/free-solid-svg-icons';
+import { openSnackBar } from 'reducers/snack-bars';
 import { resetCurrentRegistry } from 'reducers/registry';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
+import { useMemo } from 'react';
 import { useRouter } from 'next/dist/client/router';
 
 interface RepositoryPageProps {
@@ -49,17 +51,40 @@ const RepositoryPage: FC<RepositoryPageProps> = ({ registry, repository }) => {
     );
   }
 
+  const downloadCommand = useMemo(() => {
+    if (repository.tags.length === 0) {
+      return null;
+    } else {
+      const tag = repository.tags.includes('latest') ? 'latest' : repository.tags[0];
+
+      return `docker pull ${registry.host}/${repository.name}:${tag}`;
+    }
+  }, []);
+
+  const copyToClipboard = useCallback(() => {
+    if (!downloadCommand) return;
+    navigator.clipboard.writeText(downloadCommand);
+    dispatch(
+      openSnackBar({
+        severity: 'info',
+        message: 'Copied to clipboard',
+      })
+    );
+  }, [downloadCommand]);
+
   return (
     <Container>
       <WidgetContainer title="Repository" titleIcon={faCube}>
         <div className="summary-wrapper">
           <h1 className="name">{repository.name}</h1>
-          {repository.tags.length > 0 ? (
+          {downloadCommand ? (
             <>
               <p className="description">Copy and paste to pull this image</p>
               <div className="copy-wrapper">
-                <FontAwesomeIcon className="copy-icon" icon={faClone} />
-                <span className="copy-content">{`docker pull ${registry.host}/${repository.name}:${repository.tags[0]}`}</span>
+                <button className="copy-icon" type="button" onClick={copyToClipboard}>
+                  <FontAwesomeIcon icon={faClone} />
+                </button>
+                <span className="copy-content">{downloadCommand}</span>
               </div>
             </>
           ) : (
@@ -107,7 +132,7 @@ const Container = styled.div`
   }
 
   .summary-wrapper {
-    padding: 12px;
+    padding: 18px 12px;
 
     .name {
       font-size: 19px;
@@ -119,15 +144,23 @@ const Container = styled.div`
     .description {
       font-size: 14px;
       color: #999999;
-      margin-top: 10px;
+      margin-top: 18px;
+      padding-left: 6px;
     }
 
     .copy-wrapper {
-      margin-top: 5px;
-      padding: 10px;
+      margin-top: 12px;
+      padding: 12px;
       background-color: #2a3a5d;
       color: white;
-      cursor: pointer;
+
+      .copy-icon {
+        border: none;
+        outline: none;
+        background: transparent;
+        color: white;
+        cursor: pointer;
+      }
 
       .copy-content {
         margin: auto 10px;
