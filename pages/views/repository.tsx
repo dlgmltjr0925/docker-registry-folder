@@ -1,12 +1,15 @@
-import { FC, useCallback, useEffect } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { GetServerSideProps } from 'next';
 import { RegistryDto } from '../../src/registry/dto/registry.dto';
 import { RepositoryDto } from '../../src/registry/dto/repository.dto';
+import TagItem from '../../components/tag-item';
 import WidgetContainer from 'components/widget-container';
+import WidgetSearch from 'components/widget-search';
 import { faClone } from '@fortawesome/free-regular-svg-icons';
 import { faCube } from '@fortawesome/free-solid-svg-icons';
+import { handleChangeText } from 'lib/event-handles';
 import { openSnackBar } from 'reducers/snack-bars';
 import { resetCurrentRegistry } from 'reducers/registry';
 import styled from 'styled-components';
@@ -24,6 +27,8 @@ const REDIRECT_TIMEOUT = 3;
 const RepositoryPage: FC<RepositoryPageProps> = ({ registry, repository }) => {
   const dispatch = useDispatch();
   const router = useRouter();
+
+  const [keyword, setKeyword] = useState<string>('');
 
   if (!registry || !repository) {
     useEffect(() => {
@@ -61,6 +66,11 @@ const RepositoryPage: FC<RepositoryPageProps> = ({ registry, repository }) => {
     }
   }, []);
 
+  const searchedTags = useMemo(() => {
+    const keywordRegExp = new RegExp(keyword);
+    return repository.tags.filter((tag) => keywordRegExp.test(tag));
+  }, [keyword]);
+
   const copyToClipboard = useCallback(() => {
     if (!downloadCommand) return;
     navigator.clipboard.writeText(downloadCommand);
@@ -77,7 +87,9 @@ const RepositoryPage: FC<RepositoryPageProps> = ({ registry, repository }) => {
       <WidgetContainer title="Repository" titleIcon={faCube}>
         <div className="summary-wrapper">
           <h1 className="name">{repository.name}</h1>
-          {downloadCommand ? (
+          {!downloadCommand ? (
+            <p className="description">There are no images available for download.</p>
+          ) : (
             <>
               <p className="description">Copy and paste to pull this image</p>
               <div className="copy-wrapper">
@@ -87,10 +99,27 @@ const RepositoryPage: FC<RepositoryPageProps> = ({ registry, repository }) => {
                 <span className="copy-content">{downloadCommand}</span>
               </div>
             </>
-          ) : (
-            <p className="description">There are no images available for download.</p>
           )}
         </div>
+        {repository.tags.length > 0 && (
+          <>
+            <WidgetSearch
+              placeholder="Search by name, host, tag..."
+              value={keyword}
+              onChange={handleChangeText(setKeyword)}
+            />
+            <ul>
+              {searchedTags.map((tag) => (
+                <TagItem
+                  item={{
+                    digest: '1',
+                    tags: [tag],
+                  }}
+                />
+              ))}
+            </ul>
+          </>
+        )}
       </WidgetContainer>
     </Container>
   );
@@ -133,6 +162,7 @@ const Container = styled.div`
 
   .summary-wrapper {
     padding: 18px 12px;
+    border-bottom: 1px solid #ddd;
 
     .name {
       font-size: 19px;

@@ -2,7 +2,6 @@ import { faCubes, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 
 import { FC } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Link from 'next/link';
 import { MouseEventHandler } from 'react';
 import { RegistryDto } from '../src/registry/dto/registry.dto';
 import dateFormat from 'dateformat';
