@@ -79,7 +79,7 @@ function* signUpSaga(action: AuthAction) {
         payload: res.data,
       });
     }
-  } catch (error) {
+  } catch (error: any) {
     console.log(error);
     yield put({
       type: AuthActionType.SIGN_UP_ERROR,
@@ -99,7 +99,7 @@ function* signInSaga(action: AuthAction) {
       });
       yield put(openSnackBar({ severity: 'success', message: 'Login success!' }));
     }
-  } catch (error) {
+  } catch (error: any) {
     console.log(error);
     yield put({
       type: AuthActionType.SIGN_IN_ERROR,
@@ -116,7 +116,7 @@ function* signOutSaga() {
         type: AuthActionType.SIGN_OUT_SUCCESS,
       });
     }
-  } catch (error) {
+  } catch (error: any) {
     console.log(error);
     yield put({
       type: AuthActionType.SIGN_IN_ERROR,

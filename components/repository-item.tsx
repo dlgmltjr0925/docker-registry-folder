@@ -26,11 +26,11 @@ const RepositoryItem: FC<RepositoryItemProps> = ({ item: { registryId, name, tag
     <Link href={`/repository/${registryId}/${name}`}>
       <Container>
         <div>
-          <FontAwesomeIcon className="cube-icon" icon={faCube} />
+          <FontAwesomeIcon className="cube-icon" icon="cube" />
           <span className="repository-name">{name}</span>
           {tags.length > 0 && (
             <>
-              <FontAwesomeIcon className="tags-icon" icon={faTags} />
+              <FontAwesomeIcon className="tags-icon" icon="tags" />
               <span className="tag-count">{`${tags.length} ${tags.length > 1 ? 'tags' : 'tag'}`}</span>
             </>
           )}

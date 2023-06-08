@@ -1,8 +1,8 @@
-import styled from 'styled-components';
-
-import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { OutlinedTextFieldProps, TextField, TextFieldProps } from '@material-ui/core';
+import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import styled from 'styled-components';
 
 interface TextInputProps extends Omit<OutlinedTextFieldProps, 'variant'> {
   valid?: boolean;
@@ -14,11 +14,7 @@ const TextInput = ({ valid, ...props }: TextInputProps) => {
       <TextField {...props} variant="outlined" />
       {valid !== undefined && (
         <div className="valid-check">
-          {valid ? (
-            <FontAwesomeIcon icon={faCheck} color="#82dd55" />
-          ) : (
-            <FontAwesomeIcon icon={faTimes} color="#b71c1c" />
-          )}
+          {valid ? <FontAwesomeIcon icon="check" color="#82dd55" /> : <FontAwesomeIcon icon="times" color="#b71c1c" />}
         </div>
       )}
     </Container>

@@ -1,7 +1,7 @@
-import { NotFoundException } from '@nestjs/common';
+import { DockerRegistryService, RegistryAccessInfo } from './docker-registry.service';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { DockerRegistryService, RegistryAccessInfo } from './docker-registry.service';
+import { NotFoundException } from '@nestjs/common';
 import { UnauthorizedException } from './exceptions/unauthorized.exception';
 
 describe('DockerRegistryService', () => {
@@ -38,7 +38,7 @@ describe('DockerRegistryService', () => {
       try {
         registryAccessInfo.username = ' ';
         await service.checkApiVersion(registryAccessInfo);
-      } catch (error) {
+      } catch (error: any) {
         if (error.response) {
           expect(error).toEqual(new UnauthorizedException());
         }
@@ -49,7 +49,7 @@ describe('DockerRegistryService', () => {
       try {
         registryAccessInfo.password = ' ';
         await service.checkApiVersion(registryAccessInfo);
-      } catch (error) {
+      } catch (error: any) {
         if (error.response) {
           expect(error).toEqual(new UnauthorizedException());
         }

@@ -63,7 +63,7 @@ export class RegistryService {
           });
 
           sql = `SELECT id, name, host, tag FROM registry WHERE name=? AND host=? AND ifnull(token, '')=? AND ifnull(tag, '')=? ORDER BY id DESC LIMIT 1`;
-          db.each(sql, [name, host, encryptedToken || '', tag || ''], (error, row) => {
+          db.each<any>(sql, [name, host, encryptedToken || '', tag || ''], (error, row) => {
             if (error) throw error;
             resolve(row);
           });
@@ -81,7 +81,7 @@ export class RegistryService {
       const db = connect();
       try {
         const sql = `SELECT id, name, host, tag, token FROM registry`;
-        db.all(sql, (error, rows) => {
+        db.all<any>(sql, (error, rows) => {
           if (error) throw error;
           resolve(rows);
         });
@@ -99,7 +99,7 @@ export class RegistryService {
       try {
         const sql = `SELECT id, name, host, tag, token FROM registry WHERE name LIKE ? OR host LIKE ? OR ifnull(tag, '') LIKE ?`;
         const likeKeyword = `%${keyword}%`;
-        db.all(sql, [likeKeyword, likeKeyword, likeKeyword], (error, rows) => {
+        db.all<any>(sql, [likeKeyword, likeKeyword, likeKeyword], (error, rows) => {
           if (error) throw error;
           resolve(rows);
         });
@@ -116,7 +116,7 @@ export class RegistryService {
       const db = connect();
       try {
         const sql = `SELECT id, name, host, tag FROM registry WHERE id=?`;
-        db.all(sql, [id], (error, rows) => {
+        db.all<any>(sql, [id], (error, rows) => {
           if (error) return reject(error);
           if (rows.length === 0) return resolve(null);
           resolve(rows[0]);
@@ -134,7 +134,7 @@ export class RegistryService {
       const db = connect();
       try {
         const sql = `SELECT id, name, host, tag, token FROM registry WHERE id=?`;
-        db.all(sql, [id], (error, rows) => {
+        db.all<any>(sql, [id], (error, rows) => {
           if (error) return reject(error);
           if (rows.length === 0) return resolve(null);
           resolve(rows[0]);
@@ -152,7 +152,7 @@ export class RegistryService {
       const db = connect();
       try {
         const sql = `SELECT id, name, host, tag, token FROM registry WHERE id=?`;
-        db.all(sql, [id], (error, rows) => {
+        db.all<any>(sql, [id], (error, rows) => {
           if (error) return reject(error);
           if (rows.length === 0) return resolve(null);
           const { token, ...registry } = rows[0];
@@ -304,7 +304,7 @@ export class RegistryService {
           })
         );
       }
-    } catch (error) {
+    } catch (error: any) {
       registry.status = 'DOWN';
       registry.repositories = await this.getRepositoriesByRegistryId(registry.id);
       registry.message = error.message;

@@ -4,13 +4,13 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { AccessTokenPayload } from './dto/access-token-payload.dto';
 import { JwtService } from '@nestjs/jwt';
+import { RefreshTokenPayload } from './dto/refresh-token-payload.dto';
 import { SignInInputDto } from './dto/sign-in-input.dto';
 import { SignUpInputDto } from './dto/sign-up-input.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 import { UserDto } from './dto/user.dto';
 import { connect } from '../../lib/sqlite';
-import { UpdateProfileDto } from './dto/update-profile.dto';
 import dateFormat from 'dateformat';
-import { RefreshTokenPayload } from './dto/refresh-token-payload.dto';
 
 @Injectable()
 export class AuthService {
@@ -24,7 +24,7 @@ export class AuthService {
     return new Promise((resolve, reject) => {
       const sql = `SELECT id FROM user WHERE system_admin=1 LIMIT 1`;
       const db = connect();
-      db.all(sql, (error, rows) => {
+      db.all<any>(sql, (error, rows) => {
         if (error) return reject(error);
         this.systemAdmin = rows.length === 1;
         resolve(this.systemAdmin);
@@ -38,7 +38,7 @@ export class AuthService {
     return new Promise((resolve, reject) => {
       const sql = `SELECT id, username, role, system_admin FROM user WHERE username=? AND password=? LIMIT 1`;
       const db = connect();
-      db.all(sql, [username, hashedPassword], (error, rows) => {
+      db.all<any>(sql, [username, hashedPassword], (error, rows) => {
         if (error) return reject(error);
         if (rows.length === 0) resolve(null);
         else {
@@ -86,7 +86,7 @@ export class AuthService {
       const db = connect();
       try {
         const sql = `SELECT id, username, role, system_admin as systemAdmin FROM user WHERE id=?`;
-        db.each(sql, [id], (error, row) => {
+        db.each<UserDto>(sql, [id], (error, row) => {
           if (error) return reject(error);
           resolve(row);
         });
@@ -127,7 +127,7 @@ export class AuthService {
          */
         if (systemAdmin) {
           sql = `SELECT EXISTS (SELECT * FROM user WHERE system_admin=1) as user`;
-          db.each(sql, (error, row) => {
+          db.each<{ user: 1 | 0 }>(sql, (error, row) => {
             if (error) return reject(error);
             else if (row.user === 1) {
               return reject(new BadRequestException('Only one system administrator can be registered'));
@@ -138,7 +138,7 @@ export class AuthService {
          * Check duplicated username
          */
         sql = `SELECT EXISTS (SELECT * FROM user WHERE username=?) as user`;
-        db.each(sql, [username], (error, row) => {
+        db.each<{ user: 1 | 0 }>(sql, [username], (error, row) => {
           if (error) return reject(error);
           else if (row.user === 1) return reject(new BadRequestException('Already registered'));
         });
@@ -153,7 +153,7 @@ export class AuthService {
          * Get a created user information
          */
         sql = `SELECT id, username, role, system_admin FROM user WHERE username=? AND password=?`;
-        db.each(sql, [username, hashedPassword], async (error, row) => {
+        db.each<any>(sql, [username, hashedPassword], async (error, row) => {
           if (error) return reject(error);
           const { id, username, role, system_admin: systemAdmin } = row;
           const user = { id, username, role, systemAdmin };

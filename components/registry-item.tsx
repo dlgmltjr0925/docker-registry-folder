@@ -43,7 +43,7 @@ const RegistryItem: FC<RegistryItemProps> = ({ item, onClickRemove, onClickItem,
       </div>
       <div className="info-wrapper">
         <span className="host">{host}</span>
-        <FontAwesomeIcon className="cubes-icon" icon={faCubes} />
+        <FontAwesomeIcon className="cubes-icon" icon="cubes" />
         <span className="repository-count">{`${repositoriesLength} ${
           repositoriesLength <= 1 ? 'repository' : 'repositories'
         }`}</span>
@@ -58,7 +58,7 @@ const RegistryItem: FC<RegistryItemProps> = ({ item, onClickRemove, onClickItem,
         })}
       </ul>
       <button className="remove-wrapper" onClick={handleClickRemove}>
-        <FontAwesomeIcon className="remove-icon" icon={faTrashAlt} />
+        <FontAwesomeIcon className="remove-icon" icon="trash-alt" />
       </button>
     </Container>
   );

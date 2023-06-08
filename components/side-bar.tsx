@@ -44,11 +44,11 @@ const SideBar: FC<SideBarProps> = (props) => {
           </span>
         </Link>
         <div className="icon-wrapper" onClick={handleClickOpen}>
-          <FontAwesomeIcon icon={faExchangeAlt} />
+          <FontAwesomeIcon icon="exchange-alt" />
         </div>
       </div>
       {/* Home */}
-      <SideMenu route="/" label="Home" icon={faHome} isSelected={route === '/views/home'} />
+      <SideMenu route="/" label="Home" icon="home" isSelected={route === '/views/home'} />
 
       {/* Registry */}
       {currentRegistry && (
@@ -56,13 +56,13 @@ const SideBar: FC<SideBarProps> = (props) => {
           <div className="category catogory-repository">
             <span>{currentRegistry.name}</span>
             <div className="icon-wrapper">
-              <FontAwesomeIcon icon={faNetworkWired} />
+              <FontAwesomeIcon icon="network-wired" />
             </div>
           </div>
           <SideMenu
             route={`/dashboard/${currentRegistry.id}`}
             label="Dashboard"
-            icon={faServer}
+            icon="server"
             isSelected={route === '/views/dashboard'}
           />
           <ul className="repository-wrapper">
@@ -71,7 +71,7 @@ const SideBar: FC<SideBarProps> = (props) => {
                 key={name}
                 route={`/repository/${currentRegistry.id}/${name}`}
                 label={name}
-                icon={faCube}
+                icon="cube"
                 isSelected={asPath.split('?')[0] === `/repository/${currentRegistry.id}/${name}`}
               />
             ))}
@@ -84,7 +84,7 @@ const SideBar: FC<SideBarProps> = (props) => {
         <div className="category">
           <span>Settings</span>
           <div className="icon-wrapper">
-            <FontAwesomeIcon icon={faCog} />
+            <FontAwesomeIcon icon="cog" />
           </div>
         </div>
       )}
@@ -92,17 +92,12 @@ const SideBar: FC<SideBarProps> = (props) => {
         <SideMenu
           route="/setting/registries"
           label="Registries"
-          icon={faServer}
+          icon="server"
           isSelected={route === '/views/setting/registries' || route === '/views/setting/registry'}
         />
       )}
       {user?.role === 'ADMIN' && (
-        <SideMenu
-          route="/setting/users"
-          label="Users"
-          icon={faUsersCog}
-          isSelected={route === '/views/setting/users'}
-        />
+        <SideMenu route="/setting/users" label="Users" icon="user-cog" isSelected={route === '/views/setting/users'} />
       )}
     </Container>
   );

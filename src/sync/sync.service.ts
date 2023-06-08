@@ -36,7 +36,7 @@ export class SyncService {
       const db = connect();
       try {
         const sql = `SELECT id, name FROM repository WHERE registry_id=? ORDER BY name ASC`;
-        db.all(sql, [id], (error, rows) => {
+        db.all<any>(sql, [id], (error, rows) => {
           if (error) throw error;
           resolve(rows);
         });
@@ -53,7 +53,7 @@ export class SyncService {
       const db = connect();
       try {
         const sql = `SELECT id, name FROM tag WHERE repository_id=? ORDER BY name ASC`;
-        db.all(sql, [id], (error, rows) => {
+        db.all<any>(sql, [id], (error, rows) => {
           if (error) throw error;
           resolve(rows);
         });
@@ -70,7 +70,7 @@ export class SyncService {
       const db = connect();
       try {
         const sql = `SELECT id FROM repository WHERE registry_id=? AND name=?`;
-        db.all(sql, [registryId, name], (error, rows) => {
+        db.all<any>(sql, [registryId, name], (error, rows) => {
           if (error) throw error;
           if (rows.length === 0) throw new Error('Not founded repository');
           resolve(rows[0].id);

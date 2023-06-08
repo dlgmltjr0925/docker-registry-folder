@@ -1,4 +1,4 @@
-import { request, Response } from 'express';
+import type { Response } from 'express';
 
 import { Controller, Get, Logger, Param, Render, Req, Res, UseFilters, UseGuards } from '@nestjs/common';
 

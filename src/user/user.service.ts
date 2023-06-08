@@ -65,7 +65,7 @@ export class UserService {
       const db = connect();
       try {
         const sql = `SELECT id, username, role, system_admin as systemAdmin FROM user`;
-        db.all(sql, (error, rows) => {
+        db.all<any>(sql, (error, rows) => {
           if (error) throw error;
           resolve(rows);
         });
@@ -83,7 +83,7 @@ export class UserService {
       try {
         const sql = `SELECT id, username, role, system_admin as systemAdmin FROM user WHERE username LIKE ? OR role LIKE ?`;
         const likeKeyword = `%${keyword}%`;
-        db.all(sql, [likeKeyword, likeKeyword], (error, rows) => {
+        db.all<any>(sql, [likeKeyword, likeKeyword], (error, rows) => {
           if (error) throw error;
           resolve(rows.map((row) => ({ ...row, systemAdmin: row.systemAdmin === 1 })));
         });
@@ -100,7 +100,7 @@ export class UserService {
       const db = connect();
       try {
         const sql = `SELECT id, username, role, system_admin as systemAdmin FROM user WHERE id=?`;
-        db.each(sql, [id], (error, row) => {
+        db.each<any>(sql, [id], (error, row) => {
           if (error) return reject(error);
           resolve({ ...row, systemAdmin: row.systemAdmin === 1 });
         });

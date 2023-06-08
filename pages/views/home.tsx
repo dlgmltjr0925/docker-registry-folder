@@ -69,7 +69,7 @@ const HomePage: FC<HomePageProps> = () => {
 
   return (
     <Container>
-      <WidgetContainer title="Registries" titleIcon={faServer}>
+      <WidgetContainer title="Registries" titleIcon="server">
         <WidgetSearch
           placeholder="Search by name, host, tag..."
           value={keyword}

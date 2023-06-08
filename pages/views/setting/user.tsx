@@ -16,7 +16,6 @@ import TextInput from 'components/text-input';
 import { UpdateUserDto } from '../../../src/user/dto/update-user.dto';
 import { UserDto } from '../../../src/auth/dto/user.dto';
 import WidgetContainer from 'components/widget-container';
-import { route } from 'next/dist/next-server/server/router';
 import styled from 'styled-components';
 import { useRouter } from 'next/dist/client/router';
 
@@ -141,7 +140,7 @@ const UserPage: FC<UserPageProps> = ({ prevUser }) => {
           <IconButton
             className={`button-add ${isActive ? 'button-add-active' : ''}`}
             type="submit"
-            icon={isUpdateMode ? faEdit : faPlus}
+            icon={isUpdateMode ? 'edit' : 'plus'}
             loading={user[isUpdateMode ? 'updateUser' : 'addUser'].loading}
             onClick={handleClickSubmit}
           >

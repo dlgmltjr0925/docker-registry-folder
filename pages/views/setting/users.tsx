@@ -77,16 +77,16 @@ const UsersPage: FC<UsersPageProps> = (props) => {
 
   return (
     <Container>
-      <WidgetContainer title="Users" titleIcon={faUsers}>
+      <WidgetContainer title="Users" titleIcon="users">
         <div className="widget-sub-container">
           <IconButton
             className={`widget-button button-remove ${selectedUsers.length > 0 ? 'button-remove-active' : ''}`}
-            icon={faTrashAlt}
+            icon="trash-alt"
             onClick={handleClickRemove}
           >
             Remove
           </IconButton>
-          <IconButton className="widget-button button-add" icon={faPlus} onClick={handleClickAdd}>
+          <IconButton className="widget-button button-add" icon="plus" onClick={handleClickAdd}>
             Add User
           </IconButton>
         </div>

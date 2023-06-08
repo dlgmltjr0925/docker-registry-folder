@@ -84,7 +84,7 @@ const RepositoryPage: FC<RepositoryPageProps> = ({ registry, repository }) => {
 
   return (
     <Container>
-      <WidgetContainer title="Repository" titleIcon={faCube}>
+      <WidgetContainer title="Repository" titleIcon="cube">
         <div className="summary-wrapper">
           <h1 className="name">{repository.name}</h1>
           {!downloadCommand ? (
@@ -94,7 +94,7 @@ const RepositoryPage: FC<RepositoryPageProps> = ({ registry, repository }) => {
               <p className="description">Copy and paste to pull this image</p>
               <div className="copy-wrapper">
                 <button className="copy-icon" type="button" onClick={copyToClipboard}>
-                  <FontAwesomeIcon icon={faClone} />
+                  <FontAwesomeIcon icon="clone" />
                 </button>
                 <span className="copy-content">{downloadCommand}</span>
               </div>

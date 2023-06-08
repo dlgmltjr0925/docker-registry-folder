@@ -9,7 +9,7 @@ interface WidgetSearchProps extends DetailedHTMLProps<InputHTMLAttributes<HTMLIn
 const WidgetSearch: FC<WidgetSearchProps> = ({ ...props }) => {
   return (
     <Container>
-      <FontAwesomeIcon className="search-icon" icon={faSearch} />
+      <FontAwesomeIcon className="search-icon" icon="search" />
       <input className="search-text" type="text" {...props} />
     </Container>
   );

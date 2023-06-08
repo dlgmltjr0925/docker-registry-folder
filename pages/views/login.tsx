@@ -69,7 +69,7 @@ const LoginPage = () => {
           type="submit"
           className="login-button"
           variant="contained"
-          icon={faSignInAlt}
+          icon="sign-in-alt"
           disabled={username === '' || password === ''}
           loading={auth.loading}
           onClick={handleLogin}

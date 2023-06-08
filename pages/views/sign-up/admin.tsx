@@ -81,7 +81,7 @@ const AdminPage = () => {
         <IconButton
           className="sign-up-button"
           variant="contained"
-          icon={faUserPlus}
+          icon="user-plus"
           onClick={handleClickSignUp}
           disabled={!isLongPassword || !isMatched || username === ''}
           loading={auth.loading}

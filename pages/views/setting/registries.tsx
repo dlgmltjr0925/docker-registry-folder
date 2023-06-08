@@ -83,16 +83,16 @@ const RegistriesPage: FC<RegistriesPageProps> = () => {
 
   return (
     <Container>
-      <WidgetContainer title="Registries" titleIcon={faDatabase}>
+      <WidgetContainer title="Registries" titleIcon="database">
         <div className="widget-sub-container">
           <IconButton
             className={`widget-button button-remove ${selectedRegistries.length > 0 ? 'button-remove-active' : ''}`}
-            icon={faTrashAlt}
+            icon="trash-alt"
             onClick={handleClickRemove}
           >
             Remove
           </IconButton>
-          <IconButton className="widget-button button-add" icon={faPlus} onClick={handleClickAdd}>
+          <IconButton className="widget-button button-add" icon="plus" onClick={handleClickAdd}>
             Add registry
           </IconButton>
         </div>

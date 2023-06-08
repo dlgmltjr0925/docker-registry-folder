@@ -143,7 +143,7 @@ const RegistryPage: FC<RegistryPageProps> = ({ prevRegistry }) => {
         <IconButton
           className={`button-add ${isActive ? 'button-add-active' : ''}`}
           type="submit"
-          icon={isUpdateMode ? faEdit : faPlus}
+          icon={isUpdateMode ? 'edit' : 'plus'}
           loading={registry[isUpdateMode ? 'updateRegistry' : 'addRegistry'].loading}
           onClick={handleClickSubmit}
         >

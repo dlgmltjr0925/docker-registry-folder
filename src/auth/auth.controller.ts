@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post, Put, Req, Res, Session, UseGuards, UsePipes } from '@nestjs/common';
-import { Response } from 'express';
+import type { Response } from 'express';
 
 import { JoiValidationPipe } from '../common/pipes/joi-validation.pipe';
 import { AuthService } from './auth.service';

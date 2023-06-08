@@ -57,18 +57,18 @@ const Header: FC<HeaderProps> = () => {
       </div>
       <div className="user-wrapper">
         <p className="user-name">
-          <FontAwesomeIcon className="user-icon" icon={faUserCircle} />
+          <FontAwesomeIcon className="user-icon" icon="user-circle" />
           {user?.username || ''}
         </p>
         <div className="user-controll-wrapper">
           <Link href={{ pathname: '/setting/account' }}>
             <span className="my-account-button user-controll-button">
-              <FontAwesomeIcon className="user-controll-icon" icon={faUserCog} />
+              <FontAwesomeIcon className="user-controll-icon" icon="user-cog" />
               my account
             </span>
           </Link>
           <span className="logout-button user-controll-button" onClick={handleClickLogout}>
-            <FontAwesomeIcon className="user-controll-icon" icon={faSignOutAlt} />
+            <FontAwesomeIcon className="user-controll-icon" icon="sign-out-alt" />
             log out
           </span>
         </div>

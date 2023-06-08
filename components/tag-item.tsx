@@ -16,7 +16,7 @@ const TagItem: FC<TagItemProps> = ({ item }) => {
   return (
     <Container>
       <div className="tag-wrapper">
-        <FontAwesomeIcon className="tag-icon" icon={faTag} />
+        <FontAwesomeIcon className="tag-icon" icon="tag" />
         <span className="tag-name">{item.tags.join(', ')}</span>
       </div>
     </Container>

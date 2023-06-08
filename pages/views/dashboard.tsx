@@ -59,7 +59,7 @@ const DashboardPage: FC<DashboardPageProps> = ({ registry }) => {
 
   return (
     <Container>
-      <WidgetContainer title="Registry Info" titleIcon={faServer}>
+      <WidgetContainer title="Registry Info" titleIcon="server">
         <WidgetItem label="name" value={registry.name} />
         <WidgetItem label="host" value={registry.host} />
         <WidgetItem
@@ -68,7 +68,7 @@ const DashboardPage: FC<DashboardPageProps> = ({ registry }) => {
         />
       </WidgetContainer>
 
-      <WidgetContainer title="Registories" titleIcon={faCubes}>
+      <WidgetContainer title="Registories" titleIcon="cubes">
         <WidgetSearch placeholder="Search by name, tag..." onChange={handleChangeText(setKeyword)} />
         <ul>
           {searchedRegistry.map((repository) => (

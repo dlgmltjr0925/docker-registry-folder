@@ -53,7 +53,7 @@ const AccountPage: FC<AccountPageProps> = () => {
         <IconButton
           className={`button-add ${isActive ? 'button-add-active' : ''}`}
           type="submit"
-          icon={faEdit}
+          icon="edit"
           loading={user.updateUser.loading}
           onClick={handleClickSubmit}
         >

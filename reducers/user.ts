@@ -116,7 +116,7 @@ function* searchSaga(action: UserAction) {
         payload: res.data,
       });
     }
-  } catch (error) {
+  } catch (error: any) {
     yield put({
       type: UserActionType.SEARCH_USER_ERROR,
       payload: { error: error.message },
@@ -141,7 +141,7 @@ function* removeUsersSaga(action: UserAction<Remove>) {
         })
       );
     }
-  } catch (error) {
+  } catch (error: any) {
     yield put({
       type: UserActionType.REMOVE_USERS_ERROR,
       payload: { willBeRemovedUserIds, error: error.message },
@@ -166,7 +166,7 @@ function* addUserSaga(action: UserAction<AddUser>) {
         })
       );
     }
-  } catch (error) {
+  } catch (error: any) {
     yield put({
       type: UserActionType.ADD_USER_ERROR,
       payload: { error: error.message },
@@ -191,7 +191,7 @@ function* updateUserSaga(action: UserAction<UpdateUser>) {
         })
       );
     }
-  } catch (error) {
+  } catch (error: any) {
     console.log('here', error.message);
     yield put({
       type: UserActionType.UPDATE_USER_ERROR,
